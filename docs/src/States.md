@@ -1,5 +1,5 @@
 ```@meta
-CurrentModule = States
+CurrentModule = QBase.States
 ```
 
 # QBase.States

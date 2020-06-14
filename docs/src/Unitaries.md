@@ -1,5 +1,5 @@
 ```@meta
-CurrentModule = Unitaries
+CurrentModule = QBase.Unitaries
 ```
 
 # QBase.Unitaries

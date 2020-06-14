@@ -1,5 +1,5 @@
 ```@meta
-CurrentModule = Information
+CurrentModule = QBase.Information
 ```
 # QBase.Information
 

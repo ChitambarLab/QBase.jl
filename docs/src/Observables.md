@@ -1,5 +1,5 @@
 ```@meta
-CurrentModule = Observables
+CurrentModule = QBase.Observables
 ```
 # QBase.Observables
 

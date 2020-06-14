@@ -4,11 +4,11 @@ using Documenter
 makedocs(;
     modules=[QBase,QBase.States,QBase.Observables,QBase.Unitaries],
     authors="Brian Doolittle <brian.d.doolittle@gmail.com> and contributors",
-    repo="https://github.com/chitambarlab/QBase.jl/blob/{commit}{path}#L{line}",
+    repo="https://github.com/ChitambarLab/QBase.jl/blob/{commit}{path}#L{line}",
     sitename="QBase.jl",
     format=Documenter.HTML(;
         prettyurls=get(ENV, "CI", "false") == "true",
-        canonical="https://chitambarlab.github.io/QBase.jl",
+        canonical="https://ChitambarLab.github.io/QBase.jl",
         assets=String[],
     ),
     pages=[
@@ -22,5 +22,5 @@ makedocs(;
 )
 
 deploydocs(;
-    repo="github.com/chitambarlab/QBase.jl",
+    repo="github.com/ChitambarLab/QBase.jl",
 )

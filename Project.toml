@@ -1,13 +1,8 @@
 name = "QBase"
 uuid = "e52e8ede-12bf-4731-8af7-b01f6064cb11"
-authors = ["Brian Doolittle <briand4@illinois.edu> and contributors"]
+authors = ["Brian Doolittle <brian.d.doolittle@gmail.com> and contributors"]
 version = "0.1.0"
 
 [compat]
 julia = "1.4"
 
-[extras]
-Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
-
-[targets]
-test = ["Test"]

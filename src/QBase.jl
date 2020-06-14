@@ -2,6 +2,8 @@ module QBase
 
 using LinearAlgebra
 
+export QMath
+
 # include modules
 include("./QMath.jl")
 

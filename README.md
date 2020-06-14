@@ -1,4 +1,6 @@
-# QBase
+# QBase.jl
+
+* A basic toolkit for modeling quantum systems.
 
 [![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://ChitambarLab.github.io/QBase.jl/stable)
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://ChitambarLab.github.io/QBase.jl/dev)

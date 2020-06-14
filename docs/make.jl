@@ -3,7 +3,7 @@ using Documenter
 
 makedocs(;
     modules=[QBase],
-    authors="Brian Doolittle <briand4@illinois.edu> and contributors",
+    authors="Brian Doolittle <brian.d.doolittle@gmail.com> and contributors",
     repo="https://github.com/chitambarlab/QBase.jl/blob/{commit}{path}#L{line}",
     sitename="QBase.jl",
     format=Documenter.HTML(;
@@ -13,6 +13,11 @@ makedocs(;
     ),
     pages=[
         "Home" => "index.md",
+        "Overview" => "overview.jl",
+        "States" => "States.jl",
+        "Unitaries" => "Unitaries.jl",
+        "Observables" => "Observables.jl",
+        "Information" => "Information.jl",
     ],
 )
 

@@ -13,11 +13,13 @@ makedocs(;
     ),
     pages=[
         "Home" => "index.md",
+        "User Guide" => "user_guide.md",
         "Overview" => "overview.md",
         "States" => "States.md",
         "Unitaries" => "Unitaries.md",
         "Observables" => "Observables.md",
         "Information" => "Information.md",
+        "QMath" => "QMath.md",
     ],
 )
 

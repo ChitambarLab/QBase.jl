@@ -52,49 +52,72 @@ function id(dim)
     diagm(0 => fill(1,dim))
 end
 
-# """
-# partial_trace(ρ, subsystem_dims, index)
-#     Traces out the subsystem at the specified index.
-#
-# Inputs:
-#     ρ: Matrix, a square density matrix
-#     subsystem_dims: Tuple, contains positive integer elements which specify the
-#         dimension of each subsystem.
-#     index: Integer, the index of the subsystem list to trace out
-#
-# Returns:
-#     ptrace: Matrix, the partial trace of the specified system.
-# """
-function partial_trace(ρ, subsystem_dims, index)
+"""
+    partial_trace(
+        ρ::AbstractMatrix, subsystem_dims::Vector{Int64}, subsystem_id::Int64
+    ) :: AbstractMatrix
 
-    trace_dim = subsystem_dims[index]
-    trace_id = id(trace_dim)
+Performs the partial trace on matrix `ρ` with respect to the subsystem at the specified `subsystem_id`.
+The partial trace is a quantum operation ``\\mathcal{E}`` mapping the input
+Hilbert space to the output Hilbert space,
+``\\mathcal{E} \\; : \\; \\mathcal{H}_X \\rightarrow \\mathcal{H}_Y``. A quantum
+operation admits the operator sum representation, ``\\mathcal{E}(\\rho) = \\sum_i E_i  \\rho E_i^{\\dagger}``.
+For example, given a 3-qubit system with density matrix ``\\rho_{ABC}``, the partial trace with
+respect to system ``B``, is explicitly,
 
-    pre_dim = 1
-    for sub_dim in subsystem_dims[1:(index-1)]
-        pre_dim = pre_dim * sub_dim
+```math
+\\rho_{AC} = \\text{Tr}_B[\\rho_{ABC}] = \\mathcal{E}_B(\\rho_{ABC}) = \\sum_i E_i \\rho_{ABC} E_i^{\\dagger}
+```
+
+where ``E_i = \\mathbb{I}_A \\otimes \\langle i |_B \\otimes\\mathbb{I}_C``, represents
+the Kraus operators for the quantum operation and ``\\rho_{AC}`` is the reduced density
+operator remaining after system ``B`` is traced out.
+
+*Inputs:*
+* `ρ` : The matrix on which the partial trace is performed. This matrix should have dimension
+        equal to the product of the `subsystem_dims`.
+* `subsystem_dims` :  A vector containing positive integer elements which specify the
+        dimension of each subsystem. *E.g.* A 3-qubit system has `subsytem_dims = [2,2,2]`,
+        a system containing a qubit and a qutrit has `subsystem_dims = [2,3]`.
+* `subsystem_id` : A positive integer which indexes the `subsystem_dims` vector to signify
+        the subsytem which the partial trace will trace out.
+
+*Output:*
+* The reduced matrix which results after the partial trace is performed on `ρ`. This
+        matrix is square and has dimension of product of `subsystem_dims` with the element
+        corresponding to `subsystem_id` removed.
+
+A `DomainError` is thrown if `ρ` is not square or of proper dimension.
+"""
+function partial_trace(ρ::AbstractMatrix, subsystem_dims::Vector{Int64}, subsystem_id::Int64) :: AbstractMatrix
+    system_dim = .*(subsystem_dims...)
+
+    if size(ρ) != (system_dim, system_dim)
+        throw(DomainError(ρ, "Matrix ρ should be square and have dimension equal to the product of subsystem dimensions."))
     end
 
-    pre_id = id(pre_dim)
+    trace_dim = subsystem_dims[subsystem_id]
 
-    post_dim = 1
-    for sub_dim in subsystem_dims[(index + 1):end]
-        post_dim = post_dim * sub_dim
-    end
+    pre_dim = (subsystem_id > 1) ? .*(subsystem_dims[1:(subsystem_id-1)]...) : 1
+    pre_id = Matrix(1I, pre_dim, pre_dim)
 
-    post_id = id(post_dim)
+    post_dim = (subsystem_id < length(subsystem_dims)) ? .*(subsystem_dims[(subsystem_id + 1):end]...) : 1
+    post_id = Matrix(1I, post_dim, post_dim)
 
-    partial_dim = post_dim*pre_dim
-    ptrace = zeros((partial_dim,partial_dim))
-    for i in 1:trace_dim
+    basis_vectors = computational_basis_vectors(trace_dim)
+    kraus_operators = map(bv -> kron(pre_id, bv', post_id), basis_vectors)
 
-        row_multiplier = kron(pre_id, kron(trace_id[i,:]', post_id))
-        col_multiplier = kron(pre_id, kron(trace_id[:,i], post_id))
+    sum(map( E -> E*ρ*E', kraus_operators))
+end
 
-        ptrace += row_multiplier * ρ * col_multiplier
-    end
+"""
+    computational_basis_vectors( dim::Int64 ) ::Vector{ Vector{Int64} }
 
-    ptrace
+Returns an orthonormal set of column vectors spanning a vector space of dimension `dim`.
+"""
+function computational_basis_vectors(dim::Int64) :: Vector{Vector{Int64}}
+    identity = Matrix(1I, dim, dim)
+    map(i -> identity[:,i], 1:dim)
 end
 
 

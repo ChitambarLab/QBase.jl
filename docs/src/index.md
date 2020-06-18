@@ -19,7 +19,3 @@ CurrentModule = QBase
 
 ```@index
 ```
-
-```@autodocs
-Modules = [QBase]
-```

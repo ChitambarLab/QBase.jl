@@ -2,7 +2,7 @@ using Test, LinearAlgebra
 
 @testset "QMath/enumerate.jl" begin
 
-using QBase: QMath
+using QBase
 
 @testset "permutation_maps()" begin
     @testset "dim = 2" begin

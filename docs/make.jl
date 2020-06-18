@@ -2,7 +2,7 @@ using QBase
 using Documenter
 
 makedocs(;
-    modules=[QBase,QBase.States,QBase.Observables,QBase.Unitaries],
+    modules=[QBase],
     authors="Brian Doolittle <brian.d.doolittle@gmail.com> and contributors",
     repo="https://github.com/ChitambarLab/QBase.jl/blob/{commit}{path}#L{line}",
     sitename="QBase.jl",

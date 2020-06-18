@@ -7,7 +7,7 @@ using QBase: QMath
 @testset "block_diagonal()" begin
     I2 = [2 0; 0 2]
     P2 = [0 2; 2 0]
-    I5 = diagm(0 => fill(5,5))
+    I5 = Matrix(1I, 5, 5)
     four_two = [1 2;3 4;5 6;7 8]
     two_four = [1 2 3 4;5 6 7 8]
 
@@ -40,20 +40,6 @@ using QBase: QMath
     ]
 end
 
-@testset "id()" begin
-    @test QMath.id(2) == [1 0;0 1]
-    @test QMath.id(1) == fill(1,(1,1))
-    @test QMath.id(0) == fill(0,(0,0))
-    @test QMath.id(3) == [1 0 0; 0 1 0; 0 0 1]
-
-    @testset "dim = 31" begin
-        id_31 = QMath.id(31)
-
-        @test size(id_31) == (31,31)
-        @test tr(id_31) == 31
-    end
-end
-
 @testset "partial_trace()" begin
     @testset "invalid inputs" begin
         @test_throws DomainError QMath.partial_trace([1 0;0 1], [2,2], 1)
@@ -61,7 +47,7 @@ end
     end
 
     @testset "diagonal density operator" begin
-        ρ = (1/6)*QMath.id(6)
+        ρ = (1/6)*Matrix(1I,6,6)
 
         @test QMath.partial_trace(ρ, [2,3],2) == [0.5 0; 0 0.5]
         @test QMath.partial_trace(ρ, [2,3],1) == (1/3)*I

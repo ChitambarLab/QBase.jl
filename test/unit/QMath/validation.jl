@@ -2,7 +2,7 @@ using Test
 
 @testset "QMath/validation.jl" begin
 
-using QBase: QMath
+using QBase
 
 @testset "is_hermitian()" begin
     @test QMath.is_hermitian([1 0;0 1])

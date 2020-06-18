@@ -43,15 +43,6 @@ function block_diagonal(matrices)
     block_matrix
 end
 
-
-# """
-# id(dim)
-#     Returns the identity matrix for the specified dimension.
-# """
-function id(dim)
-    diagm(0 => fill(1,dim))
-end
-
 """
     partial_trace(
         ρ::AbstractMatrix, subsystem_dims::Vector{Int64}, subsystem_id::Int64
@@ -74,12 +65,12 @@ the Kraus operators for the quantum operation and ``\\rho_{AC}`` is the reduced 
 operator remaining after system ``B`` is traced out.
 
 *Inputs:*
-* `ρ` : The matrix on which the partial trace is performed. This matrix should have dimension
-        equal to the product of the `subsystem_dims`.
+* `ρ` : The matrix on which the partial trace is performed. This matrix should be square
+        and have dimension equal to the product of the `subsystem_dims`.
 * `subsystem_dims` :  A vector containing positive integer elements which specify the
-        dimension of each subsystem. *E.g.* A 3-qubit system has `subsytem_dims = [2,2,2]`,
+        dimension of each subsystem. *E.g.* A 3-qubit system has `subsystem_dims = [2,2,2]`,
         a system containing a qubit and a qutrit has `subsystem_dims = [2,3]`.
-* `subsystem_id` : A positive integer which indexes the `subsystem_dims` vector to signify
+* `subsystem_id` : A positive integer indexing the `subsystem_dims` vector to signify
         the subsytem which the partial trace will trace out.
 
 *Output:*

@@ -78,7 +78,7 @@ end
 Pauli-X unitary:
 
 ```jldoctest
-julia> QBase.σx
+julia> QBase.Unitaries.σx
 2×2 QBase.Unitaries.QubitUnitary:
  0.0+0.0im  1.0+0.0im
  1.0+0.0im  0.0+0.0im
@@ -92,7 +92,7 @@ const σx = QubitUnitary([0 1;1 0])
 Pauli-Y unitary:
 
 ```jldoctest
-julia> QBase.σy
+julia> QBase.Unitaries.σy
 2×2 QBase.Unitaries.QubitUnitary:
  0.0+0.0im  0.0-1.0im
  0.0+1.0im  0.0+0.0im
@@ -106,7 +106,7 @@ const σy = QubitUnitary([0 -im;im 0])
 Pauli-Z unitary:
 
 ```
-julia> QBase.σz
+julia> QBase.Unitaries.σz
 2×2 QBase.Unitaries.QubitUnitary:
  1.0+0.0im   0.0+0.0im
  0.0+0.0im  -1.0+0.0im

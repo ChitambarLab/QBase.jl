@@ -4,32 +4,32 @@ using Test, LinearAlgebra
 
 using QBase
 
-@testset "is_ket()" begin
+@testset "States.is_ket()" begin
     @testset "valid wavefunctions" begin
-        @test QBase.is_ket([1;0])
-        @test QBase.is_ket([1])
-        @test QBase.is_ket(1/sqrt(3)*[1;1;-1])
-        @test QBase.is_ket(1/sqrt(2)*[1;im])
+        @test States.is_ket([1;0])
+        @test States.is_ket([1])
+        @test States.is_ket(1/sqrt(3)*[1;1;-1])
+        @test States.is_ket(1/sqrt(2)*[1;im])
     end
 
     @testset "invalid wavefunctions" begin
-        @test !( QBase.is_ket([0;0]) )
-        @test !( QBase.is_ket([1;1]) )
+        @test !( States.is_ket([0;0]) )
+        @test !( States.is_ket([1;1]) )
     end
 
     @testset "valid inputs" begin
-        @test QBase.is_ket([1,0]::Vector{Int64})
-        @test QBase.is_ket([1.0,0.0]::Vector{Float64})
-        @test QBase.is_ket([1.0+im*0.0,0.0+im*0.0 ]::Vector{Complex{Float64}})
+        @test States.is_ket([1,0]::Vector{Int64})
+        @test States.is_ket([1.0,0.0]::Vector{Float64})
+        @test States.is_ket([1.0+im*0.0,0.0+im*0.0 ]::Vector{Complex{Float64}})
     end
 
     @testset "invalid inputs" begin
-        @test_throws MethodError QBase.is_ket([1 0;0 0])
-        @test_throws MethodError QBase.is_ket(1/sqrt(2)*[1 1])
+        @test_throws MethodError States.is_ket([1 0;0 0])
+        @test_throws MethodError States.is_ket(1/sqrt(2)*[1 1])
     end
 end
 
-@testset "QBase.Ket()" begin
+@testset "States.Ket()" begin
     valid_cases = [
         [1;0;0],
         [1,0,0,0],
@@ -38,19 +38,19 @@ end
     ]
 
     @testset "valid input: $id/$(length(valid_cases))" for id in 1:length(valid_cases)
-        ψ = QBase.Ket(valid_cases[id])
-        @test ψ isa QBase.Ket
-        @test ψ isa QBase.States.AbstractKet
+        ψ = States.Ket(valid_cases[id])
+        @test ψ isa States.Ket
+        @test ψ isa States.States.AbstractKet
         @test ψ == valid_cases[id]
     end
 
     @testset "invalid inputs" begin
-        @test_throws DomainError QBase.Ket([1,1,1])
-        @test_throws MethodError QBase.Ket([1 0])
+        @test_throws DomainError States.Ket([1,1,1])
+        @test_throws MethodError States.Ket([1 0])
     end
 end
 
-@testset "QBase.QubitKet()" begin
+@testset "States.QubitKet()" begin
     valid_cases = [
         [1,0],
         [1,im]/sqrt(2),
@@ -58,40 +58,40 @@ end
     ]
 
     @testset "valid input: $id/$(length(valid_cases))" for id in 1:length(valid_cases)
-        ψ = QBase.QubitKet(valid_cases[id])
-        @test ψ isa QBase.QubitKet
-        @test ψ isa QBase.States.AbstractKet
+        ψ = States.QubitKet(valid_cases[id])
+        @test ψ isa States.QubitKet
+        @test ψ isa States.States.AbstractKet
         @test ψ == valid_cases[id]
     end
 
     @testset "invalid inputs" begin
-        @test_throws DomainError QBase.QubitKet([1 0])
-        @test_throws DomainError QBase.QubitKet([1,1])
-        @test_throws DomainError QBase.QubitKet([1,0,0])
+        @test_throws DomainError States.QubitKet([1 0])
+        @test_throws DomainError States.QubitKet([1,1])
+        @test_throws DomainError States.QubitKet([1,0,0])
     end
 end
 
 @testset "is_density_matrix()" begin
     @testset "invalid matrices" begin
-        @test !(QBase.is_density_matrix([1 0;0 1]))
-        @test !(QBase.is_density_matrix([0.5 1;-1 0.5]))
-        @test !(QBase.is_density_matrix([0.5 1;1 0.5]))
-        @test !(QBase.is_density_matrix([1.5 0;0 -0.5]))
-        @test !(QBase.is_density_matrix([0.5 im;-im 0.5]))
-        @test !(QBase.is_density_matrix([1 4;4 1]))
+        @test !(States.is_density_matrix([1 0;0 1]))
+        @test !(States.is_density_matrix([0.5 1;-1 0.5]))
+        @test !(States.is_density_matrix([0.5 1;1 0.5]))
+        @test !(States.is_density_matrix([1.5 0;0 -0.5]))
+        @test !(States.is_density_matrix([0.5 im;-im 0.5]))
+        @test !(States.is_density_matrix([1 4;4 1]))
 
-        @test_throws DomainError QBase.is_density_matrix([0.5 0;0 0.5; 0 0])
+        @test_throws DomainError States.is_density_matrix([0.5 0;0 0.5; 0 0])
     end
     @testset "valid matrices" begin
-        @test QBase.is_density_matrix([0.5 0;0 0.5]::Matrix{Float64})
-        @test QBase.is_density_matrix([1 0;0 0]::Matrix{Int64})
-        @test QBase.is_density_matrix([0 0;0 1])
-        @test QBase.is_density_matrix([0.5 0.5;0.5 0.5])
-        @test QBase.is_density_matrix([0.5 0.5im;-0.5im 0.5]::Matrix{Complex{Float64}})
+        @test States.is_density_matrix([0.5 0;0 0.5]::Matrix{Float64})
+        @test States.is_density_matrix([1 0;0 0]::Matrix{Int64})
+        @test States.is_density_matrix([0 0;0 1])
+        @test States.is_density_matrix([0.5 0.5;0.5 0.5])
+        @test States.is_density_matrix([0.5 0.5im;-0.5im 0.5]::Matrix{Complex{Float64}})
     end
 end
 
-@testset "QBase.DensityMatrix()" begin
+@testset "States.DensityMatrix()" begin
     valid_cases = [
         [1 0 0;0 0 0;0 0 0]::Matrix{Int64},
         [0.5 0.5;0.5 0.5]::Matrix{Float64},
@@ -100,9 +100,9 @@ end
     ]
 
     @testset "valid input: $id/$(length(valid_cases))" for id in 1:length(valid_cases)
-        ρ = QBase.DensityMatrix(valid_cases[id])
-        @test ρ isa QBase.DensityMatrix
-        @test ρ isa QBase.States.AbstractDensityMatrix
+        ρ = States.DensityMatrix(valid_cases[id])
+        @test ρ isa States.DensityMatrix
+        @test ρ isa States.States.AbstractDensityMatrix
         @test ρ == valid_cases[id]
     end
 
@@ -115,11 +115,11 @@ end
 
     @testset "invalid input: $id/$(length(invalid_cases))" for id in 1:length(invalid_cases)
         ρ = invalid_cases[id]
-        @test_throws DomainError QBase.DensityMatrix(ρ)
+        @test_throws DomainError States.DensityMatrix(ρ)
     end
 end
 
-@testset "QBase.Qubit()" begin
+@testset "States.Qubit()" begin
     valid_cases = [
         [0.5 0.5;0.5 0.5]::Matrix{Float64},
         [1 0;0 0],
@@ -127,9 +127,9 @@ end
     ]
 
     @testset "valid input: $id/$(length(valid_cases))" for id in 1:length(valid_cases)
-        ρ = QBase.Qubit(valid_cases[id])
-        @test ρ isa QBase.Qubit
-        @test ρ isa QBase.States.AbstractDensityMatrix
+        ρ = States.Qubit(valid_cases[id])
+        @test ρ isa States.Qubit
+        @test ρ isa States.States.AbstractDensityMatrix
         @test ρ == valid_cases[id]
     end
 
@@ -142,102 +142,102 @@ end
 
     @testset "invalid input: $id/$(length(invalid_cases))" for id in 1:length(invalid_cases)
         ρ = invalid_cases[id]
-        @test_throws DomainError QBase.Qubit(ρ)
+        @test_throws DomainError States.Qubit(ρ)
     end
 end
 
 @testset "pure_state()" begin
     valid_cases = [
-        (QBase.Ket([1,0,0]), [1 0 0;0 0 0;0 0 0]),
+        (States.Ket([1,0,0]), [1 0 0;0 0 0;0 0 0]),
         ([0;0;1], [0 0 0;0 0 0;0 0 1]),
         ([1;1]/sqrt(2), [0.5 0.5;0.5 0.5])
     ]
 
     @testset "valid input: $id/$(length(valid_cases))" for id in 1:length(valid_cases)
-        ρ = QBase.pure_state(valid_cases[id][1])
-        @test ρ isa QBase.DensityMatrix
+        ρ = States.pure_state(valid_cases[id][1])
+        @test ρ isa States.DensityMatrix
         @test rank(ρ) == 1
         @test ρ ≈ valid_cases[id][2]
     end
 
-    @test_throws DomainError QBase.pure_state([1;1])
+    @test_throws DomainError States.pure_state([1;1])
 end
 
 @testset "pure_qubit()" begin
     valid_cases = [
-        (QBase.Ket([1,0]), [1 0;0 0]),
+        (States.Ket([1,0]), [1 0;0 0]),
         ([0;1], [0 0;0 1]),
         ([1;1]/sqrt(2), [0.5 0.5;0.5 0.5])
     ]
 
     @testset "valid input: $id/$(length(valid_cases))" for id in 1:length(valid_cases)
-        ρ = QBase.pure_qubit(valid_cases[id][1])
-        @test ρ isa QBase.Qubit
+        ρ = States.pure_qubit(valid_cases[id][1])
+        @test ρ isa States.Qubit
         @test rank(ρ) == 1
         @test ρ ≈ valid_cases[id][2]
     end
 
-    @test_throws DomainError QBase.pure_qubit([1;1])
+    @test_throws DomainError States.pure_qubit([1;1])
 end
 
 @testset "mixed_state()" begin
-    @test QBase.mixed_state(QBase.QMath.Marginals([0.7,0.2,0.1]), QBase.DensityMatrix.([[1 0 0;0 0 0;0 0 0],[0 0 0;0 0 0;0 0 1],[0 0 0;0 1 0;0 0 0]])) == [0.7 0 0;0 0.1 0;0 0 0.2]
-    @test QBase.mixed_state(QBase.QMath.Marginals([0.7,0.2,0.1]), QBase.DensityMatrix.([[1 0 0;0 0 0;0 0 0],[0 0 0;0 0 0;0 0 1],[0 0 0;0 1 0;0 0 0]])) isa QBase.DensityMatrix
-    @test rank(QBase.mixed_state(QBase.QMath.Marginals([0.7,0.2,0.1]), QBase.DensityMatrix.([[1 0 0;0 0 0;0 0 0],[0 0 0;0 0 0;0 0 1],[0 0 0;0 1 0;0 0 0]]))) == 3
+    @test States.mixed_state(States.QMath.Marginals([0.7,0.2,0.1]), States.DensityMatrix.([[1 0 0;0 0 0;0 0 0],[0 0 0;0 0 0;0 0 1],[0 0 0;0 1 0;0 0 0]])) == [0.7 0 0;0 0.1 0;0 0 0.2]
+    @test States.mixed_state(States.QMath.Marginals([0.7,0.2,0.1]), States.DensityMatrix.([[1 0 0;0 0 0;0 0 0],[0 0 0;0 0 0;0 0 1],[0 0 0;0 1 0;0 0 0]])) isa States.DensityMatrix
+    @test rank(States.mixed_state(States.QMath.Marginals([0.7,0.2,0.1]), States.DensityMatrix.([[1 0 0;0 0 0;0 0 0],[0 0 0;0 0 0;0 0 1],[0 0 0;0 1 0;0 0 0]]))) == 3
 
-    @test QBase.mixed_state(QBase.QMath.Marginals([0.7,0.3]), QBase.Qubit.([[1 0;0 0],[0 0;0 1]])) == [0.7 0;0 0.3]
-    @test QBase.mixed_state(QBase.QMath.Marginals([0.7,0.3]), QBase.Qubit.([[1 0;0 0],[0 0;0 1]])) isa QBase.DensityMatrix
-    @test rank(QBase.mixed_state(QBase.QMath.Marginals([0.7,0.3]), QBase.Qubit.([[1 0;0 0],[0 0;0 1]]))) == 2
+    @test States.mixed_state(States.QMath.Marginals([0.7,0.3]), States.Qubit.([[1 0;0 0],[0 0;0 1]])) == [0.7 0;0 0.3]
+    @test States.mixed_state(States.QMath.Marginals([0.7,0.3]), States.Qubit.([[1 0;0 0],[0 0;0 1]])) isa States.DensityMatrix
+    @test rank(States.mixed_state(States.QMath.Marginals([0.7,0.3]), States.Qubit.([[1 0;0 0],[0 0;0 1]]))) == 2
 
-    @test_throws DomainError QBase.mixed_state(QBase.QMath.Marginals([0.7,0.2]), QBase.DensityMatrix.([[1 0;0 0],[0 0;0 1]]))
+    @test_throws DomainError States.mixed_state(States.QMath.Marginals([0.7,0.2]), States.DensityMatrix.([[1 0;0 0],[0 0;0 1]]))
 end
 
 @testset "mixed_qubit()" begin
-    @test QBase.mixed_qubit(QBase.QMath.Marginals([0.7,0.3]), QBase.Qubit.([[1 0;0 0],[0 0;0 1]])) == [0.7 0;0 0.3]
-    @test QBase.mixed_qubit(QBase.QMath.Marginals([0.7,0.3]), QBase.Qubit.([[1 0;0 0],[0 0;0 1]])) isa QBase.Qubit
-    @test rank(QBase.mixed_qubit(QBase.QMath.Marginals([0.7,0.3]), QBase.Qubit.([[1 0;0 0],[0 0;0 1]]))) == 2
+    @test States.mixed_qubit(States.QMath.Marginals([0.7,0.3]), States.Qubit.([[1 0;0 0],[0 0;0 1]])) == [0.7 0;0 0.3]
+    @test States.mixed_qubit(States.QMath.Marginals([0.7,0.3]), States.Qubit.([[1 0;0 0],[0 0;0 1]])) isa States.Qubit
+    @test rank(States.mixed_qubit(States.QMath.Marginals([0.7,0.3]), States.Qubit.([[1 0;0 0],[0 0;0 1]]))) == 2
 
-    @test QBase.mixed_qubit(QBase.QMath.Marginals([0.7,0.3]), QBase.Qubit.([[1 0;0 0],[0 0;0 1]])) == [0.7 0;0 0.3]
-    @test QBase.mixed_qubit(QBase.QMath.Marginals([0.7,0.3]), QBase.Qubit.([[1 0;0 0],[0 0;0 1]])) isa QBase.Qubit
-    @test rank(QBase.mixed_qubit(QBase.QMath.Marginals([0.7,0.3]), QBase.Qubit.([[1 0;0 0],[0 0;0 1]]))) == 2
+    @test States.mixed_qubit(States.QMath.Marginals([0.7,0.3]), States.Qubit.([[1 0;0 0],[0 0;0 1]])) == [0.7 0;0 0.3]
+    @test States.mixed_qubit(States.QMath.Marginals([0.7,0.3]), States.Qubit.([[1 0;0 0],[0 0;0 1]])) isa States.Qubit
+    @test rank(States.mixed_qubit(States.QMath.Marginals([0.7,0.3]), States.Qubit.([[1 0;0 0],[0 0;0 1]]))) == 2
 
-    @test_throws DomainError QBase.mixed_qubit(QBase.QMath.Marginals([0.7,0.2]), QBase.DensityMatrix.([[1 0;0 0],[0 0;0 1]]))
+    @test_throws DomainError States.mixed_qubit(States.QMath.Marginals([0.7,0.2]), States.DensityMatrix.([[1 0;0 0],[0 0;0 1]]))
 end
 
 @testset "trine_qubit_kets" begin
-    @test isapprox(QBase.trine_qubit_kets, QBase.mirror_symmetric_qubit_kets(π/3))
-    @test QBase.trine_qubit_kets isa Vector{QBase.QubitKet}
+    @test isapprox(States.trine_qubit_kets, States.mirror_symmetric_qubit_kets(π/3))
+    @test States.trine_qubit_kets isa Vector{States.QubitKet}
 end
 
 @testset "mirror_symmetric_qubit_kets()" begin
-    @test QBase.mirror_symmetric_qubit_kets(0) isa Vector{QBase.QubitKet}
+    @test States.mirror_symmetric_qubit_kets(0) isa Vector{States.QubitKet}
 
-    @test isapprox(QBase.mirror_symmetric_qubit_kets(0), [[1.0;0],[1.0;0],[1.0;0]])
-    @test isapprox(QBase.mirror_symmetric_qubit_kets(π/4), [[1.0;0],[1;1]/sqrt(2),[1;-1]/sqrt(2)])
-    @test isapprox(QBase.mirror_symmetric_qubit_kets(π/3),[[1.0 0]',[0.5 (sqrt(3)/2)]',[0.5 -sqrt(3)/2]'] )
-    @test isapprox(QBase.mirror_symmetric_qubit_kets(π/2), [[1;0],[0;1],[0;-1]])
+    @test isapprox(States.mirror_symmetric_qubit_kets(0), [[1.0;0],[1.0;0],[1.0;0]])
+    @test isapprox(States.mirror_symmetric_qubit_kets(π/4), [[1.0;0],[1;1]/sqrt(2),[1;-1]/sqrt(2)])
+    @test isapprox(States.mirror_symmetric_qubit_kets(π/3),[[1.0 0]',[0.5 (sqrt(3)/2)]',[0.5 -sqrt(3)/2]'] )
+    @test isapprox(States.mirror_symmetric_qubit_kets(π/2), [[1;0],[0;1],[0;-1]])
 end
 
 @testset "trine_qubits" begin
-    @test isapprox(QBase.trine_qubits, QBase.mirror_symmetric_qubits(π/3))
-    @test QBase.trine_qubits isa Vector{QBase.Qubit}
+    @test isapprox(States.trine_qubits, States.mirror_symmetric_qubits(π/3))
+    @test States.trine_qubits isa Vector{States.Qubit}
 end
 
 @testset "mirror_symmetric_qubits()" begin
     @testset "is density matrix: θ = $θ" for θ in 0:0.1π:π/2
-        @test QBase.mirror_symmetric_qubits(θ) isa Vector{QBase.Qubit}
+        @test States.mirror_symmetric_qubits(θ) isa Vector{States.Qubit}
     end
 
     # if we pass in a bloch angle rather than hilbert angle we get a DomainError
-    @test_throws DomainError QBase.mirror_symmetric_qubits(π)
+    @test_throws DomainError States.mirror_symmetric_qubits(π)
 
-    @test QBase.mirror_symmetric_qubits(π/2) ≈ [[1 0; 0 0], [0 0; 0 1], [0 0; 0 1]]
+    @test States.mirror_symmetric_qubits(π/2) ≈ [[1 0; 0 0], [0 0; 0 1], [0 0; 0 1]]
 end
 
 @testset "bloch_qubit_ket()" begin
-    ψ = QBase.bloch_qubit_ket(π/2,π/2)
+    ψ = States.bloch_qubit_ket(π/2,π/2)
 
-    @test ψ isa QBase.QubitKet
+    @test ψ isa States.QubitKet
     @test norm(ψ) == 1
     @test length(ψ) == 2
 
@@ -246,31 +246,31 @@ end
 
     @testset "valid wavefunction" for θ in 0:0.2:π
         @test all(map(
-            (ϕ) -> QBase.bloch_qubit_ket(θ,ϕ) isa QBase.QubitKet,
+            (ϕ) -> States.bloch_qubit_ket(θ,ϕ) isa States.QubitKet,
             0:0.4:2*π
         ))
     end
 end
 
 @testset "bloch_qubit()" begin
-    @test [1 0;0 0] == QBase.bloch_qubit(0,0,1)
-    @test 0.5*[1 -im;im 1] == QBase.bloch_qubit(0,1,0)
-    @test 0.5*[1 1;1 1] == QBase.bloch_qubit(1,0,0)
-    @test 0.5*[1 0;0 1] == QBase.bloch_qubit(0,0,0)
+    @test [1 0;0 0] == States.bloch_qubit(0,0,1)
+    @test 0.5*[1 -im;im 1] == States.bloch_qubit(0,1,0)
+    @test 0.5*[1 1;1 1] == States.bloch_qubit(1,0,0)
+    @test 0.5*[1 0;0 1] == States.bloch_qubit(0,0,0)
 
-    @test QBase.bloch_qubit(0,0,1) == QBase.bloch_qubit(0,0)
-    @test QBase.bloch_qubit(0,1,0) ≈ QBase.bloch_qubit(π/2,π/2)
-    @test QBase.bloch_qubit(1,0,0) ≈ QBase.bloch_qubit(π/2,0)
+    @test States.bloch_qubit(0,0,1) == States.bloch_qubit(0,0)
+    @test States.bloch_qubit(0,1,0) ≈ States.bloch_qubit(π/2,π/2)
+    @test States.bloch_qubit(1,0,0) ≈ States.bloch_qubit(π/2,0)
 
-    @test QBase.bloch_qubit(0,0,1) isa QBase.Qubit
+    @test States.bloch_qubit(0,0,1) isa States.Qubit
 end
 
 @testset "sic_qubits" begin
-    @test QBase.sic_qubits isa Vector{QBase.Qubit}
+    @test States.sic_qubits isa Vector{States.Qubit}
 end
 
 @testset "bb84_qubits" begin
-     @test QBase.bb84_qubits isa Vector{QBase.Qubit}
+     @test States.bb84_qubits isa Vector{States.Qubit}
 end
 
 end

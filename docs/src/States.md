@@ -46,6 +46,7 @@ QubitKet
 
 ```@docs
 basis_kets
+bell_kets
 ```
 
 #### Singlet States

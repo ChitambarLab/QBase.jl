@@ -20,6 +20,8 @@ export is_ket, is_density_matrix
 # State Constructors
 export bloch_qubit_ket, bloch_qubit, pure_state, pure_qubit, mixed_state, mixed_qubit
 
+export bell_kets, basis_kets, basis_states
+
 # 3 State Array Constructors
 export mirror_symmetric_qubit_kets, mirror_symmetric_qubits, trine_qubit_kets, trine_qubits
 
@@ -171,6 +173,18 @@ The density matrices for the computational basis of dimension, `dim`.
 function basis_states(dim::Int64)::Vector{DensityMatrix}
     pure_state.(QMath.computational_basis_vectors(dim))
 end
+
+"""
+    bell_kets :: Vector{Ket}
+
+Bell basis kets, in the order ``\\frac{1}{\\sqrt{2}}(|00\\rangle + |11\\rangle)``, ``\\frac{1}{\\sqrt{2}}(|00\\rangle - |11\\rangle) ``, ``\\frac{1}{\\sqrt{2}}(|01\\rangle + |10\\rangle) ``, ``\\frac{1}{\\sqrt{2}}(|01\\rangle - |10\\rangle) ``.
+"""
+const bell_kets = Ket.([
+    1/sqrt(2)*[1,0,0,1],
+    1/sqrt(2)*[1,0,0,-1],    
+    1/sqrt(2)*[0,1,1,0],
+    1/sqrt(2)*[0,1,-1,0]        
+])
 
 """
     pure_qubit( ψ :: AbstractKet ) :: Qubit

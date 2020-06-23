@@ -1,5 +1,5 @@
 ```@meta
-CurrentModule = QBase.States
+CurrentModule = States
 ```
 
 # QBase.States
@@ -22,7 +22,7 @@ constructed from a ket via Hermitian adjoint, ``\langle\psi| = (|\psi\rangle)^{\
 It is essential that a quantum states are normalized, ``\langle\psi|\psi\rangle = 1``,
 where ``\langle \; | \; \rangle`` denotes the inner product (dot product) between bra and ket.
 
-The `QBase.States` module provides a validation method, `is_ket()` for checking
+The `States` module provides a validation method, `is_ket()` for checking
 whether a vector satisfies the requirements for being a quantum state ket.
 
 ```@docs
@@ -35,7 +35,7 @@ is_ket
 AbstractKet
 ```
 
-The `QBase.States` module provides two concrete subtypes of `AbstractKet`:
+The `States` module provides two concrete subtypes of `AbstractKet`:
 
 ```@docs
 Ket

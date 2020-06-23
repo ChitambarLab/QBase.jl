@@ -174,16 +174,25 @@ function basis_states(dim::Int64)::Vector{DensityMatrix}
     pure_state.(QMath.computational_basis_vectors(dim))
 end
 
-"""
+@doc raw"""
     bell_kets :: Vector{Ket}
 
-Bell basis kets, in the order ``\\frac{1}{\\sqrt{2}}(|00\\rangle + |11\\rangle)``, ``\\frac{1}{\\sqrt{2}}(|00\\rangle - |11\\rangle) ``, ``\\frac{1}{\\sqrt{2}}(|01\\rangle + |10\\rangle) ``, ``\\frac{1}{\\sqrt{2}}(|01\\rangle - |10\\rangle) ``.
+The Bell basis kets, ordered as ``\{|\Phi^+\rangle, |\Phi^-\rangle, |\Psi^+\rangle, |\Psi^-\rangle \}``, where
+
+```math
+\begin{matrix}
+    |\Phi^+\rangle = \frac{1}{\sqrt{2}}(|00\rangle + |11\rangle), &
+    |\Phi^-\rangle = \frac{1}{\sqrt{2}}(|00\rangle - |11\rangle), \\
+    |\Psi^+\rangle = \frac{1}{\sqrt{2}}(|01\rangle + |10\rangle), &
+    |\Psi^-\rangle = \frac{1}{\sqrt{2}}(|01\rangle - |10\rangle). \\
+\end{matrix}
+```
 """
 const bell_kets = Ket.([
     1/sqrt(2)*[1,0,0,1],
-    1/sqrt(2)*[1,0,0,-1],    
+    1/sqrt(2)*[1,0,0,-1],
     1/sqrt(2)*[0,1,1,0],
-    1/sqrt(2)*[0,1,-1,0]        
+    1/sqrt(2)*[0,1,-1,0]
 ])
 
 """

@@ -155,6 +155,24 @@ function pure_state(ψ::Vector)::DensityMatrix
 end
 
 """
+    basis_kets( dim :: Int64 ) :: Vector{Ket}
+
+The computation basis vectors for a hilbert space of dimension, `dim`.
+"""
+function basis_kets(dim::Int64)::Vector{Ket}
+    Ket.(QMath.computational_basis_vectors(dim))
+end
+
+"""
+    basis_states( dim :: Int64 ) :: Vector{DensityMatrix}
+
+The density matrices for the computational basis of dimension, `dim`.
+"""
+function basis_states(dim::Int64)::Vector{DensityMatrix}
+    pure_state.(QMath.computational_basis_vectors(dim))
+end
+
+"""
     pure_qubit( ψ :: AbstractKet ) :: Qubit
 
 A qubit is considered "pure" if it is rank-one. A rank-one density matrix

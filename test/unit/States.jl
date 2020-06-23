@@ -273,4 +273,17 @@ end
      @test States.bb84_qubits isa Vector{States.Qubit}
 end
 
+@testset "States.basis_kets()" begin
+    @test States.basis_kets(3) == [[1,0,0],[0,1,0],[0,0,1]]
+    @test States.basis_kets(8) == [
+        [1,0,0,0,0,0,0,0],[0,1,0,0,0,0,0,0],[0,0,1,0,0,0,0,0],[0,0,0,1,0,0,0,0],
+        [0,0,0,0,1,0,0,0],[0,0,0,0,0,1,0,0],[0,0,0,0,0,0,1,0],[0,0,0,0,0,0,0,1]
+    ]
+end
+
+@testset "States.basis_states()" begin
+    @test States.basis_states(3) == [[1 0 0;0 0 0;0 0 0],[0 0 0;0 1 0;0 0 0],[0 0 0;0 0 0;0 0 1]]
+    @test States.basis_states(2) == [[1 0;0 0],[0 0;0 1]]
+end
+
 end

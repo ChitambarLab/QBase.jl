@@ -44,6 +44,10 @@ QubitKet
 
 ### Ket Constructors
 
+```@docs
+basis_kets
+```
+
 #### Singlet States
 ```@docs
 bloch_qubit_ket
@@ -75,6 +79,7 @@ the outer-product of the ket with itself, ``|\psi\rangle\langle\psi| = \rho``.
 ```@docs
 pure_state
 pure_qubit
+basis_states
 ```
 
 The rank of the density matrix can be greater than 1. If a density matrix has

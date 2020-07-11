@@ -5,24 +5,33 @@ using Test, LinearAlgebra
 using QBase
 
 @testset "shannon_entropy()" begin
+    @test Information.shannon_entropy(QMath.Marginals([1,0,0,0])) == 0
+    @test Information.shannon_entropy([1,0,0,0]) == 0
+
     @test Information.shannon_entropy(QMath.Marginals(fill(1/8,8))) == 3
+    @test Information.shannon_entropy(fill(1/8,8)) == 3
+
     @test Information.shannon_entropy(QMath.Marginals([1/3,1/3,1/3])) == log2(3)
-    @test Information.shannon_entropy(QMath.Marginals([0.5,0.5])) == 1
+    @test Information.shannon_entropy([1/3,1/3,1/3]) == log2(3)
+
     @test Information.shannon_entropy(QMath.Marginals([0,0.5,0.5])) == 1
     @test Information.shannon_entropy(QMath.Marginals([0.7,0.3])) ≈ 0.88129089
-    @test Information.shannon_entropy(QMath.Marginals([0,0,0,0,0,0,0,0,0,0,0,0,0,1])) == 0
     @test Information.shannon_entropy(QMath.Marginals([1/2,1/4,1/8,1/8])) == 7/4
 
     @test_throws DomainError Information.shannon_entropy(QMath.Marginals([2,0]))
+    @test_throws DomainError Information.shannon_entropy([-0.1,1.1])
 end
 
 @testset "von_neumann_entropy()" begin
-    @test Information.von_neumann_entropy(States.DensityMatrix(diagm(0 => fill(1/8,8)))) == 3
+    @test Information.von_neumann_entropy(States.DensityMatrix(diagm(0 => fill(1/4,4)))) == 2
     @test Information.von_neumann_entropy(States.Qubit([1 0;0 0])) == 0
+
+    @test Information.von_neumann_entropy([0.5 0.5;0.5 0.5]) == 0
 
     @test Information.von_neumann_entropy.(States.DensityMatrix.([[1 0;0 0],[0.5 0;0 0.5]])) == [0,1]
 
     @test_throws DomainError Information.von_neumann_entropy(States.DensityMatrix([1 0;0 1]))
+    @test_throws DomainError Information.von_neumann_entropy([1 0;0 1])
 end
 
 @testset "holevo_bound()" begin
@@ -30,6 +39,8 @@ end
     priors = QMath.Marginals([0.5,0.5])
     ρ_set = States.DensityMatrix.([[1 0;0 0],[0 0;0 1]])
     @test Information.holevo_bound(priors,ρ_set) == 1
+    @test Information.holevo_bound([0.5,0.5],[[1 0;0 0],[0 0;0 1]]) == 1
+    @test Information.holevo_bound([0.5,0.5], ρ_set) == 1
 
     priors = QMath.Marginals([1/3,1/3,1/3])
     ρ_set = States.mirror_symmetric_qubits(0)
@@ -73,6 +84,8 @@ end
     povm = Observables.sqrt_povm(priors, ρ_set)
     @test Information.holevo_information(priors, ρ_set, povm) ≈ 1/3
 
+    @test Information.holevo_information([0.5,0.5],[[1 0;0 0],[0 0;0 1]],[[1 0;0 0],[0 0;0 1]]) == 1
+
     rot_y = Unitaries.qubit_rotation(π,axis="y")
 
     rot_povm = Observables.QubitPOVM(map(el -> rot_y*el*rot_y', povm))
@@ -88,6 +101,7 @@ end
     conditionals = QMath.Conditionals([0.5 0.5;0.5 0.5])
 
     @test Information.joint_entropy(priors, conditionals) == 2
+    @test Information.joint_entropy(priors, [0.5 0.5;0.5 0.5]) == 2
 
     priors = QMath.Marginals([1/3,1/3,1/3])
     conditionals = QMath.Conditionals([2/3 1/6 1/6;1/6 2/3 1/6;1/6 1/6 2/3])
@@ -98,6 +112,7 @@ end
     priors = QMath.Marginals([1/3,1/3,1/3])
     conditionals = QMath.Conditionals([2/3 1/6 1/6;1/6 2/3 1/6;1/6 1/6 2/3])
     @test Information.mutual_information(priors,conditionals) ≈ 1/3
+    @test Information.mutual_information([1/3,1/3,1/3],conditionals) ≈ 1/3
 
     priors = QMath.Marginals([1/3,1/3,1/3])
     conditionals = QMath.Conditionals([0 1/2 1/2;1/2 0 1/2;1/2 1/2 0])
@@ -138,6 +153,7 @@ end
         priors = QMath.Marginals([1/2,1/2])
 
         @test Information.success_probability(priors, ρ_states, Π) == 1
+        @test Information.success_probability([1/2,1/2], [[1 0;0 0],[0 0;0 1]], Π) == 1
     end
 end
 

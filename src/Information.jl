@@ -18,6 +18,8 @@ using LinearAlgebra
 """
     shannon_entropy( probabilities :: QMath.Marginals ) :: Float64
 
+    shannon_entropy( probabilities :: Vector{<:Real}) :: Float64
+
 The classical entropy of a probability distribution.
 """
 function shannon_entropy( probabilities :: QMath.Marginals ) :: Float64
@@ -28,9 +30,12 @@ function shannon_entropy( probabilities :: QMath.Marginals ) :: Float64
 
     entropy
 end
+shannon_entropy(probs::Vector{<:Real}) :: Float64 = shannon_entropy(QMath.Marginals(probs))
 
 """
-    von_neumann_entropy( ρ :: States.DensityMatrix ) :: Float64
+    von_neumann_entropy( ρ :: States.AbstractDensityMatrix ) :: Float64
+
+    von_neumann_entropy( ρ :: Matrix{<:Number} ) :: Float64
 
 The von neumann entropy of a density matrix.
 """
@@ -40,9 +45,18 @@ function von_neumann_entropy(ρ::States.AbstractDensityMatrix) :: Float64
 
     entropy
 end
+von_neumann_entropy(ρ::Matrix{<:Number}) :: Float64 = von_neumann_entropy(States.DensityMatrix(ρ))
 
 """
-    holevo_bound( priors :: QMath.Marginals, ρ_states :: Vector{<:AbstractDensityMatrix} ) :: Float64
+    holevo_bound(
+        priors :: QMath.Marginals,
+        ρ_states :: Vector{<:AbstractDensityMatrix}
+    ) :: Float64
+
+    holevo_bound(
+        priors :: Vector{<:Real},
+        ρ_states :: Vector{Matrix{<:Number}}
+    ) :: Float64
 
 Computes the upper bound of a quantum channel's information capacity. The information
 shared through a quantum channel cannot exceed a classical channel of the same dimension.
@@ -58,9 +72,19 @@ function holevo_bound(priors::QMath.Marginals, ρ_states::Vector{<:States.Abstra
 
     bound
 end
+holevo_bound(priors::AbstractVector{<:Real}, ρ_states::Vector{<:AbstractMatrix{T}} where T <: Number ) :: Float64 = begin
+    holevo_bound(
+        (priors isa QMath.Marginals) ? priors : QMath.Marginals(priors),
+        (ρ_states isa Vector{<:States.AbstractDensityMatrix}) ? ρ_states : States.DensityMatrix.(ρ_states)
+    )
+end
 
 """
-    holevo_information( priors :: QMath.Marginals, ρ_states :: Vector{<:AbstractDensityMatrix} ) :: Float64
+    holevo_information(
+        priors :: QMath.Marginals,
+        ρ_states :: Vector{<:AbstractDensityMatrix},
+        Π :: Observables.AbstractPOVM
+    ) :: Float64
 
 Computes the holevo (mutual) information shared through a quantum channel.
 """
@@ -87,6 +111,17 @@ function holevo_information(
 
     h_information
 end
+holevo_information(
+    priors::AbstractVector{<:Real},
+    ρ_states::Vector{<:AbstractMatrix{T}} where T <: Number,
+    Π :: AbstractVector{Matrix{S}} where S <: Number
+) = begin
+    holevo_information(
+        (priors isa QMath.Marginals) ? priors : QMath.Marginals(priors),
+        (ρ_states isa Vector{<:States.AbstractDensityMatrix}) ? ρ_states : States.DensityMatrix.(ρ_states),
+        (Π isa Observables.AbstractPOVM) ? Π : Observables.POVM(Π)
+    )
+end
 
 """
     joint_entropy(priors :: QMath.Marginals, conditionals :: QMath.Conditionals) :: Float64
@@ -97,6 +132,15 @@ function joint_entropy(priors::QMath.Marginals, conditionals::QMath.Conditionals
     joint_probabilities = QMath.joint_probabilities(priors, conditionals)
 
     shannon_entropy(QMath.Marginals(joint_probabilities[:]))
+end
+joint_entropy(
+    priors::AbstractVector{<:Number},
+    conditionals::AbstractMatrix{<:Number}
+) :: Float64 = begin
+    joint_entropy(
+        (priors isa QMath.Marginals) ? priors : QMath.Marginals(priors),
+        (conditionals isa QMath.Conditionals) ? conditionals : QMath.Conditionals(conditionals)
+    )
 end
 
 """
@@ -114,6 +158,15 @@ function conditional_entropy(priors::QMath.Marginals, conditionals::QMath.Condit
     1:num_col), 1:num_row)))
 
     conditional_entropy
+end
+conditional_entropy(
+    priors::AbstractVector{<:Number},
+    conditionals::AbstractMatrix{<:Number}
+) :: Float64 = begin
+    conditional_entropy(
+        (priors isa QMath.Marginals) ? priors : QMath.Marginals(priors),
+        (conditionals isa QMath.Conditionals) ? conditionals : QMath.Conditionals(conditionals)
+    )
 end
 
 """
@@ -133,6 +186,15 @@ function mutual_information(priors::QMath.Marginals, conditionals::QMath.Conditi
 
     mutual_information
 end
+mutual_information(
+    priors::AbstractVector{<:Number},
+    conditionals::AbstractMatrix{<:Number}
+) :: Float64 = begin
+    mutual_information(
+        (priors isa QMath.Marginals) ? priors : QMath.Marginals(priors),
+        (conditionals isa QMath.Conditionals) ? conditionals : QMath.Conditionals(conditionals)
+    )
+end
 
 """
     success_probability(priors::QMath.Marginals, ρ_states::Vector{<:States.AbstractDensityMatrix}, Π::Observables.AbstractPOVM) :: Float64
@@ -142,6 +204,17 @@ The probability of correctly distinguishing quantum states with the specifed POV
 function success_probability(priors::QMath.Marginals, ρ_states::Vector{<:States.AbstractDensityMatrix}, Π::Observables.AbstractPOVM) :: Float64
     sum(priors .* tr.(ρ_states .* Π))
 end
+success_probability(
+    priors::AbstractVector{<:Real},
+    ρ_states::Vector{<:AbstractMatrix{T}} where T <: Number,
+    Π :: AbstractVector{Matrix{S}} where S <: Number
+) = begin
+    success_probability(
+        (priors isa QMath.Marginals) ? priors : QMath.Marginals(priors),
+        (ρ_states isa Vector{<:States.AbstractDensityMatrix}) ? ρ_states : States.DensityMatrix.(ρ_states),
+        (Π isa Observables.AbstractPOVM) ? Π : Observables.POVM(Π)
+    )
+end
 
 """
     error_probability(priors::QMath.Marginals, ρ_states::Vector{<:States.AbstractDensityMatrix}, Π::Observables.AbstractPOVM) :: Float64
@@ -150,6 +223,17 @@ The probability of incorrectly distinguishing quantum states with the specifed P
 """
 function error_probability(priors::QMath.Marginals, ρ_states::Vector{<:States.AbstractDensityMatrix}, Π::Observables.AbstractPOVM) :: Float64
     1 .- success_probability(priors, ρ_states, Π)
+end
+error_probability(
+    priors::AbstractVector{<:Real},
+    ρ_states::Vector{<:AbstractMatrix{T}} where T <: Number,
+    Π :: AbstractVector{Matrix{S}} where S <: Number
+) = begin
+    error_probability(
+        (priors isa QMath.Marginals) ? priors : QMath.Marginals(priors),
+        (ρ_states isa Vector{<:States.AbstractDensityMatrix}) ? ρ_states : States.DensityMatrix.(ρ_states),
+        (Π isa Observables.AbstractPOVM) ? Π : Observables.POVM(Π)
+    )
 end
 
 end

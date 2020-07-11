@@ -117,6 +117,30 @@ end
         ρ = invalid_cases[id]
         @test_throws DomainError States.DensityMatrix(ρ)
     end
+
+    @testset "kron" begin
+        q0 = States.DensityMatrix([1 0;0 0])
+        q_plus = States.DensityMatrix(1/2*[1 1;1 1])
+
+        @test q0 isa States.DensityMatrix
+        @test q_plus isa States.DensityMatrix
+
+        @test kron(q0,q_plus) isa States.DensityMatrix
+    end
+
+    @testset "partial_trace" begin
+        ρ = States.DensityMatrix(0.5*[1 0 0 0;0 0 0 0;0 0 1 0;0 0 0 0])
+
+        ρ_sub1 = QMath.partial_trace(ρ, [2,2], 1)
+
+        @test ρ_sub1 isa States.DensityMatrix
+        @test ρ_sub1 == [1 0;0 0]
+
+        ρ_sub2 = QMath.partial_trace(ρ, [2,2], 2)
+
+        @test ρ_sub2 isa States.DensityMatrix
+        @test ρ_sub2 == 0.5*[1 0;0 1]
+    end
 end
 
 @testset "States.Qubit()" begin
@@ -143,6 +167,16 @@ end
     @testset "invalid input: $id/$(length(invalid_cases))" for id in 1:length(invalid_cases)
         ρ = invalid_cases[id]
         @test_throws DomainError States.Qubit(ρ)
+    end
+
+    @testset "kron" begin
+        q0 = States.Qubit([1 0;0 0])
+        q_plus = States.Qubit(1/2*[1 1;1 1])
+
+        @test q0 isa States.Qubit
+        @test q_plus isa States.Qubit
+
+        @test kron(q0,q_plus) isa States.DensityMatrix
     end
 end
 
@@ -285,15 +319,15 @@ end
     @test States.basis_states(3) == [[1 0 0;0 0 0;0 0 0],[0 0 0;0 1 0;0 0 0],[0 0 0;0 0 0;0 0 1]]
     @test States.basis_states(2) == [[1 0;0 0],[0 0;0 1]]
 end
-    
+
 @testset "States.bell_kets" begin
-    kets = States.bell_kets    
+    kets = States.bell_kets
     @test length(kets) == 4
-    @test kets isa Array{States.Ket,1}    
-    @test kets[1] == 1/sqrt(2)*(kron([1,0],[1,0])+kron([0,1],[0,1])) 
-    @test kets[2] == 1/sqrt(2)*(kron([1,0],[1,0])-kron([0,1],[0,1]))  
+    @test kets isa Array{States.Ket,1}
+    @test kets[1] == 1/sqrt(2)*(kron([1,0],[1,0])+kron([0,1],[0,1]))
+    @test kets[2] == 1/sqrt(2)*(kron([1,0],[1,0])-kron([0,1],[0,1]))
     @test kets[3] == 1/sqrt(2)*(kron([1,0],[0,1])+kron([0,1],[1,0]))
-    @test kets[4] == 1/sqrt(2)*(kron([1,0],[0,1])-kron([0,1],[1,0]))    
+    @test kets[4] == 1/sqrt(2)*(kron([1,0],[0,1])-kron([0,1],[1,0]))
 end
 
 end

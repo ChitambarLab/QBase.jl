@@ -114,10 +114,18 @@ Base.setindex!(S::AbstractDensityMatrix, v, I::Vararg{Int,2}) = (S.ρ[I...] = v)
 
 The density matrix representation of a quantum state. The constructor, `DensityMatrix(ρ)`
 throws a `DomainError` if `is_density_matrix(ρ)` is `false`.
+
+Base methods extended to use the `DensityMatrix` type:
+* `QMath.partial_trace` - Returns `DensityMatrix` if supplied with one.
+* `Base.kron` - The kronecker product of two density matrices is a `DensityMatrix`.
 """
 struct DensityMatrix <: AbstractDensityMatrix
     ρ :: Matrix{Complex{Float64}}
     DensityMatrix(ρ) = is_density_matrix(ρ) ? new(ρ) : throw(DomainError(ρ, "matrix ρ is invalid"))
+end
+Base.kron(ρ1::AbstractDensityMatrix, ρ2::AbstractDensityMatrix) = DensityMatrix(kron(ρ1.ρ,ρ2.ρ))
+QMath.partial_trace(ρ::DensityMatrix, subsystem_dims::Vector{Int64}, subsystem_id::Int64) = begin
+    DensityMatrix(QMath.partial_trace(ρ.ρ, subsystem_dims, subsystem_id))
 end
 
 """
@@ -128,7 +136,7 @@ throws a `DomainError` if `is_density_matrix(ρ)` is false or if `ρ` is not 2x2
 dimension.
 """
 struct Qubit <: AbstractDensityMatrix
-    ρ :: DensityMatrix
+    ρ :: Matrix{Complex{Float64}}
     Qubit(ρ) = (size(ρ) == (2,2)) ? new(DensityMatrix(ρ)) : throw(DomainError(ρ, "matrix is not 2x2"))
 end
 

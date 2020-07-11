@@ -60,16 +60,6 @@ end
         @test QMath.partial_trace(ρ,[2,2],2) == [0.5 0; 0 0.5]
         @test QMath.partial_trace(ρ,[2,2],1) == [0.5 0; 0 0.5]
     end
-
-    @testset "DensityMatrix types work with partial trace" begin
-        ρ = QBase.States.DensityMatrix([1 0 0 0;0 0 0 0;0 0 0 0;0 0 0 0])
-
-        reduced_ρ = QMath.partial_trace(ρ, [2,2], 1)
-
-        @test !isa(reduced_ρ, QBase.States.DensityMatrix)
-        @test reduced_ρ isa Array{Complex{Float64}, 2}
-        @test reduced_ρ == [1 0;0 0]
-    end
 end
 
 @testset "computational_basis_vectors()" begin

@@ -65,6 +65,7 @@ struct Ket <: AbstractKet
     ψ :: Vector{Complex{Float64}}
     Ket(ψ) = is_ket(ψ) ? new(ψ) : throw(DomainError(ψ, "vector ψ is not normalized"))
 end
+Base.:*(U::Unitaries.AbstractUnitary, ψ::AbstractKet) :: Ket = Ket(U.U*ψ.ψ)
 
 """
     QubitKet( ψ :: Vector{Complex{Float64}} ) <: AbstractKet

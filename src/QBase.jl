@@ -34,4 +34,25 @@ using .Observables
 include("./Information.jl")
 using .Information
 
+
+export evolve
+
+"""
+    evolve(
+        U::Unitaries.AbstractUnitary,
+        ρ::States.AbstractDensityMatrix
+    ) :: DensityMatrix
+
+Apply a unitary evolution `U` to density matrix `ρ`.
+
+    evolve(
+        U::Unitaries.AbstractUnitary,
+        ψ::States.AbstractKet
+    ) :: Ket
+
+Apply a unitary evolution `U` to a state ket `ψ`.
+"""
+evolve(U::Unitaries.AbstractUnitary, ρ::States.AbstractDensityMatrix) :: DensityMatrix = DensityMatrix(U*ρ*U')
+evolve(U::Unitaries.AbstractUnitary, ψ::States.AbstractKet) :: Ket = U*ψ
+
 end

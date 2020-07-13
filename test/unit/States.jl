@@ -326,15 +326,15 @@ end
     @test States.basis_states(3) == [[1 0 0;0 0 0;0 0 0],[0 0 0;0 1 0;0 0 0],[0 0 0;0 0 0;0 0 1]]
     @test States.basis_states(2) == [[1 0;0 0],[0 0;0 1]]
 end
-
+    
 @testset "States.bell_kets" begin
-    kets = States.bell_kets
+    kets = States.bell_kets    
     @test length(kets) == 4
-    @test kets isa Array{States.Ket,1}
-    @test kets[1] == 1/sqrt(2)*(kron([1,0],[1,0])+kron([0,1],[0,1]))
-    @test kets[2] == 1/sqrt(2)*(kron([1,0],[1,0])-kron([0,1],[0,1]))
+    @test kets isa Array{States.Ket,1}    
+    @test kets[1] == 1/sqrt(2)*(kron([1,0],[1,0])+kron([0,1],[0,1])) 
+    @test kets[2] == 1/sqrt(2)*(kron([1,0],[1,0])-kron([0,1],[0,1]))  
     @test kets[3] == 1/sqrt(2)*(kron([1,0],[0,1])+kron([0,1],[1,0]))
-    @test kets[4] == 1/sqrt(2)*(kron([1,0],[0,1])-kron([0,1],[1,0]))
+    @test kets[4] == 1/sqrt(2)*(kron([1,0],[0,1])-kron([0,1],[1,0]))    
 end
 
 end

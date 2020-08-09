@@ -1,3 +1,6 @@
+export is_probability_distribution, Marginals
+export is_conditional_distribution, Conditionals
+
 """
     is_probability_distribution( probabilities :: Vector ) :: Bool
 

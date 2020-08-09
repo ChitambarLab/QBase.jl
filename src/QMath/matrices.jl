@@ -1,3 +1,5 @@
+export partial_trace, computational_basis_vectors
+
 # """
 # block_diagonal:
 #   Constructs a block diagonal matrix from an array of matrices.

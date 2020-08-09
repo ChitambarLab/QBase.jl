@@ -27,6 +27,13 @@ using QBase
         @test_throws MethodError States.is_ket([1 0;0 0])
         @test_throws MethodError States.is_ket(1/sqrt(2)*[1 1])
     end
+
+    @testset "unitary evolution" begin
+        ψ = Unitaries.σx*States.Ket([1,0])
+
+        @test ψ == [0,1]
+        @test ψ isa States.Ket
+    end
 end
 
 @testset "States.Ket()" begin

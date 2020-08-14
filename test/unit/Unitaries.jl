@@ -122,4 +122,22 @@ end
     end
 end
 
+@testset "random()" begin
+    u2 = Unitaries.random(2)
+    @test u2 isa Unitaries.Unitary
+    @test size(u2) == (2,2)
+
+    u3 = Unitaries.random(3)
+    @test u3 isa Unitaries.Unitary
+    @test size(u3) == (3,3)
+
+    u8 = Unitaries.random(8)
+    @test u8 isa Unitaries.Unitary
+    @test size(u8) == (8,8)
+
+    u3_samples = Unitaries.random.(fill(3,10))
+    @test u3_samples isa Vector{Unitaries.Unitary}
+    @test length(u3_samples) == length(unique(u3_samples))
+end
+
 end

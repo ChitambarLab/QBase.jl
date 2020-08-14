@@ -7,6 +7,7 @@ module Unitaries
 
 using ..QMath
 using LinearAlgebra
+using RandomMatrices: Haar
 
 # validation
 export is_unitary
@@ -18,7 +19,7 @@ export Unitary, QubitUnitary
 export paulis, σx, σy, σz
 
 # contructors
-export qubit_rotation
+export qubit_rotation, random
 
 """
     AbstractUnitary <: AbstractMatrix{Complex{Float64}}
@@ -140,6 +141,16 @@ function qubit_rotation(θ :: Real; axis="x" :: String)::QubitUnitary
     end
 
     QubitUnitary(exp(-im * pauli * θ/2))
+end
+
+"""
+    random( d :: Int64 ) :: Unitary
+
+Constructs a `d x d` random unitary matrix.
+"""
+function random(d :: Int64) :: Unitary
+    generator = Haar(2) # Specifies a complex hermitian unitary matrix
+    Unitary(rand(generator, d))
 end
 
 end

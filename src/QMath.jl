@@ -11,9 +11,9 @@ A QBase.jl submodule providing general purpose mathematics useful to quantum mec
 - [`stirling2`](@ref) - Counts the ways to partition `n` items into `k` sets.
 - [`stirling2_partitions`](@ref) - Enumerates the stirling2 partitions.
 - [`stirling2_matrices`](@ref) - Generates matrices representing the stirling2 partitions.
-- [`permutations`] - Passthrough for `Combinatorics.permutations` ([JuliaMath/Combinatorics.jl](https://github.com/JuliaMath/Combinatorics.jl)).
+- [`permutations`](https://github.com/JuliaMath/Combinatorics.jl) - Passthrough for `Combinatorics.permutations`.
 - [`permutation_matrices`](@ref) - Generates the set of permutation matrices.
-- [`combinations`] - Passthrough for `Combinatorics.combinations` ([JuliaMath/Combinatorics.jl](https://github.com/JuliaMath/Combinatorics.jl)).
+- [`combinations`](https://github.com/JuliaMath/Combinatorics.jl) - Passthrough for `Combinatorics.combinations`.
 - [`n_choose_k_matrices`](@ref) - Generates matrices representing n-choose-k combinations.
 - [`base_n_val`](@ref) - Converts a base-n number into the base-10 value.
 

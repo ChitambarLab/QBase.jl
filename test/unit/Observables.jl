@@ -135,28 +135,6 @@ end
     @test Observables.trine_qubit_povm ≈ Observables.mirror_symmetric_qubit_3povm(π/3)
 end
 
-@testset "measurement_probabilites()" begin
-    @testset "trine_measurements" begin
-        conditionals = Observables.measurement_probabilities(
-            Observables.mirror_symmetric_qubit_3povm(π/3), Observables.trine_qubits
-        )
-        @test conditionals ≈ [2/3 1/6 1/6;1/6 2/3 1/6;1/6 1/6 2/3]
-        @test conditionals isa Observables.QMath.Conditionals
-    end
-
-    @testset "classical_measurements" begin
-        Π = Observables.QubitPOVM([[1 0;0 0],[0 0;0 1],[0 0;0 0]])
-        ρ_set = States.Qubit.([[1 0;0 0],[1 0;0 0],[0 0;0 1]])
-
-        @test Observables.measurement_probabilities(Π,ρ_set) == [1 1 0;0 0 1;0 0 0]
-
-        Π = Observables.POVM([[1 0 0;0 1 0;0 0 0],[0 0 0;0 0 0;0 0 1]])
-        ρ_set = Observables.DensityMatrix.([[1 0 0;0 0 0;0 0 0],[0 0 0;0 1 0;0 0 0],[0 0 0;0 0 0;0 0 1]])
-
-        @test Observables.measurement_probabilities(Π,ρ_set) == [1 1 0;0 0 1]
-    end
-end
-
 @testset "kraus_operators()" begin
     k = Observables.kraus_operators(Observables.trine_qubit_povm)
 

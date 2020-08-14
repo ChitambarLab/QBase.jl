@@ -22,7 +22,7 @@ export AbstractPOVM, POVM, QubitPOVM
 export mirror_symmetric_qubit_3povm, asymmetric_qubit_3povm, sqrt_povm, sic_qubit_povm, trine_qubit_povm
 
 # methods
-export measurement_probabilities, kraus_operators, naimark_dilation
+export kraus_operators, naimark_dilation
 
 """
     AbstractPOVM <: AbstractMatrix{Complex{Float64}}
@@ -170,18 +170,6 @@ The POVM with elements parallel to the trine qubit states.
 const trine_qubit_povm = QubitPOVM(2/3 * States.trine_qubits)
 
 """
-    measurement_probabilities(Π::AbstractPOVM, ρ_set::Array{<:AbstractDensityMatrix}) :: QMath.Conditionals
-
-Returns the conditional probability matrix for the set of states and povm. The Probability
-for a POVM elemtn `Π_el` and state `ρ` are determined using the Born rule, `tr(Π_el*ρ)`.
-"""
-function measurement_probabilities(Π::AbstractPOVM, ρ_set::Array{<:AbstractDensityMatrix}) :: QMath.Conditionals
-    QMath.Conditionals(hcat(
-        map(ρ -> real.(map(Π_el -> tr(Π_el*ρ), Π)), ρ_set)...
-    ))
-end
-
-"""
     kraus_operators(Π::AbstractPOVM) :: Array{Array{Complex{Float64},2},1}
 
 Returns the Kraus operators for the provided POVM. In general, the Kraus operators
@@ -225,7 +213,6 @@ function naimark_dilation(Π::AbstractPOVM)
 
     U = hcat(U_cols...)
 
-    n = 3
     p_ancilla = map( i -> begin
         p = zeros(n,n)
         p[i,i] = 1
@@ -240,6 +227,5 @@ function naimark_dilation(Π::AbstractPOVM)
         "ancilla" => ancilla
     )
 end
-
 
 end

@@ -1,49 +1,7 @@
 export partial_trace, computational_basis_vectors
 
-# """
-# block_diagonal:
-#   Constructs a block diagonal matrix from an array of matrices.
-#
-# Input:
-#   matrices: Array of matrices to be block diagonalized
-#
-# Output:
-#   block_matrix: Matrix, the block diagonalized form of matrices
-# """
-function block_diagonal(matrices)
-    num_matrices = size(matrices)[1]
-
-    block_matrix = []
-    for row_id in 1:num_matrices
-
-        row = []
-        for col_id in 1:num_matrices
-
-            if row_id == col_id
-                new_matrix = matrices[col_id]
-            else
-                zero_cols = size(matrices[col_id])[2]
-                zero_rows = size(matrices[row_id])[1]
-
-                new_matrix = zeros(Int64,(zero_rows,zero_cols))
-            end
-
-            if col_id == 1
-                row = new_matrix
-            else
-                row = cat(row, new_matrix, dims=2)
-            end
-        end
-
-        if row_id == 1
-            block_matrix = row
-        else
-            block_matrix = cat(block_matrix, row, dims=1)
-        end
-    end
-
-    block_matrix
-end
+# validation methods
+export commutes, is_hermitian, is_square, is_positive_Semidefinite
 
 """
     partial_trace(
@@ -113,23 +71,113 @@ function computational_basis_vectors(dim::Int64) :: Vector{Vector{Int64}}
     map(i -> identity[:,i], 1:dim)
 end
 
+"""
+    is_hermitian( matrix :: Matrix ) :: Bool
 
-# """
-# commutes(A,B):
-#
-#     Returns true if matrix A commutes with matrix B.
-#
-# Inputs:
-#     A: Matrix, mxn dimensions
-#     B: Matrix, nxm dimensions
-#
-# Output:
-#     commutes: Boolean, true if A*B = B*A
-# """
-function commutes(A, B)
+Returns `true` if the supplied matrix is hermitian (self-adjoint).
+"""
+function is_hermitian(matrix :: Matrix) :: Bool
+    isapprox(matrix, adjoint(matrix), atol=10e-6)
+end
+
+"""
+    is_square( matrix :: Matrix ) :: Bool
+
+Returns `true` if the provided matrix is square.
+"""
+function is_square(matrix :: Matrix) :: Bool
+    dims = size(matrix)
+    (dims[1] == dims[2])
+end
+
+"""
+    is_positive_semidefinite(matrix :: Matrix) :: Bool
+
+Returns `true` if the supplied matrix is positive semidefinite (all eigen values
+are real and greater than or equal to 0).
+
+A `DomainError` is thrown if the provided matrix is not square.
+"""
+function is_positive_semidefinite(matrix :: Matrix) :: Bool
+    if !(QMath.is_square(matrix))
+        throw(DomainError(matrix, "Provided matrix must be square"))
+    end
+
+    evals = eigvals(matrix)
+
+    is_pos_sd = true
+    for eval in evals
+        if !isapprox(imag(eval), 0, atol=10e-4)
+            is_pos_sd = false
+            break
+        elseif (real(eval) < 0) && !isapprox(real(eval), 0, atol=10e-4)
+            is_pos_sd = false
+            break
+        end
+    end
+
+    is_pos_sd
+end
+
+"""
+    commutes(A :: Matrix, B :: Matrix) :: Bool
+
+Returns true if matrix `A` commutes with matrix `B`. Two matrices commute if
+`A*B == B*A`. The matrices must have compatible dimensions:
+* A: Matrix, mxn dimensions
+* B: Matrix, nxm dimensions
+
+A `DomainError` is thrown if the matrices are not compatible.
+"""
+function commutes(A :: Matrix, B :: Matrix) :: Bool
     if (size(A)[1] != size(B)[2]) || (size(A)[2] != size(B)[1])
-        throw(ArgumentError("size(A) not compatible with size(B)"))
+        throw(DomainError((A,B), "size(A) is not compatible with size(B)."))
     end
 
     all(isapprox.(A*B, B*A, atol=1e-7))
+end
+
+# """
+# block_diagonal:
+#   Constructs a block diagonal matrix from an array of matrices.
+#
+# Input:
+#   matrices: Array of matrices to be block diagonalized
+#
+# Output:
+#   block_matrix: Matrix, the block diagonalized form of matrices
+# """
+function block_diagonal(matrices)
+    num_matrices = size(matrices)[1]
+
+    block_matrix = []
+    for row_id in 1:num_matrices
+
+        row = []
+        for col_id in 1:num_matrices
+
+            if row_id == col_id
+                new_matrix = matrices[col_id]
+            else
+                zero_cols = size(matrices[col_id])[2]
+                zero_rows = size(matrices[row_id])[1]
+
+                new_matrix = zeros(Int64,(zero_rows,zero_cols))
+            end
+
+            if col_id == 1
+                row = new_matrix
+            else
+                row = cat(row, new_matrix, dims=2)
+            end
+        end
+
+        if row_id == 1
+            block_matrix = row
+        else
+            block_matrix = cat(block_matrix, row, dims=1)
+        end
+    end
+
+    block_matrix
 end

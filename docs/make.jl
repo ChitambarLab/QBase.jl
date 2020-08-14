@@ -1,6 +1,8 @@
 using QBase
 using Documenter
 
+DocMeta.setdocmeta!(QBase, :DocTestSetup, :(using QBase); recursive=true)
+
 makedocs(;
     modules=[QBase],
     authors="Brian Doolittle <brian.d.doolittle@gmail.com> and contributors",
@@ -14,12 +16,14 @@ makedocs(;
     pages=[
         "Home" => "index.md",
         "User Guide" => "user_guide.md",
-        "Overview" => "overview.md",
-        "States" => "States.md",
-        "Unitaries" => "Unitaries.md",
-        "Observables" => "Observables.md",
-        "Information" => "Information.md",
-        "QMath" => "QMath.md",
+        "Exports" => "exports.md",
+        "Modules" => [
+            "States" => "submodules/States.md",
+            "Unitaries" => "submodules/Unitaries.md",
+            "Observables" => "submodules/Observables.md",
+            "Information" => "submodules/Information.md",
+            "QMath" => "submodules/QMath.md",
+        ],
     ],
 )
 

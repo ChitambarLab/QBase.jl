@@ -1,7 +1,7 @@
 ```@meta
 CurrentModule = QBase.Information
 ```
-# QBase.Information
+# Information
 
 ```@docs
 Information

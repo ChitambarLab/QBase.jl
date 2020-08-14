@@ -1,8 +1,8 @@
 ```@meta
-CurrentModule = QBase.Unitaries
+CurrentModule = Unitaries
 ```
 
-# QBase.Unitaries
+# Unitaries
 
 ```@docs
 Unitaries

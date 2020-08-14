@@ -23,7 +23,7 @@ Urbana-Champaign. Funding was provided by NSF Award 1914440.
 
 ## Citing
 
-Please review [`Citations.bib`](https://github.com/ChitambarLab/QBase.jl/blob/master/Citations.bib)
+Please review [`CITATION.bib`](https://github.com/ChitambarLab/QBase.jl/blob/master/CITATION.bib)
 for citation of this work.
 
 ## Contents

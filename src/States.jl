@@ -1,5 +1,5 @@
 """
-The `QBase.States` submodule provides:
+The `States` submodule provides:
 
 * `abstract` and `concrete` types for quantum state representations.
 * A catalog of constructors for instantiating quantum states.
@@ -35,11 +35,18 @@ The abstract type representing a quantum state ket. Since kets are contained wit
 a complex-valued hilbert space, they are appropriately `AbstractVector{Complex{Float64}}`
 subtypes. An `AbstractKet` cannot be instantiated, it serves as a supertype from
 which ket types are defined.
+
+An `AbstractKet` subtype may be operated upon by a `AbstractUnitary` subtype to
+produce a new `Ket`.
+
+    *( U :: Unitaries.AbstractUnitary, ψ :: AbstractKet) :: Ket
 """
 abstract type AbstractKet <: AbstractVector{Complex{Float64}} end
 Base.size(S::AbstractKet) = size(S.ψ)
 Base.getindex(S::AbstractKet, I::Int) = getindex(S.ψ, I...)
 Base.setindex!(S::AbstractKet, v, I::Int) = (S.ψ[I...] = v)
+Base.:*(U::Unitaries.AbstractUnitary, ψ::AbstractKet) :: Ket = Ket(U.U*ψ.ψ)
+
 
 """
     is_ket( ψ :: Vector ) :: Bool
@@ -58,22 +65,21 @@ end
 
 A ket representation of a general quantum state. When given invalid input, the
 constructor, `Ket(ψ)`, throws:
-* `DomainError` -- If `ψ` is not normalized.
-* `MethodError` -- If `ψ` is not a column vector (`[a,b,c]` or `[a;b;c]`)
+* `DomainError` - If `ψ` is not normalized.
+* `MethodError` - If `ψ` is not a column vector (`[a,b,c]` or `[a;b;c]`)
 """
 struct Ket <: AbstractKet
     ψ :: Vector{Complex{Float64}}
     Ket(ψ) = is_ket(ψ) ? new(ψ) : throw(DomainError(ψ, "vector ψ is not normalized"))
 end
-Base.:*(U::Unitaries.AbstractUnitary, ψ::AbstractKet) :: Ket = Ket(U.U*ψ.ψ)
 
 """
     QubitKet( ψ :: Vector{Complex{Float64}} ) <: AbstractKet
 
 A ket representation of a 2-dimensional quantum state. When given invalid input,
 the constructor, `QubitKet(ψ)`, throws:
-* `DomainError` -- If `ψ` is not normalized.
-* `MethodError` -- If `ψ` is not a column vector (`[a,b]` or `[a;b]`).
+* `DomainError` - If `ψ` is not normalized.
+* `MethodError` - If `ψ` is not a column vector (`[a,b]` or `[a;b]`).
 """
 struct QubitKet <: AbstractKet
     ψ :: Ket
@@ -89,7 +95,7 @@ Returns true if input `\rho` is:
 * Trace[ρ] = 1 (normalization)
 """
 function is_density_matrix(ρ::Matrix)::Bool
-    if !(QMath.is_square_matrix(ρ))
+    if !(QMath.is_square(ρ))
         throw(DomainError(ρ, "provided matrix ρ is not square"))
     end
 
@@ -254,7 +260,7 @@ The triplet of kets representing three quantum states separated by equal angles 
 the z-x plane of bloch sphere.
 
 ```jldoctest
-julia> QBase.trine_qubit_kets == [[1.0, 0], [0.5, sqrt(3)/2], [0.5, -sqrt(3)/2]]
+julia> States.trine_qubit_kets == [[1.0, 0], [0.5, sqrt(3)/2], [0.5, -sqrt(3)/2]]
 true
 ```
 """
@@ -369,7 +375,7 @@ The quadruplet of symmetric informationally complete (SIC) qubits. The qubits
 are the vertices of a tetrahedron inscribed on bloch sphere.
 
 ```jldoctest
-julia> QBase.sic_qubits
+julia> States.sic_qubits
 4-element Array{QBase.States.Qubit,1}:
  [1.0 + 0.0im 0.0 + 0.0im; 0.0 + 0.0im 0.0 + 0.0im]
  [0.33333333333333337 + 0.0im 0.47140452079103173 + 0.0im; 0.47140452079103173 + 0.0im 0.6666666666666666 + 0.0im]
@@ -391,7 +397,7 @@ The quadruplet of qubits used in the BB84 Quantum Key Distribution protocol. The
 states are ``|0\\rangle\\langle 0|``, ``|1\\rangle\\langle 1|``, ``|+\\rangle\\langle +|``, and ``|- \\rangle\\langle -|``.
 
 ```jldoctest
-julia> QBase.bb84_qubits
+julia> States.bb84_qubits
 4-element Array{QBase.States.Qubit,1}:
  [1.0 + 0.0im 0.0 + 0.0im; 0.0 + 0.0im 0.0 + 0.0im]
  [0.0 + 0.0im 0.0 + 0.0im; 0.0 + 0.0im 1.0 + 0.0im]

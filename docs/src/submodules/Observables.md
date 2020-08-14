@@ -1,7 +1,7 @@
 ```@meta
 CurrentModule = QBase.Observables
 ```
-# QBase.Observables
+# Observables
 
 ```@docs
 Observables
@@ -30,6 +30,5 @@ sqrt_povm
 
 ```@docs
 kraus_operators
-measurement_probabilities
 naimark_dilation
 ```

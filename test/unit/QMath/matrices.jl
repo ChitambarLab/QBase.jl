@@ -70,12 +70,37 @@ end
 end
 
 @testset "commutes()" begin
-    @test_throws ArgumentError QMath.commutes([1 0;0 1;1 1],[0 1;1 0])
+    @test_throws DomainError QMath.commutes([1 0;0 1;1 1],[0 1;1 0])
 
     @test QMath.commutes([1 0;0 0],[0 0;0 1])
     @test !QMath.commutes([0 1;1 0],[1 0;0 -1])
 
     @test QMath.commutes.([[0 1;1 0],[1 0;0 -1]],[[0 im;-im 0],[0 im;-im 0]]) == [false,false]
+end
+
+@testset "is_hermitian()" begin
+    @test QMath.is_hermitian([1 0;0 1])
+    @test QMath.is_hermitian([1 0;0 -1])
+    @test !( QMath.is_hermitian([1 0;1 1]) )
+    @test !( QMath.is_hermitian([1 1;-1 1]) )
+    @test QMath.is_hermitian([1 im; -im 1])
+end
+
+@testset "is_positive_semidefinite()" begin
+    @test !( QMath.is_positive_semidefinite([1 0 ; 0 -1]) )
+    @test !( QMath.is_positive_semidefinite([0 1;1 0]) )
+    @test !( QMath.is_positive_semidefinite([1 1;-1 1]) )
+    @test QMath.is_positive_semidefinite([1 0; 0 1])
+
+    @test_throws DomainError QMath.is_positive_semidefinite([1 0 0;0 1 0])
+end
+
+@testset "is_square()" begin
+    @test QMath.is_square(fill(1,(3,3)))
+    @test !( QMath.is_square(fill(1,(3,2))) )
+    @test !( QMath.is_square(fill(1,(2,3))) )
+
+    @test_throws MethodError QMath.is_square(fill(1,(3,3,3)))
 end
 
 end

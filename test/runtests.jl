@@ -1,5 +1,7 @@
 using Test
-using QBase
+
+println("importing QBase.jl")
+@time using QBase
 
 function _test_runner()
     @testset "QBase.jl" begin

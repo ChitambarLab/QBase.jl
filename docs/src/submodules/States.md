@@ -2,7 +2,7 @@
 CurrentModule = States
 ```
 
-# QBase.States
+# States
 
 ```@docs
 States

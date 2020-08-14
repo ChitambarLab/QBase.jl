@@ -6,6 +6,10 @@ A QBase.jl submodule providing general purpose mathematics useful to quantum mec
 *Matrices:*
 - [`partial_trace`](@ref) - The partial trace matrix operation.
 - [`computational_basis_vectors`](@ref) - A general orthonormal set of vectors.
+- [`commutes`](@ref) - Checks if two matrices commute.
+- [`is_hermitian`](@ref) - Checks if a matrix is hermitian.
+- [`is_positive_semidefinite`](@ref) - Checks if a matrix is positive semi-definite.
+- [`is_square`](@ref) - Checks if a matrix is square.
 
 *Combinatorics:*
 - [`stirling2`](@ref) - Counts the ways to partition `n` items into `k` sets.
@@ -27,7 +31,6 @@ module QMath
 
 using LinearAlgebra
 
-include("./QMath/validation.jl")
 include("./QMath/matrices.jl")
 include("./QMath/probability.jl")
 include("./QMath/combinatorics.jl")

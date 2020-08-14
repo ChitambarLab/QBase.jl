@@ -13,6 +13,10 @@ QMath
 ```@docs
 computational_basis_vectors
 partial_trace
+commutes
+is_hermitian
+is_positive_semidefinite
+is_square
 ```
 
 ## Combinatorics

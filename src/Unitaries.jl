@@ -1,5 +1,5 @@
 """
-Quantum states evolve under unitary transformations. The `QBase.Unitaries`
+Quantum states evolve under unitary transformations. The `Unitaries`
 submodule provides:
 * Types and Constructors for unitary operators.
 """
@@ -41,7 +41,7 @@ is its inverse:
 A unitary matrix must be square. A `DomainError` is thrown if input `U` is not square.
 """
 function is_unitary(U::Matrix) :: Bool
-    if !(QMath.is_square_matrix(U))
+    if !(QMath.is_square(U))
         throw(DomainError(U, "provided matrix U is not square"))
     end
 
@@ -78,7 +78,7 @@ end
 Pauli-X unitary:
 
 ```jldoctest
-julia> QBase.Unitaries.σx
+julia> Unitaries.σx
 2×2 QBase.Unitaries.QubitUnitary:
  0.0+0.0im  1.0+0.0im
  1.0+0.0im  0.0+0.0im
@@ -92,7 +92,7 @@ const σx = QubitUnitary([0 1;1 0])
 Pauli-Y unitary:
 
 ```jldoctest
-julia> QBase.Unitaries.σy
+julia> Unitaries.σy
 2×2 QBase.Unitaries.QubitUnitary:
  0.0+0.0im  0.0-1.0im
  0.0+1.0im  0.0+0.0im
@@ -106,7 +106,7 @@ const σy = QubitUnitary([0 -im;im 0])
 Pauli-Z unitary:
 
 ```
-julia> QBase.Unitaries.σz
+julia> Unitaries.σz
 2×2 QBase.Unitaries.QubitUnitary:
  1.0+0.0im   0.0+0.0im
  0.0+0.0im  -1.0+0.0im

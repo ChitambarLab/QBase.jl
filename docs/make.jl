@@ -11,7 +11,7 @@ makedocs(;
     format=Documenter.HTML(;
         prettyurls=get(ENV, "CI", "false") == "true",
         canonical="https://ChitambarLab.github.io/QBase.jl",
-        assets=String[],
+        assets=String["assets/custom.css"],
     ),
     pages=[
         "Home" => "index.md",

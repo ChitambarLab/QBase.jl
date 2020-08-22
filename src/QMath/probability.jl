@@ -53,6 +53,7 @@ p(1|1) & \dots & p(1|M) \\
 \vdots & \ddots & \vdots \\
 p(N|1) & \dots & p(N|M) \\
 \end{bmatrix}
+```
 """
 struct Conditionals <: AbstractMatrix{Float64}
     probabilities :: Matrix{Float64}

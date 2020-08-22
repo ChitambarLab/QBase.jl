@@ -5,5 +5,5 @@
 1. Add the QBase.jl Package:
 
 ```julia
-julia> using Pkg; Pkg.add(PackageSpec(url="https://github.com/ChitambarLab/QBase.jl"))
+julia> using Pkg; Pkg.add("QBase")
 ```

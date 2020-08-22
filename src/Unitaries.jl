@@ -37,7 +37,7 @@ Base.setindex!(unitary::AbstractUnitary, v, id::Int) = (unitary.U[id...] = v)
 
 Returns `true` if matrix `U` is unitary. The hermitian adjoint of a unitary matrix
 is its inverse:
-* `U'U == I` where `I` is the identity matrix.
+* `U' * U == I` where `I` is the identity matrix.
 
 A unitary matrix must be square. A `DomainError` is thrown if input `U` is not square.
 """

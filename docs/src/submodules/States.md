@@ -13,9 +13,9 @@ with vectors (Bra-Ket Representation) or matrices (Density Matrix Representation
 
 ## Bra-Ket Representation
 
-A quantum state may be represented by a vector on a complex-valued Hilbert space.
-In Bra-Ket notation, a quantum state is represented by a ket denoted ``|\psi\rangle``.
-A ket can simply be understood as a column vector. Each ket has an associated dual
+A quantum state is represented by a vector on a complex-valued Hilbert space.
+In Bra-Ket notation, a quantum state denoted  ``|\psi\rangle`` is referred to as
+a ket and is simply understood as a column vector. Each ket has an associated dual
 vector known as a bra. A bra is may be represented by a row vector and can be
 constructed from a ket via Hermitian adjoint, ``\langle\psi| = (|\psi\rangle)^{\dagger}``.
 

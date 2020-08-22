@@ -54,7 +54,7 @@ Base.:*(U::Unitaries.AbstractUnitary, ψ::AbstractKet) :: Ket = Ket(U.U*ψ.ψ)
 Returns `true` if vector `ψ` is a valid ket representation of a quamtum state:
 
 * `ψ` is a real or complex-valued vector.
-* `ψ` is normalized with respect to the bra-ket inner prodcut (`ψ'ψ == 0`).
+* `ψ` is normalized with respect to the bra-ket inner prodcut (`ψ' * ψ == 0`).
 """
 function is_ket(ψ::Vector)::Bool
     norm(ψ) ≈ 1.0
@@ -79,7 +79,7 @@ end
 A ket representation of a 2-dimensional quantum state. When given invalid input,
 the constructor, `QubitKet(ψ)`, throws:
 * `DomainError` - If `ψ` is not normalized.
-* `MethodError` - If `ψ` is not a column vector (`[a,b]` or `[a;b]`).
+* `MethodError` - If `ψ` is not a column vector.
 """
 struct QubitKet <: AbstractKet
     ψ :: Ket
@@ -157,7 +157,7 @@ The method alternatively accepts a `Vector` input.
 
     pure_state( ψ :: Vector ) :: Qubit
 
-A `DomainError` is thrown if `ψ` is not a valid ket.`
+A `DomainError` is thrown if `ψ` is not a valid ket.
 """
 function pure_state(ψ::AbstractKet)::DensityMatrix
     DensityMatrix(ψ*ψ')
@@ -235,7 +235,10 @@ function pure_qubit(ψ::Vector)::Qubit
 end
 
 """
-    mixed_state( priors :: QMath.Marginals, ρ_states :: Vector{<:AbstractDensityMatrix} ) :: DensityMatrix
+    mixed_state(
+        priors :: QMath.Marginals,
+        ρ_states :: Vector{<:AbstractDensityMatrix}
+    ) :: DensityMatrix
 
 Constructs the statistical mixture (weighted average) of quantum states. The
 method accepts states as type `DensityMatrix` or subbtypes `AbstractDensityMatrix`.
@@ -294,7 +297,7 @@ Returns the qubit trine states in density matrix form.
 const trine_qubits = pure_qubit.(trine_qubit_kets)
 
 """
-    mirror_symmetric_qubits(θ) :: Vector{Qubit}
+    mirror_symmetric_qubits( θ ::  Real ) :: Vector{Qubit}
 
 Returns a set of 3 mirror symmetric qubit density matrices. The first
 state is ``|0\\rangle\\langle 0|`` the other two are symmetric about the  ``|0\\rangle`` axis.
@@ -302,7 +305,7 @@ state is ``|0\\rangle\\langle 0|`` the other two are symmetric about the  ``|0\\
 Input:
 * `θ ∈ [0,π/2]`: the hilbert space angle between ``|0\\rangle`` and ``|\\psi_{2/3}\\rangle``.
 """
-function mirror_symmetric_qubits(θ)::Vector{Qubit}
+function mirror_symmetric_qubits(θ :: Real)::Vector{Qubit}
     pure_qubit.(mirror_symmetric_qubit_kets(θ))
 end
 

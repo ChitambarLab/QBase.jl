@@ -15,16 +15,20 @@ CurrentModule = QBase
   3. Methods for computing information-theoretic quantities.
   4. Mathematics utilities to support quantum calculations.
 
+## Citing
+
+Please review [`CITATION.bib`](https://github.com/ChitambarLab/QBase.jl/blob/master/CITATION.bib)
+for citation of this work.
+
+## Licensing
+
+QBase.jl is released under the MIT License.
+
 ## Acknowledgements
 
 Development of QBase.jl was made possible by the advisory of Dr. Eric Chitambar
 and general support from the Physics Department at the University of Illinois
 Urbana-Champaign. Funding was provided by NSF Award 1914440.
-
-## Citing
-
-Please review [`CITATION.bib`](https://github.com/ChitambarLab/QBase.jl/blob/master/CITATION.bib)
-for citation of this work.
 
 ## Contents
 

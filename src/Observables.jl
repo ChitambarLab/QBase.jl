@@ -42,7 +42,7 @@ Base.setindex!(P::AbstractPOVM, v, id::Int) = (P.Π[id...] = v)
 Returns `true` if `Π` is a POVM. The following constraints must be satisfied:
 * Each POVM element is hermitian
 * Each POVM element positive semi-definite
-* The POVM is complete: `sum(Π) == identity matrix`
+* The POVM is complete: `sum(Π) == I`
 """
 is_povm(Π::AbstractPOVM) :: Bool = true
 function is_povm(Π::Vector) :: Bool

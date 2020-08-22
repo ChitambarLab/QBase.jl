@@ -170,7 +170,10 @@ conditional_entropy(
 end
 
 """
-    mutual_information( priors :: QMath.Marginals, conditionals :: QMath.Conditionals ) :: Float64
+    mutual_information(
+        priors :: QMath.Marginals,
+        conditionals :: QMath.Conditionals
+    ) :: Float64
 
 The entropy of the overlap between p(x) and p(y). The information shared from y to x.
 """
@@ -197,7 +200,11 @@ mutual_information(
 end
 
 """
-    success_probability(priors::QMath.Marginals, ρ_states::Vector{<:States.AbstractDensityMatrix}, Π::Observables.AbstractPOVM) :: Float64
+    success_probability(
+        priors::QMath.Marginals,
+        ρ_states::Vector{<:States.AbstractDensityMatrix},
+        Π::Observables.AbstractPOVM
+    ) :: Float64
 
 The probability of correctly distinguishing quantum states with the specifed POVM.
 """
@@ -217,7 +224,11 @@ success_probability(
 end
 
 """
-    error_probability(priors::QMath.Marginals, ρ_states::Vector{<:States.AbstractDensityMatrix}, Π::Observables.AbstractPOVM) :: Float64
+    error_probability(
+        priors::QMath.Marginals,
+        ρ_states::Vector{<:States.AbstractDensityMatrix},
+        Π::Observables.AbstractPOVM
+    ) :: Float64
 
 The probability of incorrectly distinguishing quantum states with the specifed POVM.
 """

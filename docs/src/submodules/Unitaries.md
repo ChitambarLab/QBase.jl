@@ -1,8 +1,10 @@
 ```@meta
-CurrentModule = QBase.Unitaries
+CurrentModule = Unitaries
 ```
 
-# QBase.Unitaries
+# Unitaries
+
+## Types
 
 ```@docs
 Unitaries
@@ -12,13 +14,18 @@ Unitary
 QubitUnitary
 ```
 
+## Constructors
+
+```@docs
+qubit_rotation
+random
+```
+
+## Constants
+
 ```@docs
 paulis
 σx
 σy
 σz
-```
-
-```@docs
-qubit_rotation
 ```

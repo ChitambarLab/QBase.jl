@@ -1,5 +1,5 @@
 """
-Quantum states evolve under unitary transformations. The `QBase.Unitaries`
+Quantum states evolve under unitary transformations. The `Unitaries`
 submodule provides:
 * Types and Constructors for unitary operators.
 """
@@ -7,6 +7,7 @@ module Unitaries
 
 using ..QMath
 using LinearAlgebra
+using RandomMatrices: Haar
 
 # validation
 export is_unitary
@@ -18,7 +19,7 @@ export Unitary, QubitUnitary
 export paulis, σx, σy, σz
 
 # contructors
-export qubit_rotation
+export qubit_rotation, random
 
 """
     AbstractUnitary <: AbstractMatrix{Complex{Float64}}
@@ -41,7 +42,7 @@ is its inverse:
 A unitary matrix must be square. A `DomainError` is thrown if input `U` is not square.
 """
 function is_unitary(U::Matrix) :: Bool
-    if !(QMath.is_square_matrix(U))
+    if !(QMath.is_square(U))
         throw(DomainError(U, "provided matrix U is not square"))
     end
 
@@ -78,7 +79,7 @@ end
 Pauli-X unitary:
 
 ```jldoctest
-julia> QBase.σx
+julia> Unitaries.σx
 2×2 QBase.Unitaries.QubitUnitary:
  0.0+0.0im  1.0+0.0im
  1.0+0.0im  0.0+0.0im
@@ -92,7 +93,7 @@ const σx = QubitUnitary([0 1;1 0])
 Pauli-Y unitary:
 
 ```jldoctest
-julia> QBase.σy
+julia> Unitaries.σy
 2×2 QBase.Unitaries.QubitUnitary:
  0.0+0.0im  0.0-1.0im
  0.0+1.0im  0.0+0.0im
@@ -106,7 +107,7 @@ const σy = QubitUnitary([0 -im;im 0])
 Pauli-Z unitary:
 
 ```
-julia> QBase.σz
+julia> Unitaries.σz
 2×2 QBase.Unitaries.QubitUnitary:
  1.0+0.0im   0.0+0.0im
  0.0+0.0im  -1.0+0.0im
@@ -140,6 +141,16 @@ function qubit_rotation(θ :: Real; axis="x" :: String)::QubitUnitary
     end
 
     QubitUnitary(exp(-im * pauli * θ/2))
+end
+
+"""
+    random( d :: Int64 ) :: Unitary
+
+Constructs a `d x d` random unitary matrix.
+"""
+function random(d :: Int64) :: Unitary
+    generator = Haar(2) # Specifies a complex hermitian unitary matrix
+    Unitary(rand(generator, d))
 end
 
 end

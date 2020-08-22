@@ -1,5 +1,5 @@
 """
-The `QBase.States` submodule provides:
+The `States` submodule provides:
 
 * `abstract` and `concrete` types for quantum state representations.
 * A catalog of constructors for instantiating quantum states.
@@ -20,6 +20,8 @@ export is_ket, is_density_matrix
 # State Constructors
 export bloch_qubit_ket, bloch_qubit, pure_state, pure_qubit, mixed_state, mixed_qubit
 
+export bell_kets, basis_kets, basis_states
+
 # 3 State Array Constructors
 export mirror_symmetric_qubit_kets, mirror_symmetric_qubits, trine_qubit_kets, trine_qubits
 
@@ -33,11 +35,18 @@ The abstract type representing a quantum state ket. Since kets are contained wit
 a complex-valued hilbert space, they are appropriately `AbstractVector{Complex{Float64}}`
 subtypes. An `AbstractKet` cannot be instantiated, it serves as a supertype from
 which ket types are defined.
+
+An `AbstractKet` subtype may be operated upon by a `AbstractUnitary` subtype to
+produce a new `Ket`.
+
+    *( U :: Unitaries.AbstractUnitary, ψ :: AbstractKet) :: Ket
 """
 abstract type AbstractKet <: AbstractVector{Complex{Float64}} end
 Base.size(S::AbstractKet) = size(S.ψ)
 Base.getindex(S::AbstractKet, I::Int) = getindex(S.ψ, I...)
 Base.setindex!(S::AbstractKet, v, I::Int) = (S.ψ[I...] = v)
+Base.:*(U::Unitaries.AbstractUnitary, ψ::AbstractKet) :: Ket = Ket(U.U*ψ.ψ)
+
 
 """
     is_ket( ψ :: Vector ) :: Bool
@@ -56,8 +65,8 @@ end
 
 A ket representation of a general quantum state. When given invalid input, the
 constructor, `Ket(ψ)`, throws:
-* `DomainError` -- If `ψ` is not normalized.
-* `MethodError` -- If `ψ` is not a column vector (`[a,b,c]` or `[a;b;c]`)
+* `DomainError` - If `ψ` is not normalized.
+* `MethodError` - If `ψ` is not a column vector (`[a,b,c]` or `[a;b;c]`)
 """
 struct Ket <: AbstractKet
     ψ :: Vector{Complex{Float64}}
@@ -69,8 +78,8 @@ end
 
 A ket representation of a 2-dimensional quantum state. When given invalid input,
 the constructor, `QubitKet(ψ)`, throws:
-* `DomainError` -- If `ψ` is not normalized.
-* `MethodError` -- If `ψ` is not a column vector (`[a,b]` or `[a;b]`).
+* `DomainError` - If `ψ` is not normalized.
+* `MethodError` - If `ψ` is not a column vector (`[a,b]` or `[a;b]`).
 """
 struct QubitKet <: AbstractKet
     ψ :: Ket
@@ -86,7 +95,7 @@ Returns true if input `\rho` is:
 * Trace[ρ] = 1 (normalization)
 """
 function is_density_matrix(ρ::Matrix)::Bool
-    if !(QMath.is_square_matrix(ρ))
+    if !(QMath.is_square(ρ))
         throw(DomainError(ρ, "provided matrix ρ is not square"))
     end
 
@@ -112,10 +121,18 @@ Base.setindex!(S::AbstractDensityMatrix, v, I::Vararg{Int,2}) = (S.ρ[I...] = v)
 
 The density matrix representation of a quantum state. The constructor, `DensityMatrix(ρ)`
 throws a `DomainError` if `is_density_matrix(ρ)` is `false`.
+
+Base methods extended to use the `DensityMatrix` type:
+* `QMath.partial_trace` - Returns `DensityMatrix` if supplied with one.
+* `Base.kron` - The kronecker product of two density matrices is a `DensityMatrix`.
 """
 struct DensityMatrix <: AbstractDensityMatrix
     ρ :: Matrix{Complex{Float64}}
     DensityMatrix(ρ) = is_density_matrix(ρ) ? new(ρ) : throw(DomainError(ρ, "matrix ρ is invalid"))
+end
+Base.kron(ρ1::AbstractDensityMatrix, ρ2::AbstractDensityMatrix) = DensityMatrix(kron(ρ1.ρ,ρ2.ρ))
+QMath.partial_trace(ρ::DensityMatrix, subsystem_dims::Vector{Int64}, subsystem_id::Int64) = begin
+    DensityMatrix(QMath.partial_trace(ρ.ρ, subsystem_dims, subsystem_id))
 end
 
 """
@@ -126,7 +143,7 @@ throws a `DomainError` if `is_density_matrix(ρ)` is false or if `ρ` is not 2x2
 dimension.
 """
 struct Qubit <: AbstractDensityMatrix
-    ρ :: DensityMatrix
+    ρ :: Matrix{Complex{Float64}}
     Qubit(ρ) = (size(ρ) == (2,2)) ? new(DensityMatrix(ρ)) : throw(DomainError(ρ, "matrix is not 2x2"))
 end
 
@@ -153,6 +170,45 @@ function pure_state(ψ::Vector)::DensityMatrix
 
     DensityMatrix(ψ*ψ')
 end
+
+"""
+    basis_kets( dim :: Int64 ) :: Vector{Ket}
+
+The computation basis vectors for a hilbert space of dimension, `dim`.
+"""
+function basis_kets(dim::Int64)::Vector{Ket}
+    Ket.(QMath.computational_basis_vectors(dim))
+end
+
+"""
+    basis_states( dim :: Int64 ) :: Vector{DensityMatrix}
+
+The density matrices for the computational basis of dimension, `dim`.
+"""
+function basis_states(dim::Int64)::Vector{DensityMatrix}
+    pure_state.(QMath.computational_basis_vectors(dim))
+end
+
+@doc raw"""
+    bell_kets :: Vector{Ket}
+
+The Bell basis kets, ordered as ``\{|\Phi^+\rangle, |\Phi^-\rangle, |\Psi^+\rangle, |\Psi^-\rangle \}``, where
+
+```math
+\begin{matrix}
+    |\Phi^+\rangle = \frac{1}{\sqrt{2}}(|00\rangle + |11\rangle), &
+    |\Phi^-\rangle = \frac{1}{\sqrt{2}}(|00\rangle - |11\rangle), \\
+    |\Psi^+\rangle = \frac{1}{\sqrt{2}}(|01\rangle + |10\rangle), &
+    |\Psi^-\rangle = \frac{1}{\sqrt{2}}(|01\rangle - |10\rangle). \\
+\end{matrix}
+```
+"""
+const bell_kets = Ket.([
+    1/sqrt(2)*[1,0,0,1],
+    1/sqrt(2)*[1,0,0,-1],
+    1/sqrt(2)*[0,1,1,0],
+    1/sqrt(2)*[0,1,-1,0]
+])
 
 """
     pure_qubit( ψ :: AbstractKet ) :: Qubit
@@ -204,7 +260,7 @@ The triplet of kets representing three quantum states separated by equal angles 
 the z-x plane of bloch sphere.
 
 ```jldoctest
-julia> QBase.trine_qubit_kets == [[1.0, 0], [0.5, sqrt(3)/2], [0.5, -sqrt(3)/2]]
+julia> States.trine_qubit_kets == [[1.0, 0], [0.5, sqrt(3)/2], [0.5, -sqrt(3)/2]]
 true
 ```
 """
@@ -319,7 +375,7 @@ The quadruplet of symmetric informationally complete (SIC) qubits. The qubits
 are the vertices of a tetrahedron inscribed on bloch sphere.
 
 ```jldoctest
-julia> QBase.sic_qubits
+julia> States.sic_qubits
 4-element Array{QBase.States.Qubit,1}:
  [1.0 + 0.0im 0.0 + 0.0im; 0.0 + 0.0im 0.0 + 0.0im]
  [0.33333333333333337 + 0.0im 0.47140452079103173 + 0.0im; 0.47140452079103173 + 0.0im 0.6666666666666666 + 0.0im]
@@ -341,7 +397,7 @@ The quadruplet of qubits used in the BB84 Quantum Key Distribution protocol. The
 states are ``|0\\rangle\\langle 0|``, ``|1\\rangle\\langle 1|``, ``|+\\rangle\\langle +|``, and ``|- \\rangle\\langle -|``.
 
 ```jldoctest
-julia> QBase.bb84_qubits
+julia> States.bb84_qubits
 4-element Array{QBase.States.Qubit,1}:
  [1.0 + 0.0im 0.0 + 0.0im; 0.0 + 0.0im 0.0 + 0.0im]
  [0.0 + 0.0im 0.0 + 0.0im; 0.0 + 0.0im 1.0 + 0.0im]

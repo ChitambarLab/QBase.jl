@@ -2,7 +2,7 @@ using Test
 
 @testset "QMath/probability.jl" begin
 
-using QBase: QMath
+using QBase
 
 @testset "QMath.is_probability_distribution()" begin
     @testset "valid cases" begin

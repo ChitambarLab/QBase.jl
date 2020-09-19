@@ -17,8 +17,8 @@ CurrentModule = QBase
 
 ## Citing
 
-Please review [`CITATION.bib`](https://github.com/ChitambarLab/QBase.jl/blob/master/CITATION.bib)
-for citation of this work.
+Please see [`CITATION.bib`](https://github.com/ChitambarLab/QBase.jl/blob/master/CITATION.bib)
+for reference of this work.
 
 ## Licensing
 

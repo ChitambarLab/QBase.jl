@@ -33,6 +33,6 @@ Urbana-Champaign. Funding was provided by NSF Award 1914440.
 ## Contents
 
 ```@contents
-Pages = ["user_guide.md", "exports.md", "submodules/States.md", "submodules/Unitaries.md", "submodules/Observables.md", "submodules/Information.md", "submodules/QMath.md"]
+Pages = ["user_guide.md", "exports.md", "submodules/States.md", "submodules/Unitaries.md", "submodules/Observables.md", "submodules/Channels.md", "submodules/Information.md", "submodules/QMath.md"]
 Depth = 1
 ```

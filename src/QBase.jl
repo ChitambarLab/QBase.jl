@@ -11,6 +11,7 @@ A collection of methods and submodules useful for computation of quantum sytems.
 - [`States`](@ref) - Types and constructors for representing quantum states.
 - [`Observables`](@ref) - Types and constructors for representing measureable quantities.
 - [`Unitaries`](@ref) - Types and constructors for representing unitary operators.
+- [`Channels`](@ref) - A catalog of common quantum channels.
 - [`Information`](@ref) - Functions for computing information-theoretic quantities.
 - [`QMath`](@ref) - Mathematics useful for modeling quantum operations.
 """
@@ -19,7 +20,7 @@ module QBase
 using LinearAlgebra
 
 # submodules are exported
-export QMath, Unitaries, States, Observables, Information
+export QMath, Unitaries, States, Observables, Information, Channels
 
 # include modules
 include("./QMath.jl")
@@ -36,6 +37,9 @@ using .Observables
 
 include("./Information.jl")
 using .Information
+
+include("./Channels.jl")
+using .Channels
 
 export evolve, measurement_probs
 

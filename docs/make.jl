@@ -21,6 +21,7 @@ makedocs(;
             "States" => "submodules/States.md",
             "Unitaries" => "submodules/Unitaries.md",
             "Observables" => "submodules/Observables.md",
+            "Channels" => "submodules/Channels.md",
             "Information" => "submodules/Information.md",
             "QMath" => "submodules/QMath.md",
         ],

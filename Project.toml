@@ -1,7 +1,7 @@
 name = "QBase"
 uuid = "e52e8ede-12bf-4731-8af7-b01f6064cb11"
 authors = ["Brian Doolittle <brian.d.doolittle@gmail.com> and contributors"]
-version = "0.1.0"
+version = "0.1.1"
 
 [deps]
 Combinatorics = "861a8166-3701-5b0c-9a16-15d98fcdc6aa"

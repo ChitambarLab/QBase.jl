@@ -10,6 +10,7 @@ using ..QMath
 using ..Unitaries
 
 using LinearAlgebra
+using Base.Iterators: flatten
 
 # Types
 export AbstractKet, AbstractDensityMatrix, Ket, QubitKet, DensityMatrix, Qubit
@@ -19,8 +20,8 @@ export is_ket, is_density_matrix
 
 # State Constructors
 export bloch_qubit_ket, bloch_qubit, pure_state, pure_qubit, mixed_state, mixed_qubit
-
-export bell_kets, basis_kets, basis_states
+export basis_kets, basis_states
+export bell_kets, generalized_bell_kets, bell_states, generalized_bell_states
 
 # 3 State Array Constructors
 export mirror_symmetric_qubit_kets, mirror_symmetric_qubits, trine_qubit_kets, trine_qubits
@@ -209,6 +210,58 @@ const bell_kets = Ket.([
     1/sqrt(2)*[0,1,1,0],
     1/sqrt(2)*[0,1,-1,0]
 ])
+
+"""
+    bell_states :: Vector{DensityMatrix}
+
+The Bell basis density matrices. See [`States.bell_kets`](@ref) for more details.
+"""
+const bell_states = pure_state.(bell_kets)
+
+@doc raw"""
+    generalized_bell_kets( dim :: Int64 ) :: Vector{Ket}
+
+The Bell basis for quantum states of dimension `dim`. Each state is constructed by
+
+```math
+|\Psi^p_c\rangle = \frac{1}{\sqrt{d}}\sum_{j=0}^{d-1} e^{i2\pi pj/d}|j\rangle |mod(j+c,d)\rangle
+```
+
+where ``p,c\in 0,\cdots, (d-1)`` and ``d`` is `dim`. When iterated ``c`` is the major
+index and ``p`` is the minor index.
+
+A `DomainError` is thrown if `dim ≥ 2` is not satisfied.
+"""
+function generalized_bell_kets(dim :: Int64) :: Vector{Ket}
+    if !(dim ≥ 2)
+        throw(DomainError(dim, "hilbert space dimension must satisfy `dim ≥ 2`"))
+    end
+
+    basis = basis_kets(dim)
+
+    kets = map(
+        c -> map(
+            p -> Ket(sum(
+                j -> exp(im*2*π*p*j/dim)*kron(basis[j+1],basis[mod(j + c, dim) + 1]),
+                0:dim-1
+            )/sqrt(dim)),
+        0:dim-1),
+    0:dim-1)
+
+    collect(flatten(kets))
+end
+
+"""
+    generalized_bell_states( dim :: Int64 ) :: Vector{DensityMatrix}
+
+The density matrix representation of the generalized Bell basis. See  [`States.bell_kets`](@ref)
+for more details.
+
+A `DomainError` is thrown if `dim ≥ 2` is not satisfied.
+"""
+function generalized_bell_states(dim :: Int64) :: Vector{DensityMatrix}
+    pure_state.(generalized_bell_kets(dim))
+end
 
 """
     pure_qubit( ψ :: AbstractKet ) :: Qubit

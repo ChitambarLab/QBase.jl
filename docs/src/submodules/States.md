@@ -47,6 +47,7 @@ QubitKet
 ```@docs
 basis_kets
 bell_kets
+generalized_bell_kets
 ```
 
 #### Singlet States
@@ -81,6 +82,8 @@ the outer-product of the ket with itself, ``|\psi\rangle\langle\psi| = \rho``.
 pure_state
 pure_qubit
 basis_states
+bell_states
+generalized_bell_states
 ```
 
 The rank of the density matrix can be greater than 1. If a density matrix has

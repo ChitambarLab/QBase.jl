@@ -326,15 +326,65 @@ end
     @test States.basis_states(3) == [[1 0 0;0 0 0;0 0 0],[0 0 0;0 1 0;0 0 0],[0 0 0;0 0 0;0 0 1]]
     @test States.basis_states(2) == [[1 0;0 0],[0 0;0 1]]
 end
-    
+
 @testset "States.bell_kets" begin
-    kets = States.bell_kets    
+    kets = States.bell_kets
     @test length(kets) == 4
-    @test kets isa Array{States.Ket,1}    
-    @test kets[1] == 1/sqrt(2)*(kron([1,0],[1,0])+kron([0,1],[0,1])) 
-    @test kets[2] == 1/sqrt(2)*(kron([1,0],[1,0])-kron([0,1],[0,1]))  
+    @test kets isa Array{States.Ket,1}
+    @test kets[1] == 1/sqrt(2)*(kron([1,0],[1,0])+kron([0,1],[0,1]))
+    @test kets[2] == 1/sqrt(2)*(kron([1,0],[1,0])-kron([0,1],[0,1]))
     @test kets[3] == 1/sqrt(2)*(kron([1,0],[0,1])+kron([0,1],[1,0]))
-    @test kets[4] == 1/sqrt(2)*(kron([1,0],[0,1])-kron([0,1],[1,0]))    
+    @test kets[4] == 1/sqrt(2)*(kron([1,0],[0,1])-kron([0,1],[1,0]))
+end
+
+@testset "States.bell_states" begin
+    states = States.bell_states
+
+    @test states isa Vector{States.DensityMatrix}
+    @test states[1] ≈ 1/2*[1 0 0 1;0 0 0 0;0 0 0 0;1 0 0 1]
+    @test states[2] ≈ 1/2*[1 0 0 -1;0 0 0 0;0 0 0 0;-1 0 0 1]
+    @test states[3] ≈ 1/2*[0 0 0 0;0 1 1 0;0 1 1 0;0 0 0 0]
+    @test states[4] ≈ 1/2*[0 0 0 0;0 1 -1 0;0 -1 1 0;0 0 0 0]
+end
+
+@testset "States.generalized_bell_kets()" begin
+    @testset "qubit bell states" begin
+        kets = States.generalized_bell_kets(2)
+
+        @test kets isa Vector{States.Ket}
+        @test kets ≈ States.bell_kets
+    end
+
+    @testset "qutrit bell states" begin
+        kets = States.generalized_bell_kets(3)
+
+        basis = States.basis_kets(3)
+        ρ1 = (kron(basis[1],basis[1]) + kron(basis[2],basis[2]) + kron(basis[3],basis[3]))/sqrt(3)
+        ρ2 = (kron(basis[1],basis[1]) + exp(im*2*π/3)*kron(basis[2],basis[2]) + exp(im*4*π/3)*kron(basis[3],basis[3]))/sqrt(3)
+        ρ3 = (kron(basis[1],basis[1]) + exp(im*4*π/3)*kron(basis[2],basis[2]) + exp(im*2*π/3)*kron(basis[3],basis[3]))/sqrt(3)
+
+        ρ4 = (kron(basis[1],basis[2]) + kron(basis[2],basis[3]) + kron(basis[3],basis[1]))/sqrt(3)
+        ρ5 = (kron(basis[1],basis[2]) + exp(im*2*π/3)*kron(basis[2],basis[3]) + exp(im*4*π/3)*kron(basis[3],basis[1]))/sqrt(3)
+        ρ6 = (kron(basis[1],basis[2]) + exp(im*4*π/3)*kron(basis[2],basis[3]) + exp(im*2*π/3)*kron(basis[3],basis[1]))/sqrt(3)
+
+        ρ7 = (kron(basis[1],basis[3]) + kron(basis[2],basis[1]) + kron(basis[3],basis[2]))/sqrt(3)
+        ρ8 = (kron(basis[1],basis[3]) + exp(im*2*π/3)*kron(basis[2],basis[1]) + exp(im*4*π/3)*kron(basis[3],basis[2]))/sqrt(3)
+        ρ9 = (kron(basis[1],basis[3]) + exp(im*4*π/3)*kron(basis[2],basis[1]) + exp(im*2*π/3)*kron(basis[3],basis[2]))/sqrt(3)
+
+        ψ_match = [ρ1,ρ2,ρ3,ρ4,ρ5,ρ6,ρ7,ρ8,ρ9]
+
+        @test kets isa Vector{States.Ket}
+        @test kets ≈ ψ_match
+    end
+end
+
+@testset "generalized_bell_states()" begin
+    @testset "qubit bell states" begin
+        states = States.generalized_bell_states(2)
+
+        @test states isa Vector{States.DensityMatrix}
+        @test states ≈ States.bell_states
+    end
 end
 
 end

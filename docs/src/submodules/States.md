@@ -60,6 +60,7 @@ bloch_qubit_ket
 ```@docs
 trine_qubit_kets
 mirror_symmetric_qubit_kets
+planar_symmetric_qubit_kets
 ```
 
 ## Density Matrix Representation
@@ -84,6 +85,7 @@ pure_qubit
 basis_states
 bell_states
 generalized_bell_states
+planar_symmetric_qubit_states
 ```
 
 The rank of the density matrix can be greater than 1. If a density matrix has

@@ -24,6 +24,7 @@ asymmetric_qubit_3povm
 trine_qubit_povm
 sic_qubit_povm
 sqrt_povm
+planar_symmetric_qubit_povm
 ```
 
 ## Quantum Measurement

@@ -387,4 +387,66 @@ end
     end
 end
 
+@testset "planar_symmetric_qubit_kets()" begin
+    @testset "simple cases" begin
+        @testset "orthogonal qubits" begin
+            kets = States.planar_symmetric_qubit_kets(2)
+
+            @test kets[1] ≈ [1,0]
+            @test kets[2] ≈ [0,1]
+        end
+
+        @testset "trine states" begin
+            kets = States.planar_symmetric_qubit_kets(3)
+            trine_kets = States.trine_qubit_kets
+
+            @test kets[1] ≈ trine_kets[1]
+            @test kets[2] ≈ trine_kets[2]
+            @test kets[3] ≈ -1*trine_kets[3]
+        end
+
+        @testset "bb84 states" begin
+            kets = States.planar_symmetric_qubit_kets(4)
+
+            @test kets[1] ≈ [1,0]
+            @test kets[2] ≈ [1,1]/sqrt(2)
+            @test kets[3] ≈ [0,1]
+            @test kets[4] ≈ [-1,1]/sqrt(2)
+        end
+    end
+
+    @testset "scanning over cases verifying right number are computed" begin
+        for n in 2:100
+            kets = States.planar_symmetric_qubit_kets(n)
+
+            @test length(kets) == n
+            @test kets isa Vector{States.QubitKet}
+        end
+    end
+
+    @test_throws(DomainError, States.planar_symmetric_qubit_kets(1))
+end
+
+@testset "planar_symmetric_qubit_states()" begin
+    @testset "simple cases" begin
+        @testset "bb84 cases" begin
+            states = States.planar_symmetric_qubit_states(4)
+
+            @test states[1] ≈ States.bb84_qubits[1]
+            @test states[2] ≈ States.bb84_qubits[3]
+            @test states[3] ≈ States.bb84_qubits[2]
+            @test states[4] ≈ States.bb84_qubits[4]
+        end
+    end
+
+    @testset "scanning over cases verifying right number are computed" begin
+        for n in 2:100
+            kets = States.planar_symmetric_qubit_states(n)
+
+            @test length(kets) == n
+            @test kets isa Vector{States.Qubit}
+        end
+    end
+end
+
 end

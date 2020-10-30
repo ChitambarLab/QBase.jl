@@ -20,6 +20,7 @@ export is_ket, is_density_matrix
 
 # State Constructors
 export bloch_qubit_ket, bloch_qubit, pure_state, pure_qubit, mixed_state, mixed_qubit
+export planar_symmetric_qubit_kets, planar_symmetric_qubit_states
 export basis_kets, basis_states
 export bell_kets, generalized_bell_kets, bell_states, generalized_bell_states
 
@@ -335,11 +336,48 @@ Input:
 * `θ ∈ [0,π/2]`: the hilbert space angle between |0> and symmetric kets.
 """
 function mirror_symmetric_qubit_kets(θ::Real)::Vector{QubitKet}
+    if !(0 <= θ <= π/2)
+        throw(DomainError(θ, "Hilbert space angle θ must satisfy `0 <= θ <= π/2`"))
+    end
+
     ψ1 = QubitKet([1;0])
     ψ2 = bloch_qubit_ket(2*θ,0)
     ψ3 = bloch_qubit_ket(2*θ,π)
 
     [ψ1,ψ2,ψ3]
+end
+
+"""
+    planar_symmetric_qubit_kets( n :: Int64 ) :: Vector{QubitKet}
+
+Constructs a set of `QubitKet` states oriented symmetrically in the x-z-plane.
+Each state is separated by a bloch angle of `2π/n`. The states are constructed
+with the form
+
+```math
+|\\psi_j \\rangle = \\cos(j \\pi/n) | 0\\rangle + \\sin(j \\pi/n)|1\\rangle
+```
+
+where ``j \\in 0,\\cdots, (n-1)``.
+
+A `DomainError` is thrown if
+"""
+function planar_symmetric_qubit_kets(n :: Int64) :: Vector{QubitKet}
+    if !(n ≥ 2)
+        throw(DomainError(n, "n must satisfy `n ≥ 2`"))
+    end
+
+    map(θ -> bloch_qubit_ket(θ), 0:2π/n:2π*(n-1)/n+π/(2*n))
+end
+
+"""
+    planar_symmetric_qubit_states( n :: Int64 ) :: Vector{Qubit}
+
+Constructs a set of `Qubit` pure states oriented symmetrically in the x-z-plane.
+See [`planar_symmetric_qubit_kets`](@ref) for details.
+"""
+function planar_symmetric_qubit_states(n :: Int64) :: Vector{Qubit}
+    pure_qubit.(planar_symmetric_qubit_kets(n))
 end
 
 """
@@ -366,23 +404,31 @@ end
     bloch_qubit_ket( θ :: Real, ϕ :: Real ) :: QubitKet
 
 Returns the qubit ket for the specified spherical coordinate on the surface of
-bloch sphere, `(r=1, θ, ϕ)`.
+bloch sphere, `(r=1, θ, ϕ)`. If the state does not have a complex phase then
+
+    bloch_qubit_ket( θ :: Real ) :: QubitKet
+
+can be used to construct the state.
 
 Inputs:
 
-* `θ ∈ [0, π]`: polar angle (w.r.t z-axis)
+* `θ ∈ [0, 2π]`: polar angle (w.r.t z-axis)
 * `ϕ ∈ [0, 2π]`: azimuthal angle (x-y plane)
 
 A `DomainError` is thrown if inputs `θ` and/or `ϕ` do are not within the valid range.
 """
 function bloch_qubit_ket(θ::Real, ϕ::Real) :: QubitKet
-    if !(0 <= θ <= π)
-        throw(DomainError(θ, "polar bloch-angle (θ) must be in domain [0,π]"))
+    if !(0 <= θ <= 2π)
+        throw(DomainError(θ, "polar bloch-angle (θ) must be in domain [0,2π]"))
     elseif !(0 <= ϕ <= 2π)
         throw(DomainError(ϕ, "azimuthal angle (ϕ) must be in domain [0,2π]"))
     end
 
     QubitKet([cos(θ/2);exp(im*ϕ)*sin(θ/2)])
+end
+
+function bloch_qubit_ket(θ::Real) :: QubitKet
+    bloch_qubit_ket(θ,0)
 end
 
 """

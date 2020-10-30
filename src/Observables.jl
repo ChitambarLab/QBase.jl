@@ -19,6 +19,7 @@ export is_povm
 export AbstractPOVM, POVM, QubitPOVM
 
 # constructors
+export planar_symmetric_qubit_povm
 export mirror_symmetric_qubit_3povm, asymmetric_qubit_3povm, sqrt_povm, sic_qubit_povm, trine_qubit_povm
 
 # methods
@@ -134,6 +135,18 @@ function asymmetric_qubit_3povm(θ1::Real,θ2::Real)::QubitPOVM
     π3 = γ3*[cos(θ2)^2 cos(θ2)*sin(θ2); cos(θ2)*sin(θ2) sin(θ2)^2]
 
     QubitPOVM([π1, π2, π3])
+end
+
+"""
+    planar_symmetric_qubit_povm( n :: Int64 ) :: QubitPOVM
+
+Constructs an `n`-element `QubitPOVM` from the [`planar_symmetric_qubit_states`](@ref).
+Each state is multipled by a factor of `2/n` to satisfy the completeness relation.
+
+A `DomainError` is thrown if `n ≥ 2` is not satisfied.
+"""
+function planar_symmetric_qubit_povm(n :: Int64) :: QubitPOVM
+    QubitPOVM(2/n*States.planar_symmetric_qubit_states(n))
 end
 
 """

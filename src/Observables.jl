@@ -146,7 +146,7 @@ Each state is multipled by a factor of `2/n` to satisfy the completeness relatio
 A `DomainError` is thrown if `n ≥ 2` is not satisfied.
 """
 function planar_symmetric_qubit_povm(n :: Int64) :: QubitPOVM
-    QubitPOVM(2/n*States.planar_symmetric_qubit_states(n))
+    QubitPOVM(2/n*States.planar_symmetric_qubits(n))
 end
 
 """

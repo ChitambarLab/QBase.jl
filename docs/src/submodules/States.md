@@ -85,7 +85,7 @@ pure_qubit
 basis_states
 bell_states
 generalized_bell_states
-planar_symmetric_qubit_states
+planar_symmetric_qubits
 ```
 
 The rank of the density matrix can be greater than 1. If a density matrix has

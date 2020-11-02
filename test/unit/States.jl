@@ -427,10 +427,10 @@ end
     @test_throws(DomainError, States.planar_symmetric_qubit_kets(1))
 end
 
-@testset "planar_symmetric_qubit_states()" begin
+@testset "planar_symmetric_qubits()" begin
     @testset "simple cases" begin
         @testset "bb84 cases" begin
-            states = States.planar_symmetric_qubit_states(4)
+            states = States.planar_symmetric_qubits(4)
 
             @test states[1] ≈ States.bb84_qubits[1]
             @test states[2] ≈ States.bb84_qubits[3]
@@ -441,10 +441,10 @@ end
 
     @testset "scanning over cases verifying right number are computed" begin
         for n in 2:100
-            kets = States.planar_symmetric_qubit_states(n)
+            qubits = States.planar_symmetric_qubits(n)
 
-            @test length(kets) == n
-            @test kets isa Vector{States.Qubit}
+            @test length(qubits) == n
+            @test qubits isa Vector{States.Qubit}
         end
     end
 end

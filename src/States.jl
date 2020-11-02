@@ -20,7 +20,7 @@ export is_ket, is_density_matrix
 
 # State Constructors
 export bloch_qubit_ket, bloch_qubit, pure_state, pure_qubit, mixed_state, mixed_qubit
-export planar_symmetric_qubit_kets, planar_symmetric_qubit_states
+export planar_symmetric_qubit_kets, planar_symmetric_qubits
 export basis_kets, basis_states
 export bell_kets, generalized_bell_kets, bell_states, generalized_bell_states
 
@@ -371,12 +371,12 @@ function planar_symmetric_qubit_kets(n :: Int64) :: Vector{QubitKet}
 end
 
 """
-    planar_symmetric_qubit_states( n :: Int64 ) :: Vector{Qubit}
+    planar_symmetric_qubits( n :: Int64 ) :: Vector{Qubit}
 
 Constructs a set of `Qubit` pure states oriented symmetrically in the x-z-plane.
 See [`planar_symmetric_qubit_kets`](@ref) for details.
 """
-function planar_symmetric_qubit_states(n :: Int64) :: Vector{Qubit}
+function planar_symmetric_qubits(n :: Int64) :: Vector{Qubit}
     pure_qubit.(planar_symmetric_qubit_kets(n))
 end
 

@@ -1,0 +1,4 @@
+#documenter nav.docs-sidebar a.docs-logo > img {
+    max-height: 100%;
+    max-width: 60%;
+}

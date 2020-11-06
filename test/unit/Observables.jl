@@ -136,11 +136,27 @@ end
 end
 
 @testset "kraus_operators()" begin
-    k = Observables.kraus_operators(Observables.trine_qubit_povm)
 
-    @test k[1]'*k[1] ≈ Observables.trine_qubit_povm[1]
-    @test k[2]'*k[2] ≈ Observables.trine_qubit_povm[2]
-    @test k[3]'*k[3] ≈ Observables.trine_qubit_povm[3]
+    @testset "trine qubit povm" begin
+        k = Observables.kraus_operators(Observables.trine_qubit_povm)
+
+        @test k[1]'*k[1] ≈ Observables.trine_qubit_povm[1]
+        @test k[2]'*k[2] ≈ Observables.trine_qubit_povm[2]
+        @test k[3]'*k[3] ≈ Observables.trine_qubit_povm[3]
+    end
+
+    @testset "pentagram qubit povm" begin
+        Π = Observables.planar_symmetric_qubit_povm(5)
+        k = Observables.kraus_operators(Π)
+
+        @test sum(k_i -> k_i'*k_i, k) ≈ [1 0;0 1]
+
+        @test k[1]'*k[1] ≈ Π[1]
+        @test k[2]'*k[2] ≈ Π[2]
+        @test k[3]'*k[3] ≈ Π[3]
+        @test k[4]'*k[4] ≈ Π[4]
+        @test k[5]'*k[5] ≈ Π[5]
+    end
 end
 
 @testset "naimark_dilation()" begin

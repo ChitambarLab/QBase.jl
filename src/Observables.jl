@@ -140,7 +140,7 @@ end
 """
     planar_symmetric_qubit_povm( n :: Int64 ) :: QubitPOVM
 
-Constructs an `n`-element `QubitPOVM` from the [`planar_symmetric_qubit_states`](@ref).
+Constructs an `n`-element `QubitPOVM` from the [`planar_symmetric_qubits`](@ref).
 Each state is multipled by a factor of `2/n` to satisfy the completeness relation.
 
 A `DomainError` is thrown if `n ≥ 2` is not satisfied.
@@ -186,12 +186,16 @@ const trine_qubit_povm = QubitPOVM(2/3 * States.trine_qubits)
     kraus_operators(Π::AbstractPOVM) :: Array{Array{Complex{Float64},2},1}
 
 Returns the Kraus operators for the provided POVM. In general, the Kraus operators
-form a continuum and are non-unique. In this method, the construction
+form a continuum and are non-unique. This method applies the construction
 
-``k_i = \\sqrt{\\Pi_i)}\\otimes |i\\rangle``
+```math
+k_i = \\sqrt{\\Pi_i}\\otimes |i\\rangle
+```
 """
 function kraus_operators(Π::AbstractPOVM) :: Array{Array{Complex{Float64},2},1}
-    map(i -> kron(sqrt(Π[i]), Matrix(1I,3,3)[:,i]), 1:length(Π))
+    num_el = length(Π)
+
+    map(i -> kron(sqrt(Π[i]), Matrix(I,num_el,num_el)[:,i]), 1:num_el)
 end
 
 """

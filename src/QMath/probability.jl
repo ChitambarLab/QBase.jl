@@ -9,8 +9,8 @@ Returns `true` if the provided vector is a valid probability distribution:
 * `p[i] ≥ 0 ∀ i`
 """
 function is_probability_distribution(probabilities::Vector)::Bool
-    is_positive = all(p -> (p > 0) || isapprox(p,0, atol=10e-7), probabilities)
-    is_normalized = (sum(probabilities) ≈ 1)
+    is_positive = all(p -> (p > 0) || isapprox(p, 0, atol=10e-7), probabilities)
+    is_normalized = isapprox(sum(probabilities), 1, atol=10e-6)
 
     (is_positive & is_normalized)
 end

@@ -54,6 +54,11 @@ end
         @test conditionals isa QMath.Conditionals
     end
 
+    @testset "inexact edge case" begin
+        conditionals = QMath.Conditionals([0.666667 0.166667 0.166667; 0.166667 0.666667 0.166667; 0.166667 0.166667 0.666667])
+        @test conditionals == [0.666667 0.166667 0.166667; 0.166667 0.666667 0.166667; 0.166667 0.166667 0.666667]
+    end
+
     @testset "invalid cases" begin
         @test_throws DomainError QMath.Conditionals([0.5 -0.5;0.5 1.5])
     end

@@ -177,7 +177,7 @@ end
 
 @testset "planar_symmetric_qubit_povm()" begin
     @testset "scanning over simple cases" begin
-        for n in 2:100
+        for n in 2:50
             Π = Observables.planar_symmetric_qubit_povm(n)
 
             @test length(Π) == n

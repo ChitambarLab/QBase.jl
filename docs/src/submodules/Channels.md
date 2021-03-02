@@ -6,6 +6,7 @@ CurrentModule = Channels
 
 ```@docs
 Channels
+replacer
 depolarizing
 erasure
 ```

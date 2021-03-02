@@ -141,7 +141,7 @@ end
         ])
     end
 
-    @testset "permtutation map validity" for N in 2:6
+    @testset "permtutation map validity" for N in 2:5
         perms = QMath.permutation_matrices(N)
 
         @testset "maps are unique" begin
@@ -183,7 +183,7 @@ end
     end
 
     @testset "general tests" begin
-        for n in 2:7
+        for n in 2:5
             for k in 1:n
                 matrices = QMath.n_choose_k_matrices(n,k)
 

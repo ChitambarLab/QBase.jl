@@ -4,6 +4,28 @@ using Test
 
 using QBase
 
+@testset "repalcer()" begin
+    @testset "simple Qubut examples" begin
+        ρ = States.Qubit([1 0;0 0])
+        σ = States.Qubit([0 0;0 1])
+
+        r = Channels.replacer(ρ, σ, 0.5)
+
+        @test r isa States.DensityMatrix
+        @test r == [0.5 0;0 0.5]
+    end
+    @testset "errors" begin
+        ρ = States.Qubit([1 0;0 0])
+        σ = States.Qubit([0 0;0 1])
+
+        @test_throws DomainError Channels.replacer(ρ, σ, -0.1)
+        @test_throws DomainError Channels.replacer(ρ, σ, 1.1)
+        @test_throws DomainError Channels.replacer(
+            States.DensityMatrix([1 0;0 0]), States.DensityMatrix([0 0 0;0 1 0;0 0 0]), 0.5
+        )
+    end
+end
+
 @testset "depolarizing()" begin
     @testset "simple Qubit examples" begin
         ρ0 = States.Qubit([1 0;0 0])

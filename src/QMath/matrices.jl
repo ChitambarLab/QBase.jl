@@ -80,6 +80,7 @@ function is_hermitian(matrix :: Matrix) :: Bool
     isapprox(matrix, adjoint(matrix), atol=10e-6)
 end
 
+
 """
     is_square( matrix :: Matrix ) :: Bool
 

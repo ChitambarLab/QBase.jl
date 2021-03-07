@@ -19,8 +19,21 @@ module QBase
 
 using LinearAlgebra
 
+# Methods extended by QBase.jl
+import Base: convert, *, kron, adjoint
+
+const ATOL = 1e-7
+
+include("./types/brakets.jl")
+
+
+
+
+### Below this line is v0.1 material
+
 # submodules are exported
 export QMath, Unitaries, States, Observables, Information, Channels
+
 
 # include modules
 include("./QMath.jl")
@@ -59,7 +72,7 @@ Apply a unitary evolution `U` to a state ket `ψ`.
     ) :: Ket
 """
 evolve(U::Unitaries.AbstractUnitary, ρ::States.AbstractDensityMatrix) :: DensityMatrix = DensityMatrix(U*ρ*U')
-evolve(U::Unitaries.AbstractUnitary, ψ::States.AbstractKet) :: Ket = U*ψ
+evolve(U::Unitaries.AbstractUnitary, ψ::States.AbstractKet) :: States.Ket = U*ψ
 
 """
 Computes the outcome probabilities for a quantum measurement. The conditional

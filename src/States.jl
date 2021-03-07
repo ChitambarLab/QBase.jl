@@ -14,6 +14,8 @@ using Base.Iterators: flatten
 
 # Types
 export AbstractKet, AbstractDensityMatrix, Ket, QubitKet, DensityMatrix, Qubit
+# export AbstractDensityMatrix, DensityMatrix
+
 
 # Validation
 export is_ket, is_density_matrix

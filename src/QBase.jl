@@ -26,6 +26,20 @@ const ATOL = 1e-7
 
 include("./types/brakets.jl")
 
+# AbstractState
+
+# AbstractOperator < Matrix
+    # AbstractUnitary
+    # AbstractKrausOperator
+
+# AbstractChannel
+
+# AbstractSuperOperator
+
+# AbstractObservable
+
+# AbstractMeasurement
+
 
 
 

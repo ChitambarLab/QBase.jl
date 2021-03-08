@@ -18,6 +18,7 @@ A collection of methods and submodules useful for computation of quantum sytems.
 module QBase
 
 using LinearAlgebra
+using Base.Iterators: flatten
 
 # Methods extended by QBase.jl
 import Base: convert, *, kron, adjoint
@@ -26,28 +27,21 @@ const ATOL = 1e-7
 
 include("./types/brakets.jl")
 
-# AbstractState
+# TODO: AbstractState
+# TODO: AbstractOperator < Matrix
+    # TODO: Unitary
+    # TODO: KrausOperator
+# TODO: AbstractChannel
+# TODO: AbstractSuperOperator
+# TODO: AbstractObservable
+# TODO: AbstractMeasurement
 
-# AbstractOperator < Matrix
-    # AbstractUnitary
-    # AbstractKrausOperator
-
-# AbstractChannel
-
-# AbstractSuperOperator
-
-# AbstractObservable
-
-# AbstractMeasurement
-
-
-
+include("./constructors/brakets.jl")
 
 ### Below this line is v0.1 material
 
 # submodules are exported
 export QMath, Unitaries, States, Observables, Information, Channels
-
 
 # include modules
 include("./QMath.jl")

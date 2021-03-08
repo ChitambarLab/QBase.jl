@@ -1,4 +1,4 @@
-using Test
+using Test, QBase
 
 @testset "Testing QBase.jl types" begin
     println("Testing QBase.jl types : ")

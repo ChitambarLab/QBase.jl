@@ -13,21 +13,20 @@ using LinearAlgebra
 using Base.Iterators: flatten
 
 # Types
-export AbstractKet, AbstractDensityMatrix, Ket, QubitKet, DensityMatrix, Qubit
-# export AbstractDensityMatrix, DensityMatrix
+export AbstractDensityMatrix, DensityMatrix, Qubit
 
 
 # Validation
-export is_ket, is_density_matrix
+export is_density_matrix
 
 # State Constructors
-export bloch_qubit_ket, bloch_qubit, pure_state, pure_qubit, mixed_state, mixed_qubit
-export planar_symmetric_qubit_kets, planar_symmetric_qubits
-export basis_kets, basis_states
-export bell_kets, generalized_bell_kets, bell_states, generalized_bell_states
+export bloch_qubit, pure_state, pure_qubit, mixed_state, mixed_qubit
+export planar_symmetric_qubits
+export basis_states
+export bell_states, generalized_bell_states
 
 # 3 State Array Constructors
-export mirror_symmetric_qubit_kets, mirror_symmetric_qubits, trine_qubit_kets, trine_qubits
+export mirror_symmetric_qubits, trine_qubits
 
 # 4 State Array Constructors
 export bb84_qubits, sic_qubits
@@ -50,7 +49,6 @@ Base.size(S::AbstractKet) = size(S.ψ)
 Base.getindex(S::AbstractKet, I::Int) = getindex(S.ψ, I...)
 Base.setindex!(S::AbstractKet, v, I::Int) = (S.ψ[I...] = v)
 Base.:*(U::Unitaries.AbstractUnitary, ψ::AbstractKet) :: Ket = Ket(U.U*ψ.ψ)
-
 
 """
     is_ket( ψ :: Vector ) :: Bool

@@ -11,6 +11,14 @@ Base.size(bra::AbstractBra) = size(bra.ψ)
 Base.getindex(bra::AbstractBra, I::Vararg{Int,2}) = getindex(bra.ψ, I...)
 Base.setindex!(bra::AbstractBra, val, I::Vararg{Int,2}) = (bra.ψ[I...] = val)
 
+"""
+    is_wave_vector( ψ :: Vector; atol=ATOL :: Float64) :: Bool
+
+Returns `true` if vector `ψ` is a valid ket representation of a quantum state:
+
+* `ψ` is a real or complex-valued vector.
+* `ψ` is normalized with respect to the bra-ket inner prodcut (`ψ' * ψ == 0`).
+"""
 function is_wave_vector(ψ; atol=ATOL :: Float64)
     isapprox( norm(ψ,2), 1, atol=atol )
 end

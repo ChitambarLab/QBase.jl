@@ -1,11 +1,29 @@
 export is_wave_vector
 export AbstractKet, AbstractBra, Ket, Bra
 
+"""
+    AbstractKet{T<:Number} <: AbstractVector{Number}
+
+The abstract type representing a quantum state ket. A ket can be thought of as a
+column vector in a complex-valued Hilbert space. The elements of a `Ket` can be any
+subtype of `Number`.
+An `AbstractKet` cannot be instantiated, it serves as a supertype from
+which ket types are defined.
+"""
 abstract type AbstractKet{T<:Number} <: AbstractVector{Number} end
 Base.size(ket::AbstractKet) = size(ket.ψ)
 Base.getindex(ket::AbstractKet, I::Int) = getindex(ket.ψ, I...)
 Base.setindex!(ket::AbstractKet, val, I::Int) = (ket.ψ[I...] = val)
 
+"""
+    AbstractBra{T<:Number} <: AbstractVector{Number}
+
+The abstract type representing a quantum state ket. A ket can be thought of as a
+column vector in a complex-valued Hilbert space. The elements of a `Bra` can be any
+subtype of `Number`.
+An `AbstractBra` cannot be instantiated, it serves as a supertype from
+which ket types are defined.
+"""
 abstract type AbstractBra{T<:Number} <: AbstractMatrix{Number} end
 Base.size(bra::AbstractBra) = size(bra.ψ)
 Base.getindex(bra::AbstractBra, I::Vararg{Int,2}) = getindex(bra.ψ, I...)
@@ -31,8 +49,20 @@ end
 is_wave_vector(ψ :: AbstractKet{<:Number}) = true
 is_wave_vector(ψ :: AbstractBra{<:Number}) = true
 
+"""
+    _wave_vector_error(ψ)
+
+Throws the `DomainError`, `"ψ must be a vector that satisfies \`norm(ψ,2) != 1\`."`.
+"""
 _wave_vector_error(ψ) = throw(DomainError(ψ, "ψ must be a vector that satisfies `norm(ψ,2) != 1`."))
 
+"""
+    Ket{T} <: AbstractKet{T} where T <: Number
+
+A ket representation of a general quantum state. When given invalid input, the
+constructor, `Ket(ψ)`, throws:
+* `DomainError` - If `ψ` is not normalized.
+"""
 struct Ket{T} <: AbstractKet{T}
     ψ :: Vector{T}
     atol :: Float64
@@ -55,6 +85,13 @@ struct Ket{T} <: AbstractKet{T}
     Ket(ψ :: AbstractBra{T}) where T <: Number = new{T}(ψ.ψ'[:], ψ.atol)
 end
 
+"""
+    Bra{T} <: AbstractBra{T} where T <: Number
+
+A bra representation of a general quantum state. When given invalid input, the
+constructor, `Bra(ψ)`, throws:
+* `DomainError` - If `ψ` is not normalized.
+"""
 struct Bra{T} <: AbstractBra{T}
     ψ :: Matrix{T}
     atol :: Float64
@@ -81,11 +118,24 @@ struct Bra{T} <: AbstractBra{T}
     Bra(ψ :: AbstractKet{T}) where T <: Number = new{T}(ψ.ψ', ψ.atol)
 end
 
-*(ket :: AbstractKet{<:Number}, bra :: AbstractBra{<:Number}) = ket.ψ * bra.ψ
+"""
+    *(ket :: AbstractKet{<:Number}, bra :: AbstractBra{<:Number}) :: Matrix{<:Number}
+    *(bra :: AbstractBra{<:Number}, ket :: AbstractKet{<:Number}) :: Number
+
+"""
+*(ket :: AbstractKet{<:Number}, bra :: AbstractBra{<:Number}) :: Matrix{<:Number} = ket.ψ * bra.ψ
 *(bra :: AbstractBra{<:Number}, ket :: AbstractKet{<:Number}) :: Number = (bra.ψ * ket.ψ)[1]
 
+"""
+    adjoint(ket :: AbstractKet{<:Number}) :: AbstractBra
+    adjoint(bra :: AbstractBra{<:Number}) :: AbstractKet
+"""
 adjoint(ket :: AbstractKet{<:Number}) = Bra(ket)
 adjoint(bra :: AbstractBra{<:Number}) = Ket(bra)
 
+"""
+    kron(kets :: Vararg{AbstractKet{<:Number}}; atol=ATOL) :: AbstractKet
+    kron(bras :: Vararg{AbstractBra{<:Number}}; atol=ATOL) :: AbstractBra
+"""
 kron(kets :: Vararg{AbstractKet{<:Number}}; atol=ATOL) = Ket(kron(map(ket -> ket.ψ, kets)...), atol=atol)
 kron(bras :: Vararg{AbstractBra{<:Number}}; atol=ATOL) = Bra(kron(map(bra -> bra.ψ, bras)...), atol=atol)

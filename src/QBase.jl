@@ -25,9 +25,15 @@ import Base: convert, *, kron, adjoint
 
 const ATOL = 1e-7
 
-include("./types/brakets.jl")
+# math utilities
+include("./math/matrices.jl")
+include("./math/probability.jl")
+include("./math/combinatorics.jl")
 
-# TODO: AbstractState
+# type exports
+include("./types/brakets.jl")
+include("./types/states.jl")
+
 # TODO: AbstractOperator < Matrix
     # TODO: Unitary
     # TODO: KrausOperator

@@ -77,11 +77,11 @@ function computational_basis_vectors(dim::Int64) :: Vector{Vector{Int64}}
 end
 
 """
-    is_hermitian( matrix :: Matrix; atol=ATOL :: Float64 ) :: Bool
+    is_hermitian( matrix :: Matrix; atol=ATOL :: Real ) :: Bool
 
 Returns `true` if the supplied matrix is hermitian (self-adjoint).
 """
-function is_hermitian(A :: Matrix; atol=ATOL :: Float64) :: Bool
+function is_hermitian(A :: Matrix; atol=ATOL :: Real) :: Bool
     indsm, indsn = axes(A)
     if indsm != indsn
         return false

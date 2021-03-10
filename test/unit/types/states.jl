@@ -18,6 +18,7 @@ using Test, QBase
         @test is_density_matrix([0 0;0 1])
         @test is_density_matrix([0.5 0.5;0.5 0.5])
         @test is_density_matrix([0.5 0.5im;-0.5im 0.5]::Matrix{Complex{Float64}})
+        @test is_density_matrix(State([1 0;0 0]))
     end
     @testset "using atol" begin
         ϵ = 1e-6
@@ -185,6 +186,36 @@ end
         @test ρ_A == [2 2;2 2]
         @test ρ_A.atol == 3
     end
+end
+
+@testset "rank() for State types" begin
+    @test 1 == rank(pure_state([1,-im]/sqrt(2)))
+    @test 2 == rank(State([1 0;0 1]/2))
+    @test 2 == rank(State([1 0;0 .1], atol=0.11))
+    @test 1 == rank(State([1 0;0 .1], atol=0.11), atol=0.11)
+end
+
+@testset "is_pure()" begin
+    @test is_pure(State([1 0;0 0]))
+    @test is_pure([0 0;0 1])
+
+    @test !is_pure(State([0.5 0;0 0.5]))
+    @test_throws DomainError is_pure(State([1 0;0 1]))
+
+    @test !is_pure(State([1 0;0 1e-5], atol=1e-4))
+    @test is_pure(State([1 0;0 1e-5], atol=1e-4), atol=1e-4)
+
+end
+
+@testset "is_mixed()" begin
+    @test !is_mixed(State([1 0;0 0]))
+    @test !is_mixed([0 0;0 1])
+
+    @test is_mixed(State([0.5 0;0 0.5]))
+    @test_throws DomainError is_mixed(State([1 0;0 1]))
+
+    @test is_mixed(State([1 0;0 1e-5], atol=1e-4))
+    @test !is_mixed(State([1 0;0 1e-5], atol=1e-4), atol=1e-4)
 end
 
 end

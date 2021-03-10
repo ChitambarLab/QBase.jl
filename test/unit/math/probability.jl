@@ -83,7 +83,6 @@ end
     marginals = Marginals([0.3,0.6,0.1])
     conditionals = Conditionals([0.3 0.5 0.4;0.7 0.5 0.6])
     @test outcome_probabilities(marginals,conditionals) ≈ [0.43,0.57]
-    @test is_probability_distribution(outcome_probabilities(marginals,conditionals))
 end
 
 end

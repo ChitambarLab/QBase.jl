@@ -22,6 +22,7 @@ using Base.Iterators: flatten
 
 # Methods extended by QBase.jl
 import Base: convert, *, kron, adjoint
+import LinearAlgebra: rank
 
 const ATOL = 1e-7
 
@@ -43,6 +44,7 @@ include("./types/states.jl")
 # TODO: AbstractMeasurement
 
 include("./constructors/brakets.jl")
+include("./constructors/states.jl")
 
 ### Below this line is v0.1 material
 

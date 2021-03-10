@@ -30,19 +30,19 @@ Base.getindex(bra::AbstractBra, I::Vararg{Int,2}) = getindex(bra.ψ, I...)
 Base.setindex!(bra::AbstractBra, val, I::Vararg{Int,2}) = (bra.ψ[I...] = val)
 
 """
-    is_wave_vector( ψ :: Vector; atol=ATOL :: Float64) :: Bool
+    is_wave_vector( ψ :: Vector; atol=ATOL :: Real) :: Bool
 
 Returns `true` if vector `ψ` is a valid ket representation of a quantum state:
 
 * `ψ` is a real or complex-valued vector.
 * `ψ` is normalized with respect to the bra-ket inner prodcut (`ψ' * ψ == 0`).
 """
-function is_wave_vector(ψ; atol=ATOL :: Float64)
+function is_wave_vector(ψ; atol=ATOL :: Real)
     isapprox( norm(ψ,2), 1, atol=atol )
 end
 function is_wave_vector(
     ψ :: Union{Matrix{<:Number},Adjoint{T,Matrix{T}}};
-    atol=ATOL :: Float64
+    atol=ATOL :: Real
 ) where T <: Number
     min(size(ψ)...) == 1 ? is_wave_vector(ψ[:], atol=atol) : false
 end
@@ -67,18 +67,18 @@ struct Ket{T} <: AbstractKet{T}
     ψ :: Vector{T}
     atol :: Float64
     Ket(
-        ψ :: Vector{<:Number}; atol=ATOL :: Float64
+        ψ :: Vector{<:Number}; atol=ATOL :: Real
     ) = is_wave_vector(ψ, atol=atol) ? new{eltype(ψ)}(ψ, atol) : _wave_vector_error(ψ)
     Ket(
-        ψ :: Matrix{<:Number}; atol=ATOL :: Float64
+        ψ :: Matrix{<:Number}; atol=ATOL :: Real
     ) = is_wave_vector(ψ, atol=atol) ? new{eltype(ψ)}(ψ[:], atol) : _wave_vector_error(ψ)
     Ket(
-        ψ :: Adjoint{T,Vector{T}}; atol=ATOL :: Float64
+        ψ :: Adjoint{T,Vector{T}}; atol=ATOL :: Real
     ) where T <: Number = is_wave_vector(ψ, atol=atol) ? new{eltype(ψ)}(
         ψ[:], atol
     ) : _wave_vector_error(ψ)
     Ket(
-        ψ :: Adjoint{T,Matrix{T}}; atol=ATOL :: Float64
+        ψ :: Adjoint{T,Matrix{T}}; atol=ATOL :: Real
     ) where T <: Number = is_wave_vector(ψ, atol=atol) ? new{eltype(ψ)}(
         ψ[:], atol
     ) : _wave_vector_error(ψ)
@@ -96,22 +96,22 @@ struct Bra{T} <: AbstractBra{T}
     ψ :: Matrix{T}
     atol :: Float64
     Bra(
-        ψ :: Matrix{<:Number}; atol=ATOL :: Float64
+        ψ :: Matrix{<:Number}; atol=ATOL :: Real
     ) = is_wave_vector(ψ[:], atol=atol) ? new{eltype(ψ)}(
         ψ, atol
     ) : _wave_vector_error(ψ)
     Bra(
-        ψ :: Adjoint{T, Matrix{T}}; atol=ATOL :: Float64
+        ψ :: Adjoint{T, Matrix{T}}; atol=ATOL :: Real
     ) where T <: Number = is_wave_vector(ψ, atol=atol) ? new{eltype(ψ)}(
         ψ, atol
     ) : _wave_vector_error(ψ)
     Bra(
-        ψ :: Vector{<:Number}; atol=ATOL :: Float64
+        ψ :: Vector{<:Number}; atol=ATOL :: Real
     ) = is_wave_vector(ψ, atol=atol) ? new{eltype(ψ)}(
             transpose!(zeros(eltype(ψ), 1, length(ψ)), ψ), atol
         ) : _wave_vector_error(ψ)
     Bra(
-        ψ :: Adjoint{T,Vector{T}}; atol=ATOL :: Float64
+        ψ :: Adjoint{T,Vector{T}}; atol=ATOL :: Real
     ) where T <: Number = is_wave_vector(ψ, atol=atol) ? new{eltype(ψ)}(
             Matrix{T}(ψ), atol
         ) : _wave_vector_error(ψ)

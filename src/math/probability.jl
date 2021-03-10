@@ -1,6 +1,11 @@
-export is_probability_distribution, Marginals
+export is_probability_distribution, Marginals, AbstractProbabilities
 export is_conditional_distribution, Conditionals
 export joint_probabilities, outcome_probabilities, cvx_combo
+
+abstract type AbstractProbabilities{T<:Number} <: AbstractVector{Number} end
+Base.size(p::AbstractProbabilities) = size(p.probabilities)
+Base.getindex(p::AbstractProbabilities, id::Int) = getindex(p.probabilities, id...)
+Base.setindex!(p::AbstractProbabilities, v, id::Int) = (p.probabilities[id...] = v)
 
 """
     is_probability_distribution( probabilities :: Vector ) :: Bool
@@ -9,12 +14,14 @@ Returns `true` if the provided vector is a valid probability distribution:
 * `sum(probabilities) ≈ 1`
 * `p[i] ≥ 0 ∀ i`
 """
-function is_probability_distribution(probabilities::Vector)::Bool
+function is_probability_distribution(probabilities::Vector{<:Number})::Bool
     is_positive = all(p -> (p > 0) || isapprox(p, 0, atol=10e-7), probabilities)
     is_normalized = isapprox(sum(probabilities), 1, atol=10e-6)
 
     (is_positive & is_normalized)
 end
+is_probability_distribution(::AbstractProbabilities) = true
+
 
 """
     Marginals( probabilities :: Vector ) <: AbstractVector{Float64}
@@ -22,11 +29,8 @@ end
 A struct representing a marginal probability distribution function. All elements
 in the marginal distribution must be positive and their sum must be one.
 """
-struct Marginals <: AbstractVector{Float64}
+struct Marginals <: AbstractProbabilities{Float64}
     probabilities :: Vector{Float64}
-    Base.size(p::Marginals) = size(p.probabilities)
-    Base.getindex(p::Marginals, id::Int) = getindex(p.probabilities, id...)
-    Base.setindex!(p::Marginals, v, id::Int) = (p.probabilities[id...] = v)
     Marginals(probabilities) = is_probability_distribution(probabilities) ? new(probabilities) : throw(DomainError(probabilities, "is not a valid probability distribution."))
 end
 
@@ -77,7 +81,7 @@ end
 #     cvx_combo: A single data structure representing the convex combination.
 # """
 function cvx_combo(probabilities, elements)
-    if !(QMath.is_probability_distribution(probabilities))
+    if !(is_probability_distribution(probabilities))
         throw(ArgumentError("probabilities are not normalized/positive"))
     elseif length(probabilities) != length(elements)
         throw(ArgumentError("The number of elements does not match the number of weights"))

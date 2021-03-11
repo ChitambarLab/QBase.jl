@@ -31,7 +31,7 @@ end
 
 @testset "mixed_state()" begin
     ρ_mix = mixed_state(
-        Marginals([0.7,0.2,0.1]),
+        Probabilities([0.7,0.2,0.1]),
         State.([[1 0 0;0 0 0;0 0 0],[0 0 0;0 0 0;0 0 1],[0 0 0;0 1 0;0 0 0]])
     )
     @test ρ_mix == [0.7 0 0;0 0.1 0;0 0 0.2]
@@ -126,7 +126,7 @@ end
 @testset "planar_symmetric_qubit_states()" begin
     @test isapprox(planar_symmetric_qubit_states(2), [[1 0;0 0],[0 0;0 1]], atol=1e-7)
     @test isapprox(planar_symmetric_qubit_states(3), trine_qubit_states(),atol=1e-7)
-        
+
     @testset "scanning over cases verifying right number are computed" begin
         for n in 5:50
             qubits = planar_symmetric_qubit_states(n)

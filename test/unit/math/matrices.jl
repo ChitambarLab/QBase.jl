@@ -75,4 +75,28 @@ end
     end
 end
 
+@testset "n_product_id()" begin
+    m0 = [1 0;0 0]
+    m1 = [0 0;1 0]
+    m2 = [0 0 0;0 0 0;0 1 0;0 0 0]
+    m3 = [0 0 0 0;0 0 0 0;0 0 0 1]
+
+    col_id = n_product_id([1,1],[2,2])
+    row_id = n_product_id([1,2],[2,2])
+    @test col_id == 1
+    @test row_id == 2
+    @test kron(m0,m1)[row_id,col_id] == 1
+
+    col_id = n_product_id([1,1,2,4],[2,2,3,4])
+    row_id = n_product_id([1,2,3,3],[2,2,4,3])
+    @test col_id == 8
+    @test row_id == 21
+    @test kron(m0,m1,m2,m3)[row_id,col_id] == 1
+
+    @testset "errors" begin
+        @test_throws DomainError n_product_id([1,1,1],[2,2])
+        @test_throws DomainError n_product_id([1,3],[2,2])
+    end
+end
+
 end

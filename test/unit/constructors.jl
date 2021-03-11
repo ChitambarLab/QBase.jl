@@ -6,7 +6,7 @@ using Test, QBase
         # run only julia files in test directory
         if occursin(r"^.*\.jl$", test)
             println("./unit/constructors/$test")
-            include("./constructors/$test")
+            @time include("./constructors/$test")
         end
     end
 end

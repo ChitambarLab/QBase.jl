@@ -1,5 +1,3 @@
-using Combinatorics: permutations, combinations
-
 export stirling2, stirling2_partitions, stirling2_matrices
 export permutations, permutation_matrices
 export combinations, n_choose_k_matrices
@@ -30,9 +28,7 @@ Each partition is a vector containing a  set of `k` vectors designating each gro
 This recursive algorithm was inspired by [this blog](https://devblogs.microsoft.com/oldnewthing/20140324-00/?p=1413).
 """
 function stirling2_partitions(n :: Int64, k :: Int64) :: Vector{Vector{Vector{Int64}}}
-    if (n ==  0) || (k == 0)
-        return Vector{Vector{Vector{Int64}}}(undef,0)
-    elseif n <  k
+    if (n ==  0) || (k == 0) || (n < k)
         return Vector{Vector{Vector{Int64}}}(undef,0)
     elseif (k == 1)
         return [[[1:n...]]]
@@ -48,31 +44,33 @@ function stirling2_partitions(n :: Int64, k :: Int64) :: Vector{Vector{Vector{In
 end
 
 # helper function for adding a new group to a partition
-function _stirling2_add_partition(n, partitions)
-    new_partitions = []
+function _stirling2_add_partition(n :: Int64, partitions :: Vector{Vector{Vector{Int64}}}) :: Vector{Vector{Vector{Int64}}}
     if length(partitions) == 0
-        new_partitions = [[[n]]]
+        return [[[n]]] :: Vector{Vector{Vector{Int64}}}
     else
-        new_partitions = map(s -> cat(s, [[n]], dims=1), partitions)
+        return map(s -> cat(s, [[n]], dims=1), partitions) :: Vector{Vector{Vector{Int64}}}
     end
-
-    new_partitions
 end
 
 # helper function for extending existing groups with a new element
-function _stirling2_extend_partitions(n, k, partitions)
-    new_partitions = []
-    map(partition -> begin
+function _stirling2_extend_partitions(n :: Int64, k :: Int64, partitions :: Vector{Vector{Vector{Int64}}}) :: Vector{Vector{Vector{Int64}}}
+    new_partitions = Vector{Vector{Vector{Int64}}}(undef, length(partitions)*k)
+    id = 1
+
+    _extend_partition_set(partition :: Vector{Vector{Int64}}) = begin
         for i in 1:k
-            push!(new_partitions, cat(partition[1:k .!= i], [cat(partition[i], [n], dims=1)], dims=1))
+            new_partitions[id] = cat(partition[1:k .!= i], [cat(partition[i], [n], dims=1)], dims=1)
+            id += 1
         end
-    end, partitions)
+    end
+
+    map(_extend_partition_set, partitions)
 
     new_partitions
 end
 
 """
-    stirling2_matrices( n :: Int64, k :: Int64 ) :: Vector{Matrix{Int64}}
+    stirling2_matrices( n :: Int64, k :: Int64 ) :: Vector{Matrix{Bool}}
 
 Generates the set of matrices with `k` rows and `n` columns where rows correspond
 to the groups and columns are the grouped elements. A non-zero element designates
@@ -80,33 +78,35 @@ that the column id is grouped into the corresponding row.
 
 A `DomainError` is thrown if `n ≥ k ≥ 1` is not satisfied.
 """
-function stirling2_matrices(n :: Int64, k :: Int64) :: Vector{Matrix{Int64}}
+function stirling2_matrices(n :: Int64, k :: Int64) :: Vector{Matrix{Bool}}
     if !(n ≥ k ≥ 1)
         throw(DomainError((n,k), "Inputs (n,k) do not satisfy `n ≥ k ≥ 1`."))
     end
 
-    map(partition -> begin
-        m = zeros(Int64, k, n)
+    _partition_to_matrix(partition :: Vector{Vector{Int64}}) :: Matrix{Bool} = begin
+        m = fill(false, k, n)
         for row_id in 1:k
             col_ids = partition[row_id]
-            m[row_id,col_ids] .= 1
+            m[row_id,col_ids] .= true
         end
 
         return m
-    end, stirling2_partitions(n, k))
+    end
+
+    map(_partition_to_matrix, stirling2_partitions(n, k))
 end
 
 """
-    permutation_matrices( dim :: Int64 ) :: Vector{Matrix{Int64}}
+    permutation_matrices( dim :: Int64 ) :: Vector{Matrix{Bool}}
 
 Generates the set of square permutation matrices of dimension `dim`.
 """
-function permutation_matrices(dim :: Int64) :: Vector{Matrix{Int64}}
-    map(perm_ids -> Matrix{Int64}(I,dim,dim)[:,perm_ids], permutations(1:dim))
+function permutation_matrices(dim :: Int64) :: Vector{Matrix{Bool}}
+    map(perm_ids -> Matrix{Bool}(I,dim,dim)[:,perm_ids], permutations(1:dim))
 end
 
 """
-    n_choose_k_matrices( n :: Int64, k :: Int64 ) :: Vector{Matrix{Int64}}
+    n_choose_k_matrices( n :: Int64, k :: Int64 ) :: Vector{Matrix{Bool}}
 
 Generates a set of `n` by `k` matrices which represent all combinations of selecting
 `k` columns from `n` rows.  Each column, contains a single non-zero element and
@@ -114,19 +114,20 @@ Generates a set of `n` by `k` matrices which represent all combinations of selec
 
 A `DomainError` is thrown if `n ≥ k ≥ 1` is not satisfied.
 """
-function n_choose_k_matrices(n :: Int64, k :: Int64) :: Vector{Matrix{Int64}}
+function n_choose_k_matrices(n :: Int64, k :: Int64) :: Vector{Matrix{Bool}}
     if !(n ≥ k ≥ 1)
         throw(DomainError((n,k), "Inputs (n,k) must satisfy `n ≥ k ≥ 1`."))
     end
-
-    map(combo -> begin
-        m = zeros(Int64,n,k)
+    _combo_to_matrix(combo :: Vector{Int64}) :: Matrix{Bool} = begin
+        m = fill(false,n,k)
         for col_id in 1:k
-            m[combo[col_id],col_id] = 1
+            m[combo[col_id],col_id] = true
         end
 
         return m
-    end, combinations(1:n, k))
+    end
+
+    map(_combo_to_matrix, combinations(1:n, k))
 end
 
 """

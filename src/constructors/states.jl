@@ -9,7 +9,7 @@ export planar_symmetric_qubit_states, mirror_symmetric_qubit_states
 export trine_qubit_states, bb84_qubit_states, sic_qubit_states
 
 """
-    pure_state( ψ :: AbstractKet; atol=ATOL :: Real ) :: State
+    pure_state( ψ :: AbstractKet; atol=ATOL :: Float64 ) :: State
 
 A state is considered "pure" if it is rank-one. A rank-one density matrix
 is constructed by taking the outer-product of a `Ket` or `Bra`.
@@ -17,17 +17,17 @@ The method alternatively accepts a `Vector` input.
 
     pure_state( ψ :: Vector ) :: State
 """
-function pure_state(ket::AbstractKet; atol=ATOL :: Real) :: AbstractState
+function pure_state(ket::AbstractKet; atol=ATOL :: Float64) :: AbstractState
     State(ket.ψ*ket.ψ', atol=atol)
 end
-function pure_state(bra::AbstractBra; atol=ATOL :: Real) :: AbstractState
+function pure_state(bra::AbstractBra; atol=ATOL :: Float64) :: AbstractState
     State(bra.ψ'*bra.ψ, atol=atol)
 end
-function pure_state(ψ::Vector{<:Number}; atol=ATOL :: Real) :: AbstractState
+function pure_state(ψ::Vector{<:Number}; atol=ATOL :: Float64) :: AbstractState
     State(ψ*ψ', atol=atol)
 end
 function pure_state(
-    ψ::Adjoint{T,Vector{T}} where T <: Number; atol=ATOL :: Real
+    ψ::Adjoint{T,Vector{T}} where T <: Number; atol=ATOL :: Float64
 ) :: AbstractState
     State(ψ'*ψ, atol=atol)
 end
@@ -43,7 +43,7 @@ Constructs the statistical mixture (weighted average) of quantum states.
 function mixed_state(
     priors::AbstractVector{<:Number},
     states::Vector{<:AbstractMatrix{<:Number}};
-    atol=ATOL :: Real
+    atol=ATOL :: Float64
 ) :: AbstractState
     if !is_probability_distribution(priors)
         throw(DomainError(priors, "Input `priors` is not a valid probability distribution."))

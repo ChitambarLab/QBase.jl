@@ -19,6 +19,7 @@ module QBase
 
 using LinearAlgebra
 using Base.Iterators: flatten
+using Combinatorics: permutations, combinations
 
 # Methods extended by QBase.jl
 import Base: convert, *, kron, adjoint
@@ -28,10 +29,10 @@ const ATOL = 1e-7
 
 # math utilities
 include("./math/matrices.jl")
-include("./math/probability.jl")
 include("./math/combinatorics.jl")
 
 # type exports
+include("./types/probabilities.jl")
 include("./types/brakets.jl")
 include("./types/states.jl")
 

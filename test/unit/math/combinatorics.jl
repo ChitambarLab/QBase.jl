@@ -1,8 +1,6 @@
-using Test
+using Test, QBase
 
 @testset "./src/math/combinatorics.jl" begin
-
-using QBase
 
 @testset "stirling2()" begin
     @testset "domain errors" begin

@@ -12,14 +12,14 @@ Base.getindex(state::AbstractState{<:Number}, I::Vararg{Int,2}) = getindex(state
 Base.setindex!(state::AbstractState{<:Number}, val, I::Vararg{Int,2}) = (state.ρ[I...] = val)
 
 """
-    is_density_matrix( ρ :: Matrix; atol=ATOL :: Real ) :: Bool
+    is_density_matrix( ρ :: Matrix; atol=ATOL :: Float64 ) :: Bool
 
 Returns true if input `ρ` is:
 * Hermitian
 * Positive Semi-Definite
 * Trace[ρ] = 1 (normalization)
 """
-function is_density_matrix(ρ::Matrix; atol=ATOL :: Real)::Bool
+function is_density_matrix(ρ::Matrix; atol=ATOL :: Float64)::Bool
     if !is_hermitian(ρ, atol=atol)
         return false
     elseif !isapprox(tr(ρ), 1, atol=atol)
@@ -33,7 +33,7 @@ end
 is_density_matrix(::AbstractState) = true
 
 """
-    _density_matrix_error(ρ; atol=ATOL :: Real)
+    _density_matrix_error(ρ; atol=ATOL :: Float64)
 
 Throws a `DomainError` indicating why density matrix `ρ` is not a density matrix
 the error messages are self-explanatory and are listed as follows:
@@ -41,7 +41,7 @@ the error messages are self-explanatory and are listed as follows:
 * `"Density matrix `ρ` is not trace-one."`
 * `"Density matrix `ρ` is not positive semi-definite."`
 """
-function _density_matrix_error(ρ; atol=ATOL :: Real)
+function _density_matrix_error(ρ; atol=ATOL :: Float64)
     if !is_hermitian(ρ, atol=atol)
         throw(DomainError(ρ, "Density matrix `ρ` is not hermitian."))
     elseif !isapprox(tr(ρ), 1, atol=atol)
@@ -65,31 +65,31 @@ struct State{T} <: AbstractState{T}
     ρ :: Matrix{T}
     atol :: Float64
     State(
-        ρ :: Matrix{<:Number}; atol=ATOL :: Real
+        ρ :: Matrix{<:Number}; atol=ATOL :: Float64
     ) = is_density_matrix(ρ, atol=atol) ? new{eltype(ρ)}(ρ, atol) : _density_matrix_error(ρ, atol=atol)
     State(
-        ρ :: Adjoint{T,Matrix{T}}; atol=ATOL :: Real
+        ρ :: Adjoint{T,Matrix{T}}; atol=ATOL :: Float64
     ) where T <: Number = is_density_matrix(ρ[:,:], atol=atol) ? new{eltype(ρ)}(ρ[:,:], atol) : _density_matrix_error(ρ[:,:], atol=atol)
 end
 
 """
-    kron(states :: Vararg{AbstractState}; atol=ATOL :: Real)
+    kron(states :: Vararg{AbstractState}; atol=ATOL :: Float64)
 """
-kron(states :: Vararg{AbstractState}; atol=ATOL :: Real) = State(
+kron(states :: Vararg{AbstractState}; atol=ATOL :: Float64) = State(
     kron(map(state -> state.ρ, states)...),
 atol=atol)
 
 """
     partial_trace(ρ::AbstractState, system::Vector{Int64}, id::Int64)
 """
-partial_trace(ρ::AbstractState, system::Vector{Int64}, id::Int64; atol=ATOL :: Real) = begin
+partial_trace(ρ::AbstractState, system::Vector{Int64}, id::Int64; atol=ATOL :: Float64) = begin
     State(partial_trace(ρ.ρ, system, id), atol=atol)
 end
 
 """
-    rank(state :: AbstractState; atol=ATOL :: Real)
+    rank(state :: AbstractState; atol=ATOL :: Float64)
 """
-rank(state :: AbstractState; atol=ATOL :: Real) = rank(state.ρ, atol=atol)
+rank(state :: AbstractState; atol=ATOL :: Float64) = rank(state.ρ, atol=atol)
 
 """
     is_pure(ρ :: AbstractState, atol=ATOL) :: Bool

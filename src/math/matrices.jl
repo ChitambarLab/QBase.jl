@@ -1,5 +1,7 @@
 export partial_trace, computational_basis_vectors
 
+export n_product_id
+
 # validation methods
 export commutes, is_hermitian, is_positive_semidefinite
 
@@ -77,11 +79,11 @@ function computational_basis_vectors(dim::Int64) :: Vector{Vector{Int64}}
 end
 
 """
-    is_hermitian( matrix :: Matrix; atol=ATOL :: Real ) :: Bool
+    is_hermitian( matrix :: Matrix; atol=ATOL :: Float64 ) :: Bool
 
 Returns `true` if the supplied matrix is hermitian (self-adjoint).
 """
-function is_hermitian(A :: Matrix; atol=ATOL :: Real) :: Bool
+function is_hermitian(A :: Matrix; atol=ATOL :: Float64) :: Bool
     indsm, indsn = axes(A)
     if indsm != indsn
         return false
@@ -119,7 +121,40 @@ function is_positive_semidefinite(A :: Matrix; atol=ATOL) :: Bool
 end
 
 """
-    commutes(A :: Matrix, B :: Matrix) :: Bool
+    n_product_id( system_ids :: Vector{Int64}, system :: Vector{Int64} ) :: Int64
+
+For a given tensor product `system` and coordingate `system_ids` returns the corresponding
+index of the tensor product.
+The tenosr product `system` is a vector of positive definite integers specifying
+the dimension of each of the matrices in the tensor product.
+The `system_ids` is a vector of positive definite integers specifying the target
+index in each matrix in the tensor product.
+The `system` and `system_ids` should describe either row or column indices of the
+tensor product.
+
+A `DomainError` is thrown if any index in `system_ids` is not valid or the number of
+elements in `system_ids` does not equal that of `system`.
+"""
+function n_product_id(system_ids :: Vector{Int64}, system::Vector{Int64}) :: Int64
+    num_ids = length(system_ids)
+    if num_ids != length(system)
+        throw(DomainError(system_ids, "id does not contain the right number of elements"))
+    elseif !all(x -> system[x] ≥ system_ids[x] ≥ 1, 1:num_ids)
+        throw(DomainError(system, "not all num inputs are valid"))
+    end
+
+    id = 1
+    multiplier = 1
+    for i in num_ids:-1:1
+        multiplier *= (i+1 > num_ids) ? 1 : system[i+1]
+        id += (system_ids[i] - 1) * multiplier
+    end
+
+    id
+end
+
+"""
+    commutes(A :: Matrix, B :: Matrix; atol=ATOL :: Float64) :: Bool
 
 Returns true if matrix `A` commutes with matrix `B`. Two matrices commute if
 `A*B == B*A`. The matrices must have compatible dimensions:
@@ -128,10 +163,10 @@ Returns true if matrix `A` commutes with matrix `B`. Two matrices commute if
 
 A `DomainError` is thrown if the matrices are not compatible.
 """
-function commutes(A :: Matrix, B :: Matrix) :: Bool
+function commutes(A :: Matrix, B :: Matrix; atol=ATOL :: Float64) :: Bool
     if (size(A)[1] != size(B)[2]) || (size(A)[2] != size(B)[1])
         throw(DomainError((A,B), "size(A) is not compatible with size(B)."))
     end
 
-    all(isapprox.(A*B, B*A, atol=1e-7))
+    all(isapprox.(A*B, B*A, atol=atol))
 end

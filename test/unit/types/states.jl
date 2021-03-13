@@ -1,4 +1,5 @@
-using Test, QBase
+using Test, LinearAlgebra
+using QBase
 
 @testset "./src/types/states.jl" begin
 
@@ -72,25 +73,21 @@ end
     @testset "type inheritance" begin
         ρ_int = State([1 0;0 0])
         @test ρ_int isa State{Int64}
-        @test ρ_int isa AbstractState{Int64}
         @test ρ_int isa AbstractState
         @test ρ_int == [1 0;0 0]
 
         ρ_float = State([1. 0.;0. 0.])
         @test ρ_float isa State{Float64}
-        @test ρ_float isa AbstractState{Float64}
         @test ρ_float isa AbstractState
         @test ρ_float == [1 0;0 0]
 
         ρ_complex = State([0.5 0.5im;-0.5im 0.5])
         @test ρ_complex isa State{Complex{Float64}}
-        @test ρ_complex isa AbstractState{Complex{Float64}}
         @test ρ_complex isa AbstractState
         @test ρ_complex == [0.5 0.5im;-0.5im 0.5]
 
         ρ_rational = State([1//2 1//2; 1//2 1//2])
         @test ρ_rational isa State{Rational{Int64}}
-        @test ρ_rational isa AbstractState{Rational{Int64}}
         @test ρ_rational isa AbstractState
         @test ρ_rational == [0.5 0.5;0.5 0.5]
     end

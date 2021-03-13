@@ -37,14 +37,11 @@ Returns `true` if vector `ψ` is a valid ket representation of a quantum state:
 * `ψ` is a real or complex-valued vector.
 * `ψ` is normalized with respect to the bra-ket inner prodcut (`ψ' * ψ == 0`).
 """
-function is_wave_vector(ψ; atol=ATOL :: Float64)
+function is_wave_vector(ψ :: AbstractVector; atol=ATOL :: Float64)
     isapprox( norm(ψ,2), 1, atol=atol )
 end
-function is_wave_vector(
-    ψ :: Union{Matrix{<:Number},Adjoint{T,Matrix{T}}};
-    atol=ATOL :: Float64
-) where T <: Number
-    min(size(ψ)...) == 1 ? is_wave_vector(ψ[:], atol=atol) : false
+function is_wave_vector(ψ :: Adjoint{T, Vector{T}}; atol=ATOL :: Float64) where T <: Number
+    isapprox( norm(ψ,2), 1, atol=atol )
 end
 is_wave_vector(ψ :: AbstractKet{<:Number}) = true
 is_wave_vector(ψ :: AbstractBra{<:Number}) = true
@@ -57,64 +54,58 @@ Throws the `DomainError`, `"ψ must be a vector that satisfies \`norm(ψ,2) != 1
 _wave_vector_error(ψ) = throw(DomainError(ψ, "ψ must be a vector that satisfies `norm(ψ,2) != 1`."))
 
 """
-    Ket{T} <: AbstractKet{T} where T <: Number
+    Ket(ψ :: Vector{T}; atol=ATOL :: Float64) where T <: Number
 
-A ket representation of a general quantum state. When given invalid input, the
-constructor, `Ket(ψ)`, throws:
+A child of `AbstractKet{T}` that represents a general quantum state. If called with
+an adjoint vector `ψ'`, the adjoint will be taken on construction.
+
+    Ket(ψ :: Adjoint{Vector{T}}; atol=ATOL :: Float64) where T <: Number
+
+Similarly a `Bra` can be converted into a `Ket` via the adjoint.
+
+    Ket(ψ :: AbstractBra{T}; atol=ATOL :: Float64) where T <: Number
+
+When given invalid input, the constructor, `Ket(ψ)`, throws:
 * `DomainError` - If `ψ` is not normalized.
 """
 struct Ket{T} <: AbstractKet{T}
     ψ :: Vector{T}
     atol :: Float64
     Ket(
-        ψ :: Vector{<:Number}; atol=ATOL :: Float64
-    ) = is_wave_vector(ψ, atol=atol) ? new{eltype(ψ)}(ψ, atol) : _wave_vector_error(ψ)
-    Ket(
-        ψ :: Matrix{<:Number}; atol=ATOL :: Float64
-    ) = is_wave_vector(ψ, atol=atol) ? new{eltype(ψ)}(ψ[:], atol) : _wave_vector_error(ψ)
+        ψ :: Vector{T}; atol=ATOL :: Float64
+    ) where T <: Number = is_wave_vector(ψ, atol=atol) ? new{T}(ψ, atol) : _wave_vector_error(ψ)
     Ket(
         ψ :: Adjoint{T,Vector{T}}; atol=ATOL :: Float64
-    ) where T <: Number = is_wave_vector(ψ, atol=atol) ? new{eltype(ψ)}(
-        ψ[:], atol
+    ) where T <: Number = is_wave_vector(ψ, atol=atol) ? new{T}(
+        ψ', atol
     ) : _wave_vector_error(ψ)
-    Ket(
-        ψ :: Adjoint{T,Matrix{T}}; atol=ATOL :: Float64
-    ) where T <: Number = is_wave_vector(ψ, atol=atol) ? new{eltype(ψ)}(
-        ψ[:], atol
-    ) : _wave_vector_error(ψ)
-    Ket(ψ :: AbstractBra{T}) where T <: Number = new{T}(ψ.ψ'[:], ψ.atol)
+    Ket(ψ :: AbstractBra{T}) where T <: Number = new{T}(ψ.ψ', ψ.atol)
 end
 
 """
-    Bra{T} <: AbstractBra{T} where T <: Number
+    Bra(ψ :: Adjoint{T,Vector{T}}; atol=ATOL :: Float64) where T <: Number
 
-A bra representation of a general quantum state. When given invalid input, the
-constructor, `Bra(ψ)`, throws:
+A child of `AbstractBra{T}` that represents a general quantum state. If called with
+an `Vector{T}` type, the adjoint will automatically be taken `ψ'`.
+
+    Bra(ψ :: Vector{T}; atol=ATOL :: Float64) where T <: Number
+
+Similarly a `Ket` can be converted into a `Bra` via the adjoint.
+
+    Bra(ψ :: AbstractKet{T}; atol=ATOL :: Float64) where T <: Number
+
+When given invalid input, the constructor, `Ket(ψ)`, throws:
 * `DomainError` - If `ψ` is not normalized.
 """
 struct Bra{T} <: AbstractBra{T}
-    ψ :: Matrix{T}
+    ψ :: Adjoint{T,Vector{T}}
     atol :: Float64
     Bra(
-        ψ :: Matrix{<:Number}; atol=ATOL :: Float64
-    ) = is_wave_vector(ψ[:], atol=atol) ? new{eltype(ψ)}(
-        ψ, atol
-    ) : _wave_vector_error(ψ)
-    Bra(
-        ψ :: Adjoint{T, Matrix{T}}; atol=ATOL :: Float64
-    ) where T <: Number = is_wave_vector(ψ, atol=atol) ? new{eltype(ψ)}(
-        ψ, atol
-    ) : _wave_vector_error(ψ)
-    Bra(
-        ψ :: Vector{<:Number}; atol=ATOL :: Float64
-    ) = is_wave_vector(ψ, atol=atol) ? new{eltype(ψ)}(
-            transpose!(zeros(eltype(ψ), 1, length(ψ)), ψ), atol
-        ) : _wave_vector_error(ψ)
+        ψ :: Vector{T}; atol=ATOL :: Float64
+    ) where T <: Number = is_wave_vector(ψ, atol=atol) ? new{T}(ψ', atol) : _wave_vector_error(ψ)
     Bra(
         ψ :: Adjoint{T,Vector{T}}; atol=ATOL :: Float64
-    ) where T <: Number = is_wave_vector(ψ, atol=atol) ? new{eltype(ψ)}(
-            Matrix{T}(ψ), atol
-        ) : _wave_vector_error(ψ)
+    ) where T <: Number = is_wave_vector(ψ, atol=atol) ? new{T}(ψ, atol) : _wave_vector_error(ψ)
     Bra(ψ :: AbstractKet{T}) where T <: Number = new{T}(ψ.ψ', ψ.atol)
 end
 
@@ -138,4 +129,4 @@ adjoint(bra :: AbstractBra{<:Number}) = Ket(bra)
     kron(bras :: Vararg{AbstractBra{<:Number}}; atol=ATOL) :: AbstractBra
 """
 kron(kets :: Vararg{AbstractKet{<:Number}}; atol=ATOL) = Ket(kron(map(ket -> ket.ψ, kets)...), atol=atol)
-kron(bras :: Vararg{AbstractBra{<:Number}}; atol=ATOL) = Bra(kron(map(bra -> bra.ψ, bras)...), atol=atol)
+kron(bras :: Vararg{AbstractBra{<:Number}}; atol=ATOL) = Bra(kron(map(bra -> bra.ψ', bras)...), atol=atol)

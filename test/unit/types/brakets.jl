@@ -8,6 +8,7 @@ using LinearAlgebra
     @testset "simple valid wavefunction" begin
         @test is_wave_vector([1;0])
         @test is_wave_vector([1])
+        @test is_wave_vector([0,-im]')
         @test is_wave_vector([1;1;-1]/sqrt(3))
         @test is_wave_vector([1;im]/sqrt(2))
     end
@@ -15,25 +16,16 @@ using LinearAlgebra
     @testset "invalid wavefunctions" begin
         @test !is_wave_vector([0;0])
         @test !is_wave_vector([1;1])
-        @test !is_wave_vector([1 0;0 0])
-        @test !is_wave_vector([1 0;0 0]')
+        @test_throws MethodError is_wave_vector([1 0;0 0])
+        @test_throws MethodError is_wave_vector([1 0;0 0]')
     end
 
     @testset "valid input vector types" begin
         @test is_wave_vector([1,0])
         @test is_wave_vector([1,0]')
         @test is_wave_vector([1;0])
-        @test is_wave_vector(ones(Int64, 1,2)/sqrt(2))
-        @test is_wave_vector(ones(Int64, 1,2)'/sqrt(2))
         @test is_wave_vector(Ket([1,0]))
         @test is_wave_vector(Bra([1,0]))
-    end
-
-    @testset "valid inputs eltypes" begin
-        @test is_wave_vector([1,0]::Vector{Int64})
-        @test is_wave_vector([1.0,0.0]::Vector{Float64})
-        @test is_wave_vector([1//1,0//1]::Vector{Rational{Int64}})
-        @test is_wave_vector([1.0+im*0.0,0.0+im*0.0 ]::Vector{Complex{Float64}})
     end
 
     @testset "tuning atol" begin
@@ -112,14 +104,8 @@ end
         ψ = Ket([1,0] :: Vector{Int64})
         @test ψ == ψ_match
 
-        ψ = Ket(Bra([im,0]))
-        @test ψ == [-im,0]
-
-        ψ = Ket([1 0] :: Matrix{Int64})
-        @test ψ == ψ_match
-
-        ψ = Ket([1 0]' :: Adjoint{Int64,Matrix{Int64}})
-        @test ψ == ψ_match
+        ψ = Ket(Bra([im,0]'))
+        @test ψ == [im,0]
     end
 
     @testset "invalid inputs" begin
@@ -142,35 +128,35 @@ end
         ψ = Bra([1,0])
         @test ψ isa Bra{Int64}
         @test ψ isa AbstractBra{Int64}
-        @test ψ == [1 0]
+        @test ψ == [1,0]'
 
         ψ = Bra([1.,0.])
         @test ψ isa Bra{Float64}
         @test ψ isa AbstractBra{Float64}
-        @test ψ == [1 0]
+        @test ψ == [1,0]'
 
         ψ = Bra([1//1,0//1])
         @test ψ isa Bra{Rational{Int64}}
         @test ψ isa AbstractBra{Rational{Int64}}
-        @test ψ == [1 0]
+        @test ψ == [1,0]'
 
         ψ = Bra([im,0])
         @test ψ isa Bra{Complex{Int64}}
         @test ψ isa AbstractBra{Complex{Int64}}
-        @test ψ == [im 0]
+        @test ψ == [im,0]'
 
         ψ = Bra([im,0.])
         @test ψ isa Bra{Complex{Float64}}
         @test ψ isa AbstractBra{Complex{Float64}}
-        @test ψ == [im 0]
+        @test ψ == [im,0]'
     end
 
     @testset "simple test cases" begin
         valid_cases = [
-            [1 0 0],
-            [1 0 0 0],
-            [1 1 im]/sqrt(3),
-            [0.5im 0//1 -sqrt(3)/2]
+            [1,0,0]',
+            [1,0,0,0]',
+            [1,1,im]'/sqrt(3),
+            [0.5im,0//1,-sqrt(3)/2]'
         ]
 
         for case in valid_cases
@@ -193,11 +179,8 @@ end
         ψ = Bra(Ket([im,0]))
         @test ψ == [-im 0]
 
-        ψ = Bra([1 0] :: Matrix{Int64})
-        @test ψ == ψ_match
-
-        ψ = Bra((ones(Int64, 2,1)/sqrt(2))' :: Adjoint{Float64,Matrix{Float64}})
-        @test ψ == ones(Int64, 1,2)/sqrt(2)
+        ψ = Bra([im,0])
+        @test ψ == [im,0]'
     end
 
     @testset "invalid inputs" begin
@@ -218,7 +201,7 @@ end
 @testset "bra and ket multiplication" begin
     @testset "product of Complex{Int64} types" begin
         ket = Ket([im,0])
-        bra = Bra([-im,0])
+        bra = Bra([im,0])
 
         inner_product = bra*ket
         @test inner_product isa Complex{Int64}
@@ -231,7 +214,7 @@ end
 
     @testset "product of Complex{Int64} types" begin
         ket = Ket([1,0])
-        bra = Bra([1,-im]/sqrt(2))
+        bra = Bra([1,im]/sqrt(2))
 
         inner_product = bra*ket
         @test inner_product isa Complex{Float64}
@@ -245,7 +228,7 @@ end
 
 @testset "bra and ket conversion via adjoint" begin
     ket = Ket([im,0])
-    bra = Bra([-im,0])
+    bra = Bra([im,0]')
 
     ψ = ket'
     @test ψ isa Bra{Complex{Int64}}
@@ -297,11 +280,11 @@ end
 
         bra01 = kron(bra0,bra1)
         @test bra01 isa Bra{Int64}
-        @test bra01 == [0 1 0 0]
+        @test bra01 == [0,1,0,0]'
 
         bra010 = kron(bra0,bra1,bra0)
         @test bra010 isa Bra{Int64}
-        @test bra010 == [0 0 1 0 0 0 0 0]
+        @test bra010 == [0,0,1,0,0,0,0,0]'
     end
 
     @testset "bra using atol" begin

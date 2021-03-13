@@ -2,14 +2,14 @@ export AbstractState, State
 export is_density_matrix, is_pure, is_mixed
 
 """
-    AbstractState{T<:Number} <: AbstractMatrix{Number}
+    AbstractState <: AbstractMatrix{Number}
 
 The abstract type representing all density matrices.
 """
-abstract type AbstractState{T<:Number} <: AbstractMatrix{Number} end
-Base.size(state::AbstractState{<:Number}) = size(state.ρ)
-Base.getindex(state::AbstractState{<:Number}, I::Vararg{Int,2}) = getindex(state.ρ, I...)
-Base.setindex!(state::AbstractState{<:Number}, val, I::Vararg{Int,2}) = (state.ρ[I...] = val)
+abstract type AbstractState <: AbstractMatrix{Number} end
+Base.size(state::AbstractState) = size(state.ρ)
+Base.getindex(state::AbstractState, I::Vararg{Int,2}) = getindex(state.ρ, I...)
+Base.setindex!(state::AbstractState, val, I::Vararg{Int,2}) = (state.ρ[I...] = val)
 
 """
     is_density_matrix( ρ :: Matrix; atol=ATOL :: Float64 ) :: Bool
@@ -61,7 +61,7 @@ Base methods extended to use the `DensityMatrix` type:
 * `partial_trace` - Returns `DensityMatrix` if supplied with one.
 * `kron` - The kronecker product of two quantum states is a `State`.
 """
-struct State{T} <: AbstractState{T}
+struct State{T} <: AbstractState
     ρ :: Matrix{T}
     atol :: Float64
     State(

@@ -1,4 +1,5 @@
-using Test, QBase
+using Test, LinearAlgebra
+using QBase
 
 @testset "./src/math/combinatorics.jl" begin
 
@@ -139,7 +140,7 @@ end
         ])
     end
 
-    @testset "permtutation map validity" for N in 2:5
+    @testset "permtutation map validity" for N in 4:5
         perms = permutation_matrices(N)
 
         @testset "maps are unique" begin
@@ -156,7 +157,7 @@ end
             @test (parity == -1) || (parity == 1)
 
             # invertibility
-            @test perm*perm' == diagm(0 => fill(1,N))
+            @test perm*perm' == Matrix{Int64}(I,N,N)
         end
     end
 end

@@ -22,7 +22,7 @@ using Base.Iterators: flatten
 using Combinatorics: permutations, combinations
 
 # Methods extended by QBase.jl
-import Base: convert, *, kron, adjoint
+import Base: convert, *, kron, adjoint, show
 import LinearAlgebra: rank
 
 const ATOL = 1e-7
@@ -35,6 +35,7 @@ include("./math/combinatorics.jl")
 include("./types/probabilities.jl")
 include("./types/brakets.jl")
 include("./types/states.jl")
+include("./types/measurements.jl")
 
 # TODO: AbstractOperator < Matrix
     # TODO: Unitary
@@ -46,6 +47,7 @@ include("./types/states.jl")
 
 include("./constructors/brakets.jl")
 include("./constructors/states.jl")
+include("./constructors/measurements.jl")
 
 ### Below this line is v0.1 material
 

@@ -8,8 +8,8 @@ The abstract type representing all density matrices.
 """
 abstract type AbstractState <: AbstractMatrix{Number} end
 Base.size(state::AbstractState) = size(state.ρ)
-Base.getindex(state::AbstractState, I::Vararg{Int,2}) = getindex(state.ρ, I...)
-Base.setindex!(state::AbstractState, val, I::Vararg{Int,2}) = (state.ρ[I...] = val)
+Base.getindex(state::AbstractState, id::Vararg{Int,2}) = getindex(state.ρ, id...)
+Base.setindex!(state::AbstractState, val, id::Vararg{Int,2}) = (state.ρ[id...] = val)
 
 """
     is_density_matrix( ρ :: Matrix; atol=ATOL :: Float64 ) :: Bool

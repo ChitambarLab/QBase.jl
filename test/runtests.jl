@@ -23,14 +23,16 @@ function _test_runner()
     @time @safetestset "./test/unit/math/combinatorics.jl" begin include("unit/math/combinatorics.jl") end
 
     println("Testing types : ")
+    @time @safetestset "./test/unit/types/probabilities.jl" begin include("unit/types/probabilities.jl") end
     @time @safetestset "./test/unit/types/brakets.jl" begin include("unit/types/brakets.jl") end
     @time @safetestset "./test/unit/types/states.jl" begin include("unit/types/states.jl") end
-    @time @safetestset "./test/unit/types/probabilities.jl" begin include("unit/types/probabilities.jl") end
+    @time @safetestset "./test/unit/types/unitaries.jl" begin include("unit/types/unitaries.jl") end
     @time @safetestset "./test/unit/types/measurements.jl" begin include("unit/types/measurements.jl") end
 
     println("Testing constructors : ")
     @time @safetestset "./test/unit/constructors/brakets.jl" begin include("unit/constructors/brakets.jl") end
     @time @safetestset "./test/unit/constructors/states.jl" begin include("unit/constructors/states.jl") end
+    @time @safetestset "./test/unit/constructors/unitaries.jl" begin include("unit/constructors/unitaries.jl") end
     @time @safetestset "./test/unit/constructors/brakets.jl" begin include("unit/constructors/measurements.jl") end
 end
 

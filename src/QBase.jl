@@ -20,6 +20,7 @@ module QBase
 using LinearAlgebra
 using Base.Iterators: flatten
 using Combinatorics: permutations, combinations
+using RandomMatrices: Haar
 
 # Methods extended by QBase.jl
 import Base: convert, *, kron, adjoint, show
@@ -35,6 +36,7 @@ include("./math/combinatorics.jl")
 include("./types/probabilities.jl")
 include("./types/brakets.jl")
 include("./types/states.jl")
+include("./types/unitaries.jl")
 include("./types/measurements.jl")
 
 # TODO: AbstractOperator < Matrix
@@ -47,6 +49,7 @@ include("./types/measurements.jl")
 
 include("./constructors/brakets.jl")
 include("./constructors/states.jl")
+include("./constructors/unitaries.jl")
 include("./constructors/measurements.jl")
 
 ### Below this line is v0.1 material

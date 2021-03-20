@@ -4,6 +4,9 @@ using QBase
 @testset "./src/constructors/unitaries.jl" begin
 
 @testset "pauli constants" begin
+    @test σI == [1 0;0 1]
+    @test σI isa Unitary{Int64}
+
     @test σx == [0 1; 1 0]
     @test σx isa Unitary{Int64}
 

@@ -43,4 +43,12 @@ struct Unitary{T} <: AbstractUnitary{T}
     ) where T <: Number = is_unitary(U, atol=atol) ? new{T}(U, atol) : throw(DomainError(U, "matrix U is not unitary"))
 end
 
+"""
+*(unitaries :: Vararg{AbstractUnitary}; atol=ATOL :: Float64) :: AbstractUnitary
+"""
 *(unitaries :: Vararg{AbstractUnitary}; atol=ATOL :: Float64) = Unitary(*(map(unitary -> unitary.U, unitaries)...), atol=atol)
+
+"""
+kron(unitaries :: Vararg{AbstractUnitary}; atol=ATOL :: Float64) :: AbstractUnitary
+"""
+kron(unitaries :: Vararg{AbstractUnitary}; atol=ATOL :: Float64) = Unitary(kron(map(unitary -> unitary.U, unitaries)...), atol=atol)

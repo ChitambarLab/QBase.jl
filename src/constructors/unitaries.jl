@@ -1,8 +1,22 @@
 # constants
-export σx, σy, σz
+export σI, σx, σy, σz
 
 # contructors
 export qubit_rotation, random_unitary
+
+"""
+    σI :: Unitary{Int64}
+
+Identity unitary:
+
+```jldoctest
+julia> σx
+2×2 QBase.Unitary{Int64}:
+ 1  0
+ 0  1
+```
+"""
+const σI = Unitary([1 0;0 1])
 
 """
     σx :: Unitary{Int64}

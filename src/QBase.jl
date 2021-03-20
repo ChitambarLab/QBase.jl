@@ -45,12 +45,15 @@ include("./types/measurements.jl")
 # TODO: AbstractChannel
 # TODO: AbstractSuperOperator
 # TODO: AbstractObservable
-# TODO: AbstractMeasurement
 
 include("./constructors/brakets.jl")
 include("./constructors/states.jl")
 include("./constructors/unitaries.jl")
 include("./constructors/measurements.jl")
+
+# high-level quantum
+include("./channels.jl")
+
 
 ### Below this line is v0.1 material
 
@@ -72,9 +75,6 @@ using .Observables
 
 include("./Information.jl")
 using .Information
-
-include("./Channels.jl")
-using .Channels
 
 export evolve, measurement_probs
 

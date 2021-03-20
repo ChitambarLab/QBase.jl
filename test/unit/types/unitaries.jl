@@ -1,4 +1,4 @@
-using Test
+using Test, LinearAlgebra
 using QBase
 
 @testset "./src/types/unitaries.jl" begin
@@ -60,6 +60,16 @@ end
 
     U_prod = *(random_unitary.([3,3,3,3,3])...)
     @test U_prod isa Unitary{Complex{Float64}}
+end
+
+@testset "unitary kron" begin
+    σ_xz = kron(σx, σz)
+    @test σ_xz == [0 0 1 0;0 0 0 -1;1 0 0 0;0 -1 0 0]
+    @test σ_xz isa Unitary{Int64}
+
+    σ_yII = kron(σy,σI,σI)
+    @test σ_yII == [zeros(4,4) -im*Matrix(I,4,4);im*Matrix(I,4,4) zeros(4,4)]
+    @test σ_yII isa Unitary{Complex{Int64}}
 end
 
 end

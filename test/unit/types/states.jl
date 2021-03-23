@@ -73,22 +73,22 @@ end
     @testset "type inheritance" begin
         ρ_int = State([1 0;0 0])
         @test ρ_int isa State{Int64}
-        @test ρ_int isa AbstractState
+        @test ρ_int isa Operator
         @test ρ_int == [1 0;0 0]
 
         ρ_float = State([1. 0.;0. 0.])
         @test ρ_float isa State{Float64}
-        @test ρ_float isa AbstractState
+        @test ρ_float isa Operator
         @test ρ_float == [1 0;0 0]
 
         ρ_complex = State([0.5 0.5im;-0.5im 0.5])
         @test ρ_complex isa State{Complex{Float64}}
-        @test ρ_complex isa AbstractState
+        @test ρ_complex isa Operator
         @test ρ_complex == [0.5 0.5im;-0.5im 0.5]
 
         ρ_rational = State([1//2 1//2; 1//2 1//2])
         @test ρ_rational isa State{Rational{Int64}}
-        @test ρ_rational isa AbstractState
+        @test ρ_rational isa Operator
         @test ρ_rational == [0.5 0.5;0.5 0.5]
     end
 
@@ -188,8 +188,20 @@ end
 @testset "rank() for State types" begin
     @test 1 == rank(pure_state([1,-im]/sqrt(2)))
     @test 2 == rank(State([1 0;0 1]/2))
-    @test 2 == rank(State([1 0;0 .1], atol=0.11))
-    @test 1 == rank(State([1 0;0 .1], atol=0.11), atol=0.11)
+    @test 1 == rank(State([0.9 0;0 0.1], atol=0.11))
+    @test 2 == rank(State([0.9 0;0 0.1]))
+end
+
+@testset "eigvals() for State types" begin
+    priors = Probabilities([1/3,1/3,1/3])
+
+    qb1 = bloch_qubit_state(2*π/3,0)
+    qb2 = bloch_qubit_state(5*π/12,π)
+    qb3 = bloch_qubit_state(0,0)
+    ρ_states = [qb1,qb2,qb3]
+
+    ρ_mix = mixed_state(priors, ρ_states)
+    @test isapprox(eigvals(ρ_mix), [0.372, 0.628], atol=1e-3)
 end
 
 @testset "is_pure()" begin
@@ -199,8 +211,8 @@ end
     @test !is_pure(State([0.5 0;0 0.5]))
     @test_throws DomainError is_pure(State([1 0;0 1]))
 
-    @test !is_pure(State([1 0;0 1e-5], atol=1e-4))
-    @test is_pure(State([1 0;0 1e-5], atol=1e-4), atol=1e-4)
+    @test !is_pure(State([1-1e-5 0;0 1e-5]))
+    @test is_pure(State([1-1e-5 0;0 1e-5], atol=1e-4))
 
 end
 
@@ -211,8 +223,8 @@ end
     @test is_mixed(State([0.5 0;0 0.5]))
     @test_throws DomainError is_mixed(State([1 0;0 1]))
 
-    @test is_mixed(State([1 0;0 1e-5], atol=1e-4))
-    @test !is_mixed(State([1 0;0 1e-5], atol=1e-4), atol=1e-4)
+    @test is_mixed(State([1-1e-5 0;0 1e-5]))
+    @test !is_mixed(State([1-1e-5 0;0 1e-5], atol=1e-4))
 end
 
 end

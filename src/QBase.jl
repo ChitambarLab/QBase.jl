@@ -53,12 +53,13 @@ include("./constructors/measurements.jl")
 
 # high-level quantum
 include("./channels.jl")
+include("./information.jl")
 
 
 ### Below this line is v0.1 material
 
 # submodules are exported
-export QMath, Unitaries, States, Observables, Information, Channels
+export QMath, Unitaries, States, Observables
 
 # include modules
 include("./QMath.jl")
@@ -73,8 +74,6 @@ using .States
 include("./Observables.jl")
 using .Observables
 
-include("./Information.jl")
-using .Information
 
 export evolve, measurement_probs
 

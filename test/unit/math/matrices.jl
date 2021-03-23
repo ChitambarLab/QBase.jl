@@ -75,6 +75,25 @@ end
     end
 end
 
+@testset "is_orthonormal_basis()" begin
+    @testset "valid cases" begin
+        @test is_orthonormal_basis([[1,0],[0,1]])
+        @test is_orthonormal_basis(Ket.([[1,0],[0,1]]))
+        @test is_orthonormal_basis(computational_basis_vectors(5))
+        @test is_orthonormal_basis([[1,1im]/sqrt(2),[1,-1im]/sqrt(2)])
+    end
+
+    @testset "invalid cases" begin
+        @test !is_orthonormal_basis([[1,1]/2,[1,-1]/2])
+        @test !is_orthonormal_basis([[0.5,0.5],[0.5,0.5]])
+    end
+
+    @testset "atol" begin
+        @test !is_orthonormal_basis([[1,0.1],[0,1]])
+        @test is_orthonormal_basis([[1,0.1],[0,1]],atol=0.2)
+    end
+end
+
 @testset "n_product_id()" begin
     m0 = [1 0;0 0]
     m1 = [0 0;1 0]

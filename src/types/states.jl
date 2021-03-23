@@ -1,15 +1,16 @@
-export AbstractState, State
+# export State, State
+export State
 export is_density_matrix, is_pure, is_mixed
 
-"""
-    AbstractState <: AbstractMatrix{Number}
-
-The abstract type representing all density matrices.
-"""
-abstract type AbstractState <: AbstractMatrix{Number} end
-Base.size(state::AbstractState) = size(state.ρ)
-Base.getindex(state::AbstractState, id::Vararg{Int,2}) = getindex(state.ρ, id...)
-Base.setindex!(state::AbstractState, val, id::Vararg{Int,2}) = (state.ρ[id...] = val)
+# """
+#     State <: AbstractMatrix{Number}
+#
+# The abstract type representing all density matrices.
+# """
+# abstract type State <: AbstractMatrix{Number} end
+# Base.size(state::State) = size(state.ρ)
+# Base.getindex(state::State, id::Vararg{Int,2}) = getindex(state.ρ, id...)
+# Base.setindex!(state::State, val, id::Vararg{Int,2}) = (state.ρ[id...] = val)
 
 """
     is_density_matrix( ρ :: Matrix; atol=ATOL :: Float64 ) :: Bool
@@ -30,7 +31,6 @@ function is_density_matrix(ρ::Matrix; atol=ATOL :: Float64)::Bool
 
     return true
 end
-is_density_matrix(::AbstractState) = true
 
 """
     _density_matrix_error(ρ; atol=ATOL :: Float64)
@@ -52,7 +52,7 @@ function _density_matrix_error(ρ; atol=ATOL :: Float64)
 end
 
 """
-    State( ρ :: Matrix{Complex{Float64}} ) <: AbstractDensityMatrix
+    State( ρ :: Matrix{T<:Number} ) <: Operator{T}
 
 The density matrix representation of a quantum state. The constructor, `DensityMatrix(ρ)`
 throws a `DomainError` if `is_density_matrix(ρ)` is `false`.
@@ -61,8 +61,8 @@ Base methods extended to use the `DensityMatrix` type:
 * `partial_trace` - Returns `DensityMatrix` if supplied with one.
 * `kron` - The kronecker product of two quantum states is a `State`.
 """
-struct State{T} <: AbstractState
-    ρ :: Matrix{T}
+struct State{T} <: Operator{T}
+    M :: Matrix{T}
     atol :: Float64
     State(
         ρ :: Matrix{<:Number}; atol=ATOL :: Float64
@@ -71,44 +71,60 @@ struct State{T} <: AbstractState
         ρ :: Adjoint{T,Matrix{T}}; atol=ATOL :: Float64
     ) where T <: Number = is_density_matrix(ρ[:,:], atol=atol) ? new{eltype(ρ)}(ρ[:,:], atol) : _density_matrix_error(ρ[:,:], atol=atol)
 end
+is_density_matrix(::State) = true
+
 
 """
-    kron(states :: Vararg{AbstractState}; atol=ATOL :: Float64)
+    kron(states :: Vararg{State}; atol=ATOL :: Float64)
 """
-kron(states :: Vararg{AbstractState}; atol=ATOL :: Float64) = State(
-    kron(map(state -> state.ρ, states)...),
+kron(states :: Vararg{State}; atol=ATOL :: Float64) = State(
+    kron(map(ρ -> ρ.M, states)...),
 atol=atol)
 
 """
-    partial_trace(ρ::AbstractState, system::Vector{Int64}, id::Int64)
+    partial_trace(ρ::State, system::Vector{Int64}, id::Int64)
 """
-partial_trace(ρ::AbstractState, system::Vector{Int64}, id::Int64; atol=ATOL :: Float64) = begin
-    State(partial_trace(ρ.ρ, system, id), atol=atol)
+partial_trace(ρ::State, system::Vector{Int64}, id::Int64; atol=ATOL :: Float64) = begin
+    State(partial_trace(ρ.M, system, id), atol=atol)
+end
+
+# """
+#     rank(state :: State)
+# """
+# rank(state :: State) = rank(state.ρ, atol=state.atol)
+
+"""
+    eigvals(state :: State)
+"""
+function eigvals(ρ :: State)
+    λs = eigvals(ρ.M)
+    for λ in λs
+        if !isapprox(imag(λ), 0, atol=ρ.atol)
+            throw(DomainError(λ), "eigenvalue λ has a imaginary component outside the absolute tolerance.")
+        end
+    end
+
+    real.(λs)
 end
 
 """
-    rank(state :: AbstractState; atol=ATOL :: Float64)
-"""
-rank(state :: AbstractState; atol=ATOL :: Float64) = rank(state.ρ, atol=atol)
-
-"""
-    is_pure(ρ :: AbstractState, atol=ATOL) :: Bool
+    is_pure(ρ :: State) :: Bool
 
 Returns `true` if `rho` is pure, i.e. `rank(ρ) == 1`. This method also can be used
 on an matrix.
 """
-function is_pure(ρ :: AbstractState; atol=ATOL) :: Bool
-    rank(ρ, atol=atol) == 1
+function is_pure(ρ :: State) :: Bool
+    rank(ρ) == 1
 end
-is_pure(ρ :: Matrix{<:Number}; atol=ATOL) :: Bool = is_pure(State(ρ, atol=atol), atol=atol)
+is_pure(ρ :: Matrix{<:Number}; atol=ATOL :: Float64) :: Bool = is_pure(State(ρ, atol=atol))
 
 """
-    is_mixed(ρ :: AbstractState, atol=ATOL) :: Bool
+    is_mixed(ρ :: State) :: Bool
 
 Returns `true` if `rho` is mixed, i.e. `rank(ρ) > 1`. This method also can be used
 on an matrix.
 """
-function is_mixed(ρ :: AbstractState; atol=ATOL) :: Bool
-    rank(ρ, atol=atol) > 1
+function is_mixed(ρ :: State) :: Bool
+    rank(ρ) > 1
 end
-is_mixed(ρ :: Matrix{<:Number}; atol=ATOL) :: Bool = is_mixed(State(ρ, atol=atol), atol=atol)
+is_mixed(ρ :: Matrix{<:Number}; atol=ATOL :: Float64) :: Bool = is_mixed(State(ρ, atol=atol))

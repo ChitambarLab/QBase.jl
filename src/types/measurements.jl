@@ -2,9 +2,13 @@
 export is_povm
 
 # types
-export AbstractMeasurement, AbstractPOVM, POVM
+export Measurement, POVM, PVM #AbstractPOVM, POVM
 
-abstract type AbstractMeasurement end
+abstract type Measurement{T} <: AbstractVector{T} end
+Base.size( m :: Measurement) = size(m.Π)
+Base.getindex( m :: Measurement, id::Int) = getindex(m.Π, id...)
+Base.setindex!( m :: Measurement, val, id::Int) = (m.Π[id...] = val)
+
 
 """
     AbstractPOVM <: AbstractMatrix{Complex{Float64}}
@@ -13,7 +17,7 @@ The abstract type representing positive-operator valued measures (POVMs). An
 `AbstractPOVM` cannot be instantiated, it serves as a supertype from which concrete
 types are derived.
 """
-abstract type AbstractPOVM{T<:Number} <: AbstractMeasurement end
+# abstract type AbstractPOVM{T<:Number} <: AbstractMeasurement end
 
 
 """
@@ -24,7 +28,7 @@ Returns `true` if `Π` is a POVM. The following constraints must be satisfied:
 * Each POVM element positive semi-definite
 * The POVM is complete: `sum(Π) == I`
 """
-function is_povm(Π::Vector; atol=ATOL :: Float64) :: Bool
+function is_povm(Π::Vector{Matrix}; atol=ATOL :: Float64) :: Bool
     dim = size(Π[1])[1]
 
     if !isapprox(sum(Π), Matrix{Complex{Float64}}(I,dim,dim), atol=atol)
@@ -37,17 +41,20 @@ function is_povm(Π::Vector; atol=ATOL :: Float64) :: Bool
 
     return true
 end
-is_povm(Π::AbstractPOVM) :: Bool = true
+
+function is_pvm(Π::Vector{Vector}; atol=ATOL :: Float64) :: Bool
+
+end
 
 """
-    POVM( Π :: Vector{Matrix} ) <: AbstractPOVM
+    POVM( Π :: Vector{Matrix} ) <: Measurement
 
 Positve-operator valued measures (POVMs) represent a general quantum measurement.
 Each POVM-element is a hermitian, positive-semidefinite matrix. The sum of all
 POVM-elements yields the identity matrix. The constructor, `POVM(Π)` throws a
 `DomainError` if the provided array of matrices, `Π` is not a valid POVM.
 """
-struct POVM{T} <: AbstractPOVM{T}
+struct POVM{T} <: Measurement{T}
     Π :: Vector{Matrix{T}}
     atol :: Float64
     POVM(
@@ -58,13 +65,27 @@ end
 
 function show(io::IO, mime::MIME{Symbol("text/plain")}, povm :: POVM)
     summary(io, povm)
-    print(io, "\natol : ")
+    print(io, "\n\natol : ")
     show(io,mime, povm.atol)
+    println(io, "\nlength : ", length(povm))
     for i in 1:length(povm.Π)
         print(io,"\nΠ[",i,"] : ")
         show(io, mime, povm.Π[i])
     end
 end
+is_povm(Π::POVM) :: Bool = true
+
+struct PVM{T} <: Measurement{T}
+    Π :: Vector{Vector{T}}
+    atol :: Float64
+    PVM(
+        Π :: Vector{Vector{T}};
+        atol=ATOL :: Float64
+    ) where T <: Number = true ? new{T}(Π, atol) : throw(DomainError(Π, "povm Π is invalid"))
+end
+
+
+
 
 
 

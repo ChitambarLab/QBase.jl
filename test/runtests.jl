@@ -39,6 +39,7 @@ function _test_runner()
 
     println("Testing high-level : ")
     @time @safetestset "./test/unit/channels.jl" begin include("unit/channels.jl") end
+    @time @safetestset "./test/unit/information.jl" begin include("unit/information.jl") end
 
 end
 

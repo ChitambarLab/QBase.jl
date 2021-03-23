@@ -110,7 +110,7 @@ end
 
 
 """
-    _naimark_kraus_operators(Π::AbstractPOVM) :: Array{Array{Complex{Float64},2},1}
+    _naimark_kraus_operators(Π::POVM) :: Array{Array{Complex{Float64},2},1}
 
 Returns the Kraus operators for the provided POVM. In general, the Kraus operators
 form a continuum and are non-unique. This method applies the construction
@@ -119,19 +119,19 @@ form a continuum and are non-unique. This method applies the construction
 k_i = \\sqrt{\\Pi_i}\\otimes |i\\rangle
 ```
 """
-function _naimark_kraus_operators(povm::AbstractPOVM) :: Array{Array{Complex{Float64},2},1}
+function _naimark_kraus_operators(povm::POVM) :: Array{Array{Complex{Float64},2},1}
     num_el = length(povm.Π)
 
     map(i -> kron(sqrt(povm.Π[i]), Matrix(I,num_el,num_el)[:,i]), 1:num_el)
 end
 
 """
-    naimark_dilation( Π::AbstractPOVM )
+    naimark_dilation( Π::POVM )
 
 Returns the dilated projectors which are equivalent to the provided POVM. During
 measurement, the measured state must be tensored with the ancilla.
 """
-function naimark_dilation(povm::AbstractPOVM)
+function naimark_dilation(povm::POVM)
     n = length(povm.Π)
     d = size(povm.Π[1])[1]
 

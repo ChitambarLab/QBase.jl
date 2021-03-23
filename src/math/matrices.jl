@@ -3,7 +3,7 @@ export partial_trace, computational_basis_vectors
 export n_product_id
 
 # validation methods
-export commutes, is_hermitian, is_positive_semidefinite
+export commutes, is_hermitian, is_positive_semidefinite, is_orthonormal_basis
 
 """
     partial_trace(
@@ -117,6 +117,24 @@ function is_positive_semidefinite(A :: Matrix; atol=ATOL) :: Bool
         end
     end
 
+    return true
+end
+
+"""
+    is_orthonormal_basis(basis_vecs ::  Vector;  atol=ATOL ::  Float64) :: Bool
+
+Returns `true` if `basis_vecs` forms an orthonormal basis.
+"""
+function is_orthonormal_basis(basis_vecs :: Vector{<:AbstractVector}; atol=ATOL :: Float64) :: Bool
+    (indsn,) = axes(basis_vecs)
+    for i = indsn, j = i:last(indsn)
+        inner_prod = basis_vecs[j]'basis_vecs[i]
+        if i == j &&  !isapprox(inner_prod,1,atol=atol)
+            return false
+        elseif j > i  && !isapprox(inner_prod,0,atol=atol)
+            return false
+        end
+    end
     return true
 end
 

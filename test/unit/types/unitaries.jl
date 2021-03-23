@@ -34,12 +34,12 @@ end
         U = Unitary([0 1;1 0])
         @test U == [0 1;1 0]
         @test U isa Unitary{Int64}
-        @test U isa AbstractUnitary
+        @test U isa Unitary
 
         U = Unitary([1/sqrt(2) 1/sqrt(2) 0;-1im/sqrt(2) 1im/sqrt(2) 0;0 0 im])
         @test U == [1/sqrt(2) 1/sqrt(2) 0;-1im/sqrt(2) 1im/sqrt(2) 0;0 0 im]
         @test U isa Unitary{Complex{Float64}}
-        @test U isa AbstractUnitary
+        @test U isa Unitary
     end
 
     @testset "invalid unitaries" begin
@@ -70,6 +70,19 @@ end
     σ_yII = kron(σy,σI,σI)
     @test σ_yII == [zeros(4,4) -im*Matrix(I,4,4);im*Matrix(I,4,4) zeros(4,4)]
     @test σ_yII isa Unitary{Complex{Int64}}
+end
+
+@testset "unitary adjoint" begin
+    rx = qubit_rotation(π/2)
+    @test rx ≈ [1 -im;-im 1]/sqrt(2)
+
+    adj_rx = rx'
+    @test adj_rx ≈ [1 im;im 1]/sqrt(2)
+    @test adj_rx isa Unitary{Complex{Float64}}
+
+    U = Unitary([1 0;0 2],  atol=3.01)
+    @test U' isa Unitary{Int64}
+    @test U' == [1 0;0 2]
 end
 
 end

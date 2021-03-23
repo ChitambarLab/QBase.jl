@@ -1,15 +1,4 @@
-export AbstractUnitary, Unitary, is_unitary
-
-"""
-    AbstractUnitary <: AbstractMatrix{Complex{Float64}}
-
-The abstract type representing unitary operators. An `AbstractUnitary` cannot be
-instantiated, it serves as a supertype from which concrete types are derived.
-"""
-abstract type AbstractUnitary{T<:Number} <: AbstractMatrix{Number} end
-Base.size(unitary::AbstractUnitary) = size(unitary.U)
-Base.getindex(unitary::AbstractUnitary, id::Vararg{Int,2}) = getindex(unitary.U, id...)
-Base.setindex!(unitary::AbstractUnitary, val, id::Vararg{Int,2}) = (unitary.U[id...] = val)
+export Unitary, is_unitary
 
 """
     is_unitary( U :: Matrix; atol=ATOL :: Float64 ) :: Bool
@@ -18,7 +7,7 @@ Returns `true` if matrix `U` is unitary. The hermitian adjoint of a unitary matr
 is its inverse:
 * `U' * U == I` where `I` is the identity matrix.
 """
-function is_unitary(U::Matrix; atol=ATOL :: Float64) :: Bool
+function is_unitary(U::AbstractMatrix; atol=ATOL :: Float64) :: Bool
     if !isequal(size(U)...)
         return false
     end
@@ -26,29 +15,31 @@ function is_unitary(U::Matrix; atol=ATOL :: Float64) :: Bool
 
     isapprox(U'*U, Matrix(I,dim,dim), atol=atol)
 end
-is_unitary(U :: AbstractUnitary) = true
 
 """
-    Unitary( U :: Matrix ) <: AbstractUnitary
+    Unitary( U :: AbstractMatrix ) <: Operator{T}
 
 Unitary matrices represent the physical evolution of quantum states. The Constructor,
 `Unitary(U)`, throws a `DomainError` if the provided matrix, `U` is not unitary.
 """
-struct Unitary{T} <: AbstractUnitary{T}
-    U :: Matrix{T}
+struct Unitary{T} <: Operator{T}
+    M :: Matrix{T}
     atol :: Float64
     Unitary(
-        U :: Matrix{T};
+        U :: AbstractMatrix;
         atol=ATOL :: Float64
-    ) where T <: Number = is_unitary(U, atol=atol) ? new{T}(U, atol) : throw(DomainError(U, "matrix U is not unitary"))
+    ) = is_unitary(U, atol=atol) ? new{eltype(U)}(U, atol) : throw(DomainError(U, "matrix U is not unitary"))
 end
+is_unitary(U :: Unitary) = true
 
 """
-*(unitaries :: Vararg{AbstractUnitary}; atol=ATOL :: Float64) :: AbstractUnitary
+*(unitaries :: Vararg{Unitary}; atol=ATOL :: Float64) :: Unitary
 """
-*(unitaries :: Vararg{AbstractUnitary}; atol=ATOL :: Float64) = Unitary(*(map(unitary -> unitary.U, unitaries)...), atol=atol)
+*(unitaries :: Vararg{Unitary}; atol=ATOL :: Float64) :: Unitary = Unitary(*(map(U -> U.M, unitaries)...), atol=atol)
 
 """
-kron(unitaries :: Vararg{AbstractUnitary}; atol=ATOL :: Float64) :: AbstractUnitary
+kron(unitaries :: Vararg{Unitary}; atol=ATOL :: Float64) :: Unitary
 """
-kron(unitaries :: Vararg{AbstractUnitary}; atol=ATOL :: Float64) = Unitary(kron(map(unitary -> unitary.U, unitaries)...), atol=atol)
+kron(unitaries :: Vararg{Unitary}; atol=ATOL :: Float64) :: Unitary = Unitary(kron(map(U -> U.M, unitaries)...), atol=atol)
+
+adjoint(U :: Unitary) :: Unitary = Unitary(U.M', atol=U.atol)

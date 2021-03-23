@@ -118,4 +118,17 @@ end
     end
 end
 
+@testset "is_complete()" begin
+    @testset "valid cases" begin
+        @test is_complete([[1 0;0  0],[0 0;0 1]])
+        @test is_complete([[0.25 -0.25im;0.25im 0.25],[0.25 0.25im;-0.25im 0.25],[0.5 0;0 0.5]])
+        @test is_complete(computational_basis_states(3))
+        @test is_complete([[1 0;0.5 0],[0 0;0 1]], atol=0.51)
+    end
+
+    @testset "invalid cases" begin
+        @test !is_complete([[1 0;0.5 0],[0 0;0 1]])
+    end
+end
+
 end

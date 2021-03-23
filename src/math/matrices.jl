@@ -3,7 +3,7 @@ export partial_trace, computational_basis_vectors
 export n_product_id
 
 # validation methods
-export commutes, is_hermitian, is_positive_semidefinite, is_orthonormal_basis
+export commutes, is_hermitian, is_positive_semidefinite, is_orthonormal_basis, is_complete
 
 """
     partial_trace(
@@ -126,8 +126,12 @@ end
 Returns `true` if `basis_vecs` forms an orthonormal basis.
 """
 function is_orthonormal_basis(basis_vecs :: Vector{<:AbstractVector}; atol=ATOL :: Float64) :: Bool
-    (indsn,) = axes(basis_vecs)
-    for i = indsn, j = i:last(indsn)
+    num_vecs = length(basis_vecs)
+    if num_vecs != length(basis_vecs[1])
+        return false
+    end
+
+    for i = 1:num_vecs, j = i:num_vecs
         inner_prod = basis_vecs[j]'basis_vecs[i]
         if i == j &&  !isapprox(inner_prod,1,atol=atol)
             return false
@@ -187,4 +191,17 @@ function commutes(A :: Matrix, B :: Matrix; atol=ATOL :: Float64) :: Bool
     end
 
     all(isapprox.(A*B, B*A, atol=atol))
+end
+
+"""
+    is_complete(Π :: Vector{<:AbstracMatrix}; atol=ATOL :: Float64) :: Bool
+
+Returns `true` if the provided set of matrices sums to the identity.
+"""
+function is_complete(Π :: Vector{<:AbstractMatrix}; atol=ATOL :: Float64) :: Bool
+    if !isapprox(sum(Π), I, atol=atol)
+        return false
+    end
+
+    return true
 end

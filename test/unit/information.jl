@@ -17,7 +17,6 @@ using QBase
     @test shannon_entropy(Probabilities([0.7,0.3])) ≈ 0.88129089
     @test shannon_entropy(Probabilities([1/2,1/4,1/8,1/8])) == 7/4
 
-    @test_throws DomainError shannon_entropy(Probabilities([2,0]))
     @test_throws DomainError shannon_entropy([-0.1,1.1])
 end
 
@@ -29,12 +28,10 @@ end
 
     @test von_neumann_entropy.(State.([[1 0;0 0],[0.5 0;0 0.5]])) == [0,1]
 
-    @test_throws DomainError von_neumann_entropy(State([1 0;0 1]))
     @test_throws DomainError von_neumann_entropy([1 0;0 1])
 end
 
 @testset "holevo_bound()" begin
-
     priors = Probabilities([0.5,0.5])
     ρ_set = State.([[1 0;0 0],[0 0;0 1]])
     @test holevo_bound(priors,ρ_set) == 1
@@ -42,50 +39,48 @@ end
     @test holevo_bound([0.5,0.5], ρ_set) == 1
 
     priors = Probabilities([1/3,1/3,1/3])
-    ρ_set = mirror_symmetric_qubits(0)
+    ρ_set = mirror_symmetric_qubit_states(0)
     @test holevo_bound(priors,ρ_set) ≈ 0
 
     priors = Probabilities([1/3,1/3,1/3])
-    ρ_set = mirror_symmetric_qubits(π/2)
+    ρ_set = mirror_symmetric_qubit_states(π/2)
     @test isapprox(holevo_bound(priors,ρ_set), 2/3*log2(3/2)+1/3*log2(3),atol=1e-6)
 
     priors = Probabilities([1/3,1/3,1/3])
-    ρ_set = mirror_symmetric_qubits(π/3)
+    ρ_set = mirror_symmetric_qubit_states(π/3)
     @test holevo_bound(priors,ρ_set) ≈ 1
 
     priors = Probabilities([1/3,1/3,1/3])
-    ρ_set = mirror_symmetric_qubits(5π/12)
-    @test holevo_bound(priors,ρ_set) ≈ 0.9566111446
+    ρ_set = mirror_symmetric_qubit_states(5π/12)
+    @test isapprox(holevo_bound(priors,ρ_set), 0.957,atol=1e-3)
 
     qb1 = bloch_qubit_ket(2*π/3,π/2)
     qb2 = bloch_qubit_ket(2*π/3,3π/2)
     qb3 = bloch_qubit_ket(0,0)
-
     ρ_set = pure_state.([qb1,qb2,qb3])
     @test holevo_bound(priors,ρ_set) ≈ 1
 
-    qb1 = bloch_qubit(2*π/3,0)
-    qb2 = bloch_qubit(5*π/12,π)
-    qb3 = bloch_qubit(0,0)
-
+    qb1 = bloch_qubit_state(2*π/3,0)
+    qb2 = bloch_qubit_state(5*π/12,π)
+    qb3 = bloch_qubit_state(0,0)
     @test holevo_bound(priors,[qb1,qb2,qb3]) ≈ 0.952526321
 
     states = [State([1 0;0 0]), State([1 0;0 0]), State([0 0;0 1])]
     @test holevo_bound(priors, states) ≈ 0.91829583
 
     priors = Probabilities(ones(4)/4)
-    @test holevo_bound(priors, sic_qubits) == 1
+    @test holevo_bound(priors, sic_qubit_states()) == 1
 end
 
 @testset "holevo_information()" begin
     priors = Probabilities([1/3,1/3,1/3])
-    ρ_set = trine_qubits
+    ρ_set = trine_qubit_states()
     povm = sqrt_povm(priors, ρ_set)
     @test holevo_information(priors, ρ_set, povm) ≈ 1/3
 
     @test holevo_information([0.5,0.5],[[1 0;0 0],[0 0;0 1]],[[1 0;0 0],[0 0;0 1]]) == 1
 
-    rot_y = Unitaries.qubit_rotation(π,axis="y")
+    rot_y = qubit_rotation(π,axis="y")
 
     rot_povm = POVM(map(el -> rot_y*el*rot_y', povm))
 

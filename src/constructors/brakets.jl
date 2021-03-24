@@ -18,7 +18,7 @@ export generalized_bell_kets
 The computational basis vectors for the Hilbert space of dimension, `dim`.
 """
 function computational_basis_kets(dim::Int64) :: Vector{Ket{Int64}}
-    Ket.(QMath.computational_basis_vectors(dim))
+    Ket.(computational_basis_vectors(dim))
 end
 
 """
@@ -96,7 +96,7 @@ function generalized_bell_kets(dim :: Int64) :: Vector{Ket{Complex{Float64}}}
         throw(DomainError(dim, "Hilbert space dimension must satisfy `dim ≥ 2`"))
     end
 
-    basis = QMath.computational_basis_vectors(dim)
+    basis = computational_basis_vectors(dim)
 
     kets = map(
         c -> map(

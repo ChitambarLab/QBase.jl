@@ -18,16 +18,16 @@ end
 
 @testset "asymmetric_qubit_3povm" begin
     @testset "valid range of angles" begin
-        @test isa(asymmetric_qubit_3povm(π/2, -0.0001), POVM)
-        @test isa(asymmetric_qubit_3povm(0.00001, -π/2), POVM)
+        @test asymmetric_qubit_3povm(π/2, -0.0001) isa POVM{Float64}
+        @test asymmetric_qubit_3povm(0.00001, -π/2) isa POVM{Float64}
 
         for θ1 in π/24:π/24:π/2
             for θ2 in -π/2:π/24:(θ1-π/2 - 0.00001) # slight offset because θ2 cannot be 0
                 Π1 = asymmetric_qubit_3povm(θ1, θ2)
                 Π2 = asymmetric_qubit_3povm(θ2, θ1)
 
-                @test isa(Π1, POVM)
-                @test isa(Π2, POVM)
+                @test Π1 isa POVM{Float64}
+                @test Π2 isa POVM{Float64}
             end
         end
 
@@ -36,8 +36,8 @@ end
                 Π1 = asymmetric_qubit_3povm(θ1, θ2)
                 Π2 = asymmetric_qubit_3povm(θ2, θ1)
 
-                @test isa(Π1, POVM)
-                @test isa(Π2, POVM)
+                @test Π1 isa POVM{Float64}
+                @test Π2 isa POVM{Float64}
             end
         end
     end
@@ -54,21 +54,22 @@ end
 @testset "planar_symmetric_qubit_povm()" begin
     @testset "scanning over simple cases" begin
         for n in 2:50
-            povm = planar_symmetric_qubit_povm(n)
+            Π= planar_symmetric_qubit_povm(n)
 
-            @test length(povm.Π) == n
-            @test povm isa POVM{Float64}
+            @test length(Π) == n
+            @test Π isa POVM{Float64}
         end
     end
 end
 
-@testset "trine_qubit_povm" begin
-    @test isa(trine_qubit_povm(), POVM{Float64})
-    @test trine_qubit_povm().Π ≈ mirror_symmetric_qubit_3povm(π/3).Π
+@testset "trine_qubit_povm()" begin
+    trine_Π = trine_qubit_povm()
+    @test trine_Π isa POVM{Float64}
+    @test trine_Π ≈ mirror_symmetric_qubit_3povm(π/3)
 end
 
-@testset "sic_qubit_povm" begin
-    @test isa(sic_qubit_povm(), POVM{Complex{Float64}})
+@testset "sic_qubit_povm()" begin
+    @test sic_qubit_povm() isa POVM{Complex{Float64}}
 end
 
 @testset "sqrt_povm()" begin
@@ -77,29 +78,31 @@ end
     states = trine_qubit_states()
     Π = sqrt_povm(priors, states)
 
-    @test isa(Π, POVM{Float64})
+    @test Π isa POVM{Float64}
+    @test Π ≈ trine_qubit_povm()
 end
 
 @testset "_naimark_kraus_operators()" begin
     @testset "trine qubit povm" begin
         k = QBase._naimark_kraus_operators(trine_qubit_povm())
+        trine_Π = trine_qubit_povm()
 
-        @test k[1]'*k[1] ≈ trine_qubit_povm().Π[1]
-        @test k[2]'*k[2] ≈ trine_qubit_povm().Π[2]
-        @test k[3]'*k[3] ≈ trine_qubit_povm().Π[3]
+        @test k[1]'*k[1] ≈ trine_Π[1]
+        @test k[2]'*k[2] ≈ trine_Π[2]
+        @test k[3]'*k[3] ≈ trine_Π[3]
     end
 
     @testset "pentagram qubit povm" begin
-        povm = planar_symmetric_qubit_povm(5)
-        k = QBase._naimark_kraus_operators(povm)
+        Π = planar_symmetric_qubit_povm(5)
+        k = QBase._naimark_kraus_operators(Π)
 
         @test sum(k_i -> k_i'*k_i, k) ≈ [1 0;0 1]
 
-        @test k[1]'*k[1] ≈ povm.Π[1]
-        @test k[2]'*k[2] ≈ povm.Π[2]
-        @test k[3]'*k[3] ≈ povm.Π[3]
-        @test k[4]'*k[4] ≈ povm.Π[4]
-        @test k[5]'*k[5] ≈ povm.Π[5]
+        @test k[1]'*k[1] ≈ Π[1]
+        @test k[2]'*k[2] ≈ Π[2]
+        @test k[3]'*k[3] ≈ Π[3]
+        @test k[4]'*k[4] ≈ Π[4]
+        @test k[5]'*k[5] ≈ Π[5]
     end
 end
 

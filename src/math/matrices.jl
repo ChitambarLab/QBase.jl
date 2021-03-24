@@ -42,7 +42,7 @@ operator remaining after system ``B`` is traced out.
 
 A `DomainError` is thrown if `ρ` is not square or of proper dimension.
 """
-function partial_trace(ρ::Matrix, system::Vector{Int64}, id::Int64) :: Matrix
+function partial_trace(ρ::AbstractMatrix, system::Vector{Int64}, id::Int64) :: Matrix
     dim = *(system...)
 
     if size(ρ) != (dim, dim)
@@ -79,18 +79,18 @@ function computational_basis_vectors(dim::Int64) :: Vector{Vector{Int64}}
 end
 
 """
-    is_hermitian( matrix :: Matrix; atol=ATOL :: Float64 ) :: Bool
+    is_hermitian( M :: AbstractMatrix; atol=ATOL :: Float64 ) :: Bool
 
 Returns `true` if the supplied matrix is hermitian (self-adjoint).
 """
-function is_hermitian(A :: Matrix; atol=ATOL :: Float64) :: Bool
-    indsm, indsn = axes(A)
+function is_hermitian(M :: AbstractMatrix; atol=ATOL :: Float64) :: Bool
+    indsm, indsn = axes(M)
     if indsm != indsn
         return false
     end
 
     for i = indsn, j = i:last(indsn)
-        if A[i,j] != adjoint(A[j,i]) && !isapprox(A[i,j],A[j,i],atol=atol)
+        if M[i,j] != adjoint(M[j,i]) && !isapprox(M[i,j],M[j,i],atol=atol)
             return false
         end
     end
@@ -99,17 +99,17 @@ function is_hermitian(A :: Matrix; atol=ATOL :: Float64) :: Bool
 end
 
 """
-    is_positive_semidefinite(matrix :: Matrix) :: Bool
+    is_positive_semidefinite(M :: AbstractMatrix) :: Bool
 
 Returns `true` if the supplied matrix is square and positive semidefinite (all eigen values
 are real and greater than or equal to 0).
 """
-function is_positive_semidefinite(A :: Matrix; atol=ATOL) :: Bool
-    if !isequal(size(A)...)
+function is_positive_semidefinite(M :: AbstractMatrix; atol=ATOL) :: Bool
+    if !isequal(size(M)...)
         return false
     end
 
-    for λ in eigvals(A)
+    for λ in eigvals(M)
         if (real(λ) < 0) && !isapprox(real(λ), 0, atol=atol)
             return false
         elseif !isapprox(imag(λ), 0, atol=atol)
@@ -185,7 +185,7 @@ Returns true if matrix `A` commutes with matrix `B`. Two matrices commute if
 
 A `DomainError` is thrown if the matrices are not compatible.
 """
-function commutes(A :: Matrix, B :: Matrix; atol=ATOL :: Float64) :: Bool
+function commutes(A :: AbstractMatrix, B :: Matrix; atol=ATOL :: Float64) :: Bool
     if (size(A)[1] != size(B)[2]) || (size(A)[2] != size(B)[1])
         throw(DomainError((A,B), "size(A) is not compatible with size(B)."))
     end

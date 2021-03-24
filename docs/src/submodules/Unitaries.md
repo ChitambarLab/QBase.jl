@@ -9,7 +9,7 @@ CurrentModule = Unitaries
 ```@docs
 Unitaries
 is_unitary
-AbstractUnitary
+Unitary
 Unitary
 QubitUnitary
 ```

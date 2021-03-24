@@ -2,10 +2,10 @@ export replacer_channel, depolarizing_channel, erasure_channel
 
 """
     replacer_channel(
-        ρ :: AbstractState,
-        σ :: AbstractState,
+        ρ :: State,
+        σ :: State,
         μ :: Real
-    ) :: AbstractState
+    ) :: State
 
 
 The replacer channel replaces the quantum state `ρ` with quantum state `σ` with
@@ -20,7 +20,7 @@ A `DomainError` is thrown if
 * `μ` does not satisfy `1 ≥ μ ≥ 0`
 * `ρ` and `σ` are not the same size
 """
-function replacer_channel(ρ :: AbstractState, σ :: AbstractState, μ :: Real) :: AbstractState
+function replacer_channel(ρ :: State, σ :: State, μ :: Real) :: State
     if !(1 ≥ μ ≥ 0)
         throw(DomainError(μ, "Input `μ` must satisfy `1 ≥ μ ≥ 0`"))
     elseif size(ρ) != size(σ)
@@ -31,7 +31,7 @@ function replacer_channel(ρ :: AbstractState, σ :: AbstractState, μ :: Real) 
 end
 
 """
-    depolarizing_channel( ρ :: AbstractState, μ :: Real ) :: AbstractState
+    depolarizing_channel( ρ :: State, μ :: Real ) :: State
 
 The depolarizing channel mixes uniform classical noise into a quantum state `ρ`.
 The argument `μ` describes the amount of noise mixed into the quantum states.
@@ -43,14 +43,14 @@ For a quantum state ``\\rho``, the depolarizing channel is expressed:
 
 A `DomainError` is thrown if `μ` does not satisfy `1 ≥ μ ≥ 0`.
 """
-function depolarizing_channel(ρ :: AbstractState, μ :: Real) :: AbstractState
+function depolarizing_channel(ρ :: State, μ :: Real) :: State
     d = size(ρ, 1)
     σ = State(Matrix{Int64}(I, (d,d))/d)
     replacer_channel(ρ, σ, μ)
 end
 
 """
-    erasure_channel( ρ :: AbstractState, μ :: Real ) :: State
+    erasure_channel( ρ :: State, μ :: Real ) :: State
 
 The erasure channel mixes a quantum state `ρ` with an error flag ``|F\\rangle``
 orthogonal to the Hilbert space of `ρ`.
@@ -65,7 +65,7 @@ Note that the erasure channel increases the dimension of the Hilbert space by 1.
 
 A `DomainError` is thrown if `μ` does not satisfy `1 ≥ μ ≥ 0`.
 """
-function erasure_channel(ρ :: AbstractState, μ :: Real) :: AbstractState
+function erasure_channel(ρ :: State, μ :: Real) :: State
     d = size(ρ, 1)
 
     ρ_ext = zeros(Complex{Float64}, d+1, d+1)

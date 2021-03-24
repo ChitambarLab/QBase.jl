@@ -8,7 +8,7 @@ export outcome_probabilities
 
 The abstract type representing a discrete probability distribution.
 """
-abstract type ProbabilityDistribution <: AbstractVector{Real} end
+abstract type ProbabilityDistribution{T} <: AbstractVector{T} end
 Base.size(probs::ProbabilityDistribution) = size(probs.distribution)
 Base.getindex(probs::ProbabilityDistribution, id::Int) = getindex(probs.distribution, id...)
 Base.setindex!(probs::ProbabilityDistribution, v, id::Int) = (probs.distribution[id...] = v)
@@ -18,7 +18,7 @@ Base.setindex!(probs::ProbabilityDistribution, v, id::Int) = (probs.distribution
 
 The abstract type representing a discrete conditional probability distribution.
 """
-abstract type ConditionalDistribution <: AbstractMatrix{Real} end
+abstract type ConditionalDistribution{T} <: AbstractMatrix{T} end
 Base.size(probs::ConditionalDistribution) = size(probs.distribution)
 Base.getindex(probs::ConditionalDistribution, id::Vararg{Int,2}) = getindex(probs.distribution, id...)
 Base.setindex!(probs::ConditionalDistribution, v, id::Vararg{Int,2}) = (probs.distribution[id...] = v)
@@ -28,7 +28,7 @@ Base.setindex!(probs::ConditionalDistribution, v, id::Vararg{Int,2}) = (probs.di
 
 The abstract type representing a discrete joint probability distribution.
 """
-abstract type JointProbabilityDistribution <: AbstractMatrix{Real} end
+abstract type JointProbabilityDistribution{T} <: AbstractMatrix{T} end
 Base.size(probs::JointProbabilityDistribution) = size(probs.distribution)
 Base.getindex(probs::JointProbabilityDistribution, id::Vararg{Int,2}) = getindex(probs.distribution, id...)
 Base.setindex!(probs::JointProbabilityDistribution, v, id::Vararg{Int,2}) = (probs.distribution[id...] = v)
@@ -79,7 +79,7 @@ is_conditional_distribution(::ConditionalDistribution) = true
 A struct representing a discrete probability distribution. All elements
 in the marginal distribution must be positive and their sum must be one.
 """
-struct Probabilities{T} <: ProbabilityDistribution
+struct Probabilities{T} <: ProbabilityDistribution{T}
     distribution :: Vector{T}
     atol :: Float64
     Probabilities(
@@ -106,7 +106,7 @@ p(N|1) & \\dots & p(N|M) \\\\
 \\end{bmatrix}
 ```
 """
-struct Conditionals{T} <: ConditionalDistribution
+struct Conditionals{T} <: ConditionalDistribution{T}
     distribution :: Matrix{T}
     atol :: Float64
     Conditionals(
@@ -146,7 +146,7 @@ Or, two `ProbabilityDistribution`s can be provided
 
 A `DomainError` is thrown if the joint probability distribution is invalid.
 """
-struct JointProbabilities{T} <: JointProbabilityDistribution
+struct JointProbabilities{T} <: JointProbabilityDistribution{T}
     distribution :: Matrix{T}
     atol :: Float64
     JointProbabilities(

@@ -91,12 +91,12 @@ The `POVM` with elements parallel to the symmetric informationally complete (SIC
 sic_qubit_povm() :: POVM{Complex{Float64}} = POVM(0.5 * sic_qubit_states())
 
 """
-    sqrt_povm(priors :: Probabilities, states :: Vector{<:AbstractState}) :: POVM
+    sqrt_povm(priors :: Probabilities, states :: Vector{<:State}) :: POVM
 
 Returns the "pretty good" square-root povm for the given density operator
 states and priors.
 """
-function sqrt_povm(priors :: Probabilities, states :: Vector{<:AbstractState}) :: POVM
+function sqrt_povm(priors :: Probabilities, states :: Vector{<:State}) :: POVM
     ρ_mix = sum(priors .* states)
     ρ_sqrt = sqrt(inv(ρ_mix))
 
@@ -119,10 +119,10 @@ form a continuum and are non-unique. This method applies the construction
 k_i = \\sqrt{\\Pi_i}\\otimes |i\\rangle
 ```
 """
-function _naimark_kraus_operators(povm::POVM) :: Array{Array{Complex{Float64},2},1}
-    num_el = length(povm.Π)
+function _naimark_kraus_operators(Π::POVM) :: Array{Array{Complex{Float64},2},1}
+    num_el = length(Π)
 
-    map(i -> kron(sqrt(povm.Π[i]), Matrix(I,num_el,num_el)[:,i]), 1:num_el)
+    map(i -> kron(sqrt(Π[i]), Matrix(I,num_el,num_el)[:,i]), 1:num_el)
 end
 
 """
@@ -131,14 +131,14 @@ end
 Returns the dilated projectors which are equivalent to the provided POVM. During
 measurement, the measured state must be tensored with the ancilla.
 """
-function naimark_dilation(povm::POVM)
-    n = length(povm.Π)
-    d = size(povm.Π[1])[1]
+function naimark_dilation(Π::POVM)
+    n = length(Π)
+    d = size(Π[1])[1]
 
     ancilla = zeros(n,n)
     ancilla[1,1] = 1
 
-    k = _naimark_kraus_operators(povm)
+    k = _naimark_kraus_operators(Π)
     V = sum(k)
 
     orth_comp = nullspace(V')

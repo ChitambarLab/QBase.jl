@@ -17,18 +17,18 @@ The method alternatively accepts a `Vector` input.
 
     pure_state( ψ :: Vector ) :: State
 """
-function pure_state(ket::AbstractKet; atol=ATOL :: Float64) :: AbstractState
+function pure_state(ket::AbstractKet; atol=ATOL :: Float64) :: State
     State(ket.ψ*ket.ψ', atol=atol)
 end
-function pure_state(bra::AbstractBra; atol=ATOL :: Float64) :: AbstractState
+function pure_state(bra::AbstractBra; atol=ATOL :: Float64) :: State
     State(bra.ψ'*bra.ψ, atol=atol)
 end
-function pure_state(ψ::Vector{<:Number}; atol=ATOL :: Float64) :: AbstractState
+function pure_state(ψ::Vector{<:Number}; atol=ATOL :: Float64) :: State
     State(ψ*ψ', atol=atol)
 end
 function pure_state(
     ψ::Adjoint{T,Vector{T}} where T <: Number; atol=ATOL :: Float64
-) :: AbstractState
+) :: State
     State(ψ'*ψ, atol=atol)
 end
 
@@ -44,7 +44,7 @@ function mixed_state(
     priors::AbstractVector{<:Number},
     states::Vector{<:AbstractMatrix{<:Number}};
     atol=ATOL :: Float64
-) :: AbstractState
+) :: State
     if !is_probability_distribution(priors)
         throw(DomainError(priors, "Input `priors` is not a valid probability distribution."))
     elseif findfirst(!is_density_matrix, states) !== nothing

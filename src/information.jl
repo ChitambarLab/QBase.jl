@@ -4,13 +4,15 @@ export mutual_information
 export success_probability, error_probability
 
 """
-    shannon_entropy( probabilities :: Probabilities ) :: Float64
-
-    shannon_entropy( probabilities :: Vector{<:Real}) :: Float64
+    shannon_entropy( probabilities :: AbstractVector ) :: Float64
 
 The classical entropy of a probability distribution.
+
+A `DomainError` is thrown if input `probabilities` does not satisfy [`is_probability_distribution`](@ref).
 """
-function shannon_entropy( probabilities :: Probabilities ) :: Float64
+function shannon_entropy( probabilities :: AbstractVector ) :: Float64
+    is_probability_distribution(probabilities) || Probabilities(probabilities)
+
     entropy = -1*sum(map(
         (p) -> isapprox(p, 0, atol=1e-7) ? 0 : p*log2(p),
         probabilities
@@ -18,38 +20,40 @@ function shannon_entropy( probabilities :: Probabilities ) :: Float64
 
     entropy
 end
-shannon_entropy(probs::Vector{<:Real}) :: Float64 = shannon_entropy(Probabilities(probs))
 
 """
-    von_neumann_entropy( ρ :: AbstractState ) :: Float64
-
-    von_neumann_entropy( ρ :: Matrix{<:Number} ) :: Float64
+    von_neumann_entropy( ρ :: AbstractMatrix ) :: Float64
 
 The von neumann entropy of a density matrix.
+
+A `DomainError` is thrown if `ρ` does not satisyd [`is_density_matrix`](@ref).
 """
-function von_neumann_entropy(ρ::AbstractState) :: Float64
+function von_neumann_entropy(ρ :: AbstractMatrix) :: Float64
+    is_density_matrix(ρ) || State(ρ)
+
     λs = Probabilities(eigvals(ρ))
     entropy = shannon_entropy(λs)
 
     entropy
 end
-von_neumann_entropy(ρ::Matrix{<:Number}) :: Float64 = von_neumann_entropy(State(ρ))
 
 """
     holevo_bound(
-        priors :: Probabilities,
-        ρ_states :: Vector{<:AbstractState}
-    ) :: Float64
-
-    holevo_bound(
-        priors :: Vector{<:Real},
-        ρ_states :: Vector{Matrix{<:Number}}
+        priors :: AbstractVector,
+        ρ_states :: Vector{<:AbstractMatrix}
     ) :: Float64
 
 Computes the upper bound of a quantum channel's information capacity. The information
 shared through a quantum channel cannot exceed a classical channel of the same dimension.
+
+A `DomainError` is thrown  if:
+* `priors` does not satisfy [`is_probability_distribution`](@ref).
+* Any `ρ ∈ ρ_states` does not satisfy [`is_density_matrix`](@ref).
 """
-function holevo_bound(priors::Probabilities, ρ_states::Vector{<:AbstractState}) :: Float64
+function holevo_bound(priors::AbstractVector, ρ_states::Vector{<:AbstractMatrix}) :: Float64
+    is_probability_distribution(priors) || Probabilities(priors)
+    all(is_density_matrix.(ρ_states)) || State.(ρ_states)
+
     ρ = mixed_state(priors, ρ_states)
     ρ_ent = von_neumann_entropy(ρ)
 
@@ -60,85 +64,62 @@ function holevo_bound(priors::Probabilities, ρ_states::Vector{<:AbstractState})
 
     bound
 end
-holevo_bound(priors::AbstractVector{<:Real}, ρ_states::Vector{<:AbstractMatrix{T}} where T <: Number ) :: Float64 = begin
-    holevo_bound(
-        (priors isa Probabilities) ? priors : Probabilities(priors),
-        (ρ_states isa Vector{<:AbstractState}) ? ρ_states : State.(ρ_states)
-    )
-end
 
 """
     holevo_information(
-        priors :: Probabilities,
-        ρ_states :: Vector{<:AbstractState},
-        Π :: POVM
+        priors :: AbstractVector,
+        ρ_states :: Vector{<:AbstractMatrix,
+        Π :: AbstractVector
     ) :: Float64
 
 Computes the holevo (mutual) information shared through a quantum channel.
+
+A `DomainError` is thrown if:
+* `priors` does not satisfy [`is_probability_distribution`](@ref).
+* Any `ρ ∈ ρ_states` does not satisfy [`is_density_matrix`](@ref).
+* `Π` does not satisfy [`is_povm`](@ref).
 """
 function holevo_information(
-    priors::Probabilities,
-    ρ_states::Vector{<:AbstractState},
-    Π::POVM
+    priors::AbstractVector,
+    states::Vector{<:AbstractMatrix},
+    Π::AbstractVector{<:AbstractMatrix}
 ) :: Float64
-    x_num = length(priors)
-    y_num = length(Π)
+    is_probability_distribution(priors) || Probabilities(priors)
 
-    joint_probs = zeros(y_num,x_num)
-    for x_id in 1:x_num
-        p = priors[x_id]
-        ρ = ρ_states[x_id]
-        for y_id in 1:y_num
-            joint_probs[y_id,x_id] += p*tr(ρ*Π[y_id])
-        end
+    if !all(ρ -> ρ isa State, states)
+        states = State.(states)
+    end
+    if !(Π isa POVM)
+        Π = POVM(Π)
     end
 
-    conditionals = Conditionals(joint_probs .* (1 ./ priors)')
-
-    h_information = mutual_information(priors, conditionals)
-
-    h_information
-end
-holevo_information(
-    priors::AbstractVector{<:Real},
-    ρ_states::Vector{<:AbstractMatrix{T}} where T <: Number,
-    Π :: AbstractVector{Matrix{S}} where S <: Number
-) = begin
-    holevo_information(
-        (priors isa Probabilities) ? priors : Probabilities(priors),
-        (ρ_states isa Vector{<:AbstractState}) ? ρ_states : State.(ρ_states),
-        (Π isa POVM) ? Π : POVM(Π)
-    )
+    conditionals = measure(Π, states)
+    mutual_information(priors, conditionals)
 end
 
 """
-    joint_entropy(priors :: Probabilities, conditionals :: Conditionals) :: Float64
+    joint_entropy(priors :: AbstractVector, conditionals :: AbstractMatrix) :: Float64
 
 Returns the entropy for the union of pdf ``P(x,y)``.
 """
-function joint_entropy(priors::Probabilities, conditionals::Conditionals) :: Float64
-    joint_probabilities = joint_probabilities(priors, conditionals)
+function joint_entropy(priors::AbstractVector, conditionals::AbstractMatrix) :: Float64
+    is_probability_distribution(priors) || Probabilities(priors)
+    is_conditional_distribution(conditionals) || Conditionals(conditionals)
 
-    shannon_entropy(Probabilities(joint_probabilities[:]))
-end
-joint_entropy(
-    priors::AbstractVector{<:Number},
-    conditionals::AbstractMatrix{<:Number}
-) :: Float64 = begin
-    joint_entropy(
-        (priors isa Probabilities) ? priors : Probabilities(priors),
-        (conditionals isa Conditionals) ? conditionals : Conditionals(conditionals)
-    )
+    joint_probabilities = JointProbabilities(priors, conditionals)
+    shannon_entropy(joint_probabilities[:])
 end
 
 """
-    conditional_entropy(priors::Probabilities, conditionals::Conditionals) :: Float64
+    conditional_entropy(priors::AbstractVector, conditionals::AbstractMatrix) :: Float64
 
 Returns the conditional entropy for the system with specified `priors` and `conditionals`.
 """
-function conditional_entropy(priors::Probabilities, conditionals::Conditionals) :: Float64
-    joint_probabilities = joint_probabilities(priors, conditionals)
+function conditional_entropy(priors::AbstractVector, conditionals::AbstractMatrix) :: Float64
+    is_probability_distribution(priors) || Probabilities(priors)
+    is_conditional_distribution(conditionals) || Conditionals(conditionals)
 
+    joint_probabilities = JointProbabilities(priors, conditionals)
     (num_row, num_col) = size(joint_probabilities)
 
     conditional_entropy = shannon_entropy(Probabilities(joint_probabilities[:])) + sum(sum(map( row -> map( col ->
@@ -147,90 +128,56 @@ function conditional_entropy(priors::Probabilities, conditionals::Conditionals) 
 
     conditional_entropy
 end
-conditional_entropy(
-    priors::AbstractVector{<:Number},
-    conditionals::AbstractMatrix{<:Number}
-) :: Float64 = begin
-    conditional_entropy(
-        (priors isa Probabilities) ? priors : Probabilities(priors),
-        (conditionals isa Conditionals) ? conditionals : Conditionals(conditionals)
-    )
-end
 
 """
     mutual_information(
-        priors :: Probabilities,
-        conditionals :: Conditionals
+        priors :: AbstractVector,
+        conditionals :: AbstractMatrix
     ) :: Float64
 
 The entropy of the overlap between p(x) and p(y). The information shared from y to x.
 """
-function mutual_information(priors::Probabilities, conditionals::Conditionals) :: Float64
+function mutual_information(priors::AbstractVector, conditionals::AbstractMatrix) :: Float64
+    is_probability_distribution(priors) || Probabilities(priors)
+    is_conditional_distribution(conditionals) || Conditionals(conditional)
 
     prior_ent = shannon_entropy(priors)
 
     outcome_probs = outcome_probabilities(priors,conditionals)
-    outcome_ent = shannon_entropy( Probabilities(outcome_probs) )
+    outcome_ent = shannon_entropy( outcome_probs )
     joint_ent = joint_entropy(priors, conditionals)
 
     mutual_information = prior_ent + outcome_ent - joint_ent
 
     mutual_information
 end
-mutual_information(
-    priors::AbstractVector{<:Number},
-    conditionals::AbstractMatrix{<:Number}
-) :: Float64 = begin
-    mutual_information(
-        (priors isa Probabilities) ? priors : Probabilities(priors),
-        (conditionals isa Conditionals) ? conditionals : Conditionals(conditionals)
-    )
-end
 
 """
     success_probability(
-        priors::Probabilities,
-        ρ_states::Vector{<:AbstractState},
-        Π::POVM
+        priors::AbstractVector,
+        states::Vector{<:AbstractMatrix},
+        Π::Vector{<:AbstractMatrix}
     ) :: Float64
 
 The probability of correctly distinguishing quantum states with the specifed POVM.
 """
-function success_probability(priors::Probabilities, ρ_states::Vector{<:AbstractState}, Π::POVM) :: Float64
-    sum(priors .* tr.(ρ_states .* Π))
-end
-success_probability(
-    priors::AbstractVector{<:Real},
-    ρ_states::Vector{<:AbstractMatrix{T}} where T <: Number,
-    Π :: AbstractVector{Matrix{S}} where S <: Number
-) = begin
-    success_probability(
-        (priors isa Probabilities) ? priors : Probabilities(priors),
-        (ρ_states isa Vector{<:AbstractState}) ? ρ_states : State.(ρ_states),
-        (Π isa POVM) ? Π : POVM(Π)
-    )
+function success_probability(priors::AbstractVector,states::Vector{<:AbstractMatrix}, Π::AbstractVector{<:AbstractMatrix}) :: Float64
+    is_probability_distribution(priors) || Probabilities(priors)
+    all(is_density_matrix.(states)) || State.(states)
+    is_povm(Π) || POVM(Π)
+
+    sum(priors .* tr.(states .* Π))
 end
 
 """
     error_probability(
-        priors::Probabilities,
-        ρ_states::Vector{<:AbstractState},
-        Π::POVM
+        priors::AbstractVector,
+        ρ_states::Vector{<:AbstractMatrix},
+        Π::AbstractVector{<:AbstractMatrix}
     ) :: Float64
 
 The probability of incorrectly distinguishing quantum states with the specifed POVM.
 """
-function error_probability(priors::Probabilities, ρ_states::Vector{<:AbstractState}, Π::POVM) :: Float64
+function error_probability(priors::AbstractVector, ρ_states::Vector{<:AbstractMatrix}, Π::AbstractVector{<:AbstractMatrix}) :: Float64
     1 .- success_probability(priors, ρ_states, Π)
-end
-error_probability(
-    priors::AbstractVector{<:Real},
-    ρ_states::Vector{<:AbstractMatrix{T}} where T <: Number,
-    Π :: AbstractVector{Matrix{S}} where S <: Number
-) = begin
-    error_probability(
-        (priors isa Probabilities) ? priors : Probabilities(priors),
-        (ρ_states isa Vector{<:AbstractState}) ? ρ_states : State.(ρ_states),
-        (Π isa POVM) ? Π : POVM(Π)
-    )
 end

@@ -31,17 +31,17 @@ end
 
         ρ0_out1 = depolarizing_channel(ρ0, 1)
 
-        @test ρ0_out1 isa AbstractState
+        @test ρ0_out1 isa State
         @test ρ0_out1 == ρ0
 
         ρ0_out2 = depolarizing_channel(ρ0, 0)
 
-        @test ρ0_out2 isa AbstractState
+        @test ρ0_out2 isa State
         @test ρ0_out2 == [1/2 0;0 1/2]
 
         ρ0_out3 = depolarizing_channel(ρ0, 0.5)
 
-        @test ρ0_out3 isa AbstractState
+        @test ρ0_out3 isa State
         @test ρ0_out3 == [3/4 0;0 1/4]
     end
 
@@ -73,17 +73,17 @@ end
 
         ρ_out1 = erasure_channel(ρ, 1)
 
-        @test ρ_out1 isa AbstractState
+        @test ρ_out1 isa State
         @test ρ_out1 == [1 0 0;0 0 0;0 0 0]
 
         ρ_out2 = erasure_channel(ρ, 0)
 
-        @test ρ_out2 isa AbstractState
+        @test ρ_out2 isa State
         @test ρ_out2 == [0 0 0;0 0 0;0 0 1]
 
         ρ_out3 = erasure_channel(ρ, 0.5)
 
-        @test ρ_out3 isa AbstractState
+        @test ρ_out3 isa State
         @test ρ_out3 == [0.5 0 0;0 0 0;0 0 0.5]
     end
 

@@ -1,124 +1,126 @@
 # validation
-export is_povm
+export is_povm, is_povm_element
 
 # types
-export Measurement, POVM, PVM #AbstractPOVM, POVM
+export Measurement
+export POVMel, POVM, PVM
 
+"""
+    Measurement{T} <: AbstractVector{T}
+
+The abstract type representing a quantum measurement. A measurement consists of a
+complete set of possible outcomes.
+"""
 abstract type Measurement{T} <: AbstractVector{T} end
-Base.size( m :: Measurement) = size(m.Π)
-Base.getindex( m :: Measurement, id::Int) = getindex(m.Π, id...)
-Base.setindex!( m :: Measurement, val, id::Int) = (m.Π[id...] = val)
-
-
-"""
-    AbstractPOVM <: AbstractMatrix{Complex{Float64}}
-
-The abstract type representing positive-operator valued measures (POVMs). An
-`AbstractPOVM` cannot be instantiated, it serves as a supertype from which concrete
-types are derived.
-"""
-# abstract type AbstractPOVM{T<:Number} <: AbstractMeasurement end
-
+Base.size( Π :: Measurement) = size(Π.V)
+Base.getindex( Π :: Measurement, id::Int) = getindex(Π.V, id...)
+Base.setindex!( Π :: Measurement, val, id::Int) = (Π.V[id...] = val)
 
 """
-    is_povm( Π :: Vector; atol=ATOL :: Float64 ) :: Bool
+    is_povm_element(M :: AbstractMatrix; atol=ATOL :: Float64) :: Bool
 
-Returns `true` if `Π` is a POVM. The following constraints must be satisfied:
-* Each POVM element is hermitian
-* Each POVM element positive semi-definite
-* The POVM is complete: `sum(Π) == I`
+Returns `true` if matrix `M` satisfies the following constraints:
+* `M` is Hermitian
+* `M` is positive semi-definite
 """
-function is_povm(Π::Vector{Matrix}; atol=ATOL :: Float64) :: Bool
-    dim = size(Π[1])[1]
-
-    if !isapprox(sum(Π), Matrix{Complex{Float64}}(I,dim,dim), atol=atol)
+function is_povm_element(M :: AbstractMatrix; atol=ATOL :: Float64) :: Bool
+    if !is_hermitian(M, atol=atol)
         return false
-    elseif !all(Πx -> is_hermitian(Πx, atol=atol), Π)
-        return false
-    elseif !all(Πx -> is_positive_semidefinite(Πx, atol=atol), Π)
+    elseif !is_positive_semidefinite(M, atol=atol)
         return false
     end
 
     return true
 end
 
-function is_pvm(Π::Vector{Vector}; atol=ATOL :: Float64) :: Bool
+"""
+    is_povm( Π :: Vector; atol=ATOL :: Float64 ) :: Bool
 
+Returns `true` if `Π` satisfies the following constraints
+* The POVM is complete: `sum(Π) == I`
+* Each POVM element is hermitian
+* Each POVM element positive semi-definite
+"""
+function is_povm(Π::Vector{<:AbstractMatrix}; atol=ATOL :: Float64) :: Bool
+    if !is_complete(Π, atol=atol)
+        return false
+    elseif !all(M -> is_povm_element(M, atol=atol), Π)
+        return false
+    end
+
+    return true
 end
 
 """
-    POVM( Π :: Vector{Matrix} ) <: Measurement
+    POVMel( M :: AbstractMatrix{T}; atol=ATOL :: Float64) <: Operator{T}
+
+A [`POVM`](@ref) element. A `DomainError` is thrown if matrix `M` is not hermitian
+and positive semi-definite within absolute tolerance `atol`.
+"""
+struct POVMel{T} <: Operator{T}
+    M :: Matrix{T}
+    atol :: Float64
+    POVMel(
+        M :: AbstractMatrix; atol=ATOL :: Float64
+    ) = is_povm_element(M,atol=atol) ? new{eltype(M)}(M,atol) : throw(DomainError(M, "POVM element M is invalid"))
+end
+is_povm_element(::POVMel) :: Bool = true
+kron(Π_els :: Vararg{POVMel}) = POVMel(kron(map(Π_el -> Π_el.M, Π_els)...))
+
+"""
+    POVM( Π :: Vector{Matrix{T}} ) <: Measurement{T}
 
 Positve-operator valued measures (POVMs) represent a general quantum measurement.
 Each POVM-element is a hermitian, positive-semidefinite matrix. The sum of all
 POVM-elements yields the identity matrix. The constructor, `POVM(Π)` throws a
 `DomainError` if the provided array of matrices, `Π` is not a valid POVM.
 """
-struct POVM{T} <: Measurement{T}
-    Π :: Vector{Matrix{T}}
+struct POVM{T} <: Measurement{POVMel{T}}
+    V :: Vector{POVMel{T}}
     atol :: Float64
     POVM(
         Π :: Vector{Matrix{T}};
         atol=ATOL :: Float64
-    ) where T <: Number = is_povm(Π, atol=atol) ? new{T}(Π, atol) : throw(DomainError(Π, "povm Π is invalid"))
+    ) where T <: Number = is_povm(Π, atol=atol) ? new{T}(POVMel.(Π, atol=atol), atol) : throw(DomainError(Π, "povm Π is invalid"))
 end
+is_povm(::POVM) :: Bool = true
 
-function show(io::IO, mime::MIME{Symbol("text/plain")}, povm :: POVM)
-    summary(io, povm)
-    print(io, "\n\natol : ")
-    show(io,mime, povm.atol)
-    println(io, "\nlength : ", length(povm))
-    for i in 1:length(povm.Π)
+# print out matrix forms when POVM types are displayed
+function show(io::IO, mime::MIME{Symbol("text/plain")}, Π :: POVM)
+    summary(io, Π)
+    for i in 1:length(Π)
         print(io,"\nΠ[",i,"] : ")
-        show(io, mime, povm.Π[i])
+        show(io, mime, Π[i])
     end
 end
-is_povm(Π::POVM) :: Bool = true
 
+"""
+    PVM( Π :: Vector{Vector{T}}; atol=ATOL :: Float64 ) <: Measurement{T}
+
+The concret type for a projector-valued measure. The projectors are represented
+as a set of orthonormal basis vectors
+
+A `DomainError` is thrown if `Π` does not contain an orthonormal basis.
+"""
 struct PVM{T} <: Measurement{T}
-    Π :: Vector{Vector{T}}
+    V :: Vector{Ket{T}}
     atol :: Float64
     PVM(
         Π :: Vector{Vector{T}};
         atol=ATOL :: Float64
-    ) where T <: Number = true ? new{T}(Π, atol) : throw(DomainError(Π, "povm Π is invalid"))
+    ) where T <: Number = is_orthonormal_basis(Π,  atol=atol) ? new{T}(Ket.(Π, atol=atol), atol) : throw(DomainError(Π, "povm Π is invalid"))
+    PVM(
+        Π :: Vector{Ket{T}};
+        atol=ATOL :: Float64
+    ) where  T <: Number = is_orthonormal_basis(Π,  atol=atol) ? new{T}(Π, atol) : throw(DomainError(Π, "povm Π is invalid"))
 end
+is_orthonormal_basis(::PVM) = true
 
-
-
-
-
-
-
-
-
-
-#
-# abstract type AbstractPVM{T<:Number} <: AbstractPOVM end
-#
-# abstract type AbstractObservable{T<:Number} <: AbstractMatrix{Number} end
-
-
-# Observable
+# TODO: Observable
     # hermitian matrix M
     # M = ∑_j m_j * P_j
     # P_j are rank one projectors
     # m_j are real eigenvalues
     # P_j are the orthonormal eigenvectors of M
-
-# PVM projection-valued measure
-    # orthonormal and complete
-    # should be represented by vector
-    # measurements will be much faster that way
-
-# POVM
-    # Hermitian positive semi-definite elements that sum to the identity
-    # vector of matrices
-
-# Measurement Operator
-    # matrix that is element of
-
-# a PVM is also a POVM
-    # can convert PVM into POVM
-
-# PVM can be converted into an observable and vice-versa
+# TODO: POVM and PVM conversions
+# TODO: kron extensions for measurements

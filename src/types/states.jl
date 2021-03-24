@@ -1,16 +1,5 @@
-# export State, State
 export State
 export is_density_matrix, is_pure, is_mixed
-
-# """
-#     State <: AbstractMatrix{Number}
-#
-# The abstract type representing all density matrices.
-# """
-# abstract type State <: AbstractMatrix{Number} end
-# Base.size(state::State) = size(state.ρ)
-# Base.getindex(state::State, id::Vararg{Int,2}) = getindex(state.ρ, id...)
-# Base.setindex!(state::State, val, id::Vararg{Int,2}) = (state.ρ[id...] = val)
 
 """
     is_density_matrix( ρ :: Matrix; atol=ATOL :: Float64 ) :: Bool
@@ -87,11 +76,6 @@ atol=atol)
 partial_trace(ρ::State, system::Vector{Int64}, id::Int64; atol=ATOL :: Float64) = begin
     State(partial_trace(ρ.M, system, id), atol=atol)
 end
-
-# """
-#     rank(state :: State)
-# """
-# rank(state :: State) = rank(state.ρ, atol=state.atol)
 
 """
     eigvals(state :: State)

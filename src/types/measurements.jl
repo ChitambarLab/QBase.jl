@@ -41,7 +41,7 @@ Returns `true` if `Π` satisfies the following constraints
 * Each POVM element is hermitian
 * Each POVM element positive semi-definite
 """
-function is_povm(Π::Vector{<:AbstractMatrix}; atol=ATOL :: Float64) :: Bool
+function is_povm(Π::Vector{<:AbstractMatrix{<:Number}}; atol=ATOL :: Float64) :: Bool
     if !is_complete(Π, atol=atol)
         return false
     elseif !all(M -> is_povm_element(M, atol=atol), Π)
@@ -52,17 +52,20 @@ function is_povm(Π::Vector{<:AbstractMatrix}; atol=ATOL :: Float64) :: Bool
 end
 
 """
-    POVMel( M :: AbstractMatrix{T}; atol=ATOL :: Float64) <: Operator{T}
+    POVMel( M :: AbstractMatrix{T<:Number}; atol=ATOL :: Float64) <: Operator{T}
 
 A [`POVM`](@ref) element. A `DomainError` is thrown if matrix `M` is not hermitian
 and positive semi-definite within absolute tolerance `atol`.
 """
-struct POVMel{T} <: Operator{T}
+struct POVMel{T<:Number} <: Operator{T}
     M :: Matrix{T}
     atol :: Float64
     POVMel(
-        M :: AbstractMatrix; atol=ATOL :: Float64
+        M :: Matrix{<:Number}; atol=ATOL :: Float64
     ) = is_povm_element(M,atol=atol) ? new{eltype(M)}(M,atol) : throw(DomainError(M, "POVM element M is invalid"))
+    POVMel(
+        ρ :: State; atol=ATOL :: Float64
+    ) = is_povm_element(ρ, atol=atol) ? new{eltype(ρ.M)}(ρ.M,atol) : throw(DomainError(ρ.M, "POVM element M is invalid"))
 end
 is_povm_element(::POVMel) :: Bool = true
 kron(Π_els :: Vararg{POVMel}) = POVMel(kron(map(Π_el -> Π_el.M, Π_els)...))
@@ -75,7 +78,7 @@ Each POVM-element is a hermitian, positive-semidefinite matrix. The sum of all
 POVM-elements yields the identity matrix. The constructor, `POVM(Π)` throws a
 `DomainError` if the provided array of matrices, `Π` is not a valid POVM.
 """
-struct POVM{T} <: Measurement{POVMel{T}}
+struct POVM{T<:Number} <: Measurement{POVMel{T}}
     V :: Vector{POVMel{T}}
     atol :: Float64
     POVM(
@@ -102,7 +105,7 @@ as a set of orthonormal basis vectors
 
 A `DomainError` is thrown if `Π` does not contain an orthonormal basis.
 """
-struct PVM{T} <: Measurement{T}
+struct PVM{T<:Number} <: Measurement{T}
     V :: Vector{Ket{T}}
     atol :: Float64
     PVM(

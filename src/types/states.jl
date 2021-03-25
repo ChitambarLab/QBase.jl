@@ -2,14 +2,14 @@ export State
 export is_density_matrix, is_pure, is_mixed
 
 """
-    is_density_matrix( ρ :: Matrix; atol=ATOL :: Float64 ) :: Bool
+    is_density_matrix( ρ :: Matrix{<:Number}; atol=ATOL :: Float64 ) :: Bool
 
 Returns true if input `ρ` is:
 * Hermitian
 * Positive Semi-Definite
 * Trace[ρ] = 1 (normalization)
 """
-function is_density_matrix(ρ::Matrix; atol=ATOL :: Float64)::Bool
+function is_density_matrix(ρ::Matrix{<:Number}; atol=ATOL :: Float64)::Bool
     if !is_hermitian(ρ, atol=atol)
         return false
     elseif !isapprox(tr(ρ), 1, atol=atol)
@@ -50,7 +50,7 @@ Base methods extended to use the `DensityMatrix` type:
 * `partial_trace` - Returns `DensityMatrix` if supplied with one.
 * `kron` - The kronecker product of two quantum states is a `State`.
 """
-struct State{T} <: Operator{T}
+struct State{T<:Number} <: Operator{T}
     M :: Matrix{T}
     atol :: Float64
     State(

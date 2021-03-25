@@ -32,10 +32,10 @@ is_ket
 ### Ket Types
 
 ```@docs
-AbstractKet
+Ket
 ```
 
-The `States` module provides two concrete subtypes of `AbstractKet`:
+The `States` module provides two concrete subtypes of `Ket`:
 
 ```@docs
 Ket

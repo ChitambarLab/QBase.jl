@@ -1,12 +1,12 @@
 export evolve
 
 """
-    *( U :: Unitary, ket :: AbstractKet ) :: AbstractKet
-    *( bra :: AbstractBra, U :: Unitary ) :: AbstractBra
+    *( U :: Unitary, ket :: Ket ) :: Ket
+    *( bra :: Bra, U :: Unitary ) :: Bra
     *()
 """
-*(U :: Unitary, ket :: AbstractKet) :: AbstractKet = Ket(U.M * ket.ψ, atol=max(U.atol, ket.atol))
-*(bra :: AbstractBra, U :: Unitary) :: AbstractBra = Bra(bra.ψ * U.M, atol=max(U.atol, bra.atol))
+*(U :: Unitary, ket :: Ket) :: Ket = Ket(U.M * ket.ψ, atol=max(U.atol, ket.atol))
+*(bra :: Bra, U :: Unitary) :: Bra = Bra(bra.ψ * U.M, atol=max(U.atol, bra.atol))
 *(U1 :: Unitary, ρ :: State, U2 ::  Unitary) :: Matrix =  U1.M*ρ.M*U2.M
 
 """
@@ -24,10 +24,10 @@ evolve(U :: AbstractMatrix, ρ :: AbstractMatrix; atol=ATOL :: Float64) :: State
 """
     evolve(
         U ::  Unitary,
-        ψ :: AbstractKet
-    ) :: AbstractKet
+        ψ :: Ket
+    ) :: Ket
 
 Apply a unitary evolution `U` to a state ket `ψ`.
 """
-evolve(U::Unitary, ψ::AbstractKet) :: AbstractKet = U*ψ
-evolve(U :: AbstractMatrix, ψ :: AbstractVector; atol=ATOL :: Float64) :: AbstractKet = Ket(U*ψ, atol=atol)
+evolve(U::Unitary, ψ::Ket) :: Ket = U*ψ
+evolve(U :: AbstractMatrix, ψ :: AbstractVector; atol=ATOL :: Float64) :: Ket = Ket(U*ψ, atol=atol)

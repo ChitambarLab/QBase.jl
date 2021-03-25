@@ -55,27 +55,27 @@ end
     @testset "valid input types" begin
         ψ = Ket([1,0])
         @test ψ isa Ket{Int64}
-        @test ψ isa AbstractKet{Int64}
+        @test ψ isa Ket{Int64}
         @test ψ == [1,0]
 
         ψ = Ket([1.,0.])
         @test ψ isa Ket{Float64}
-        @test ψ isa AbstractKet{Float64}
+        @test ψ isa Ket{Float64}
         @test ψ == [1,0]
 
         ψ = Ket([1//1,0//1])
         @test ψ isa Ket{Rational{Int64}}
-        @test ψ isa AbstractKet{Rational{Int64}}
+        @test ψ isa Ket{Rational{Int64}}
         @test ψ == [1,0]
 
         ψ = Ket([im,0])
         @test ψ isa Ket{Complex{Int64}}
-        @test ψ isa AbstractKet{Complex{Int64}}
+        @test ψ isa Ket{Complex{Int64}}
         @test ψ == [im,0]
 
         ψ = Ket([im,0.])
         @test ψ isa Ket{Complex{Float64}}
-        @test ψ isa AbstractKet{Complex{Float64}}
+        @test ψ isa Ket{Complex{Float64}}
         @test ψ == [im,0]
     end
 
@@ -127,27 +127,27 @@ end
     @testset "valid input types" begin
         ψ = Bra([1,0])
         @test ψ isa Bra{Int64}
-        @test ψ isa AbstractBra{Int64}
+        @test ψ isa Bra{Int64}
         @test ψ == [1,0]'
 
         ψ = Bra([1.,0.])
         @test ψ isa Bra{Float64}
-        @test ψ isa AbstractBra{Float64}
+        @test ψ isa Bra{Float64}
         @test ψ == [1,0]'
 
         ψ = Bra([1//1,0//1])
         @test ψ isa Bra{Rational{Int64}}
-        @test ψ isa AbstractBra{Rational{Int64}}
+        @test ψ isa Bra{Rational{Int64}}
         @test ψ == [1,0]'
 
         ψ = Bra([im,0])
         @test ψ isa Bra{Complex{Int64}}
-        @test ψ isa AbstractBra{Complex{Int64}}
+        @test ψ isa Bra{Complex{Int64}}
         @test ψ == [im,0]'
 
         ψ = Bra([im,0.])
         @test ψ isa Bra{Complex{Float64}}
-        @test ψ isa AbstractBra{Complex{Float64}}
+        @test ψ isa Bra{Complex{Float64}}
         @test ψ == [im,0]'
     end
 

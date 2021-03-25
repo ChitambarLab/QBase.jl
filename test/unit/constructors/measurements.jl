@@ -65,7 +65,7 @@ end
 @testset "trine_qubit_povm()" begin
     trine_Π = trine_qubit_povm()
     @test trine_Π isa POVM{Float64}
-    @test trine_Π ≈ mirror_symmetric_qubit_3povm(π/3)
+    @test isapprox(trine_Π, mirror_symmetric_qubit_3povm(π/3), atol=1e-7)
 end
 
 @testset "sic_qubit_povm()" begin
@@ -79,7 +79,7 @@ end
     Π = sqrt_povm(priors, states)
 
     @test Π isa POVM{Float64}
-    @test Π ≈ trine_qubit_povm()
+    @test isapprox(Π, trine_qubit_povm(), atol=1e-7)
 end
 
 @testset "_naimark_kraus_operators()" begin

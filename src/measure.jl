@@ -14,7 +14,7 @@ Measurement of a single `Ket` or  `DensityMatrix`:
 
     measure(
         Π :: POVM,
-        ψ :: AbstractKet
+        ψ :: Ket
     ) :: Conditionals
 
 Measurement of an ensemble of `Ket` or `DensityMatrix` types:
@@ -43,13 +43,13 @@ function measure(
 end
 function measure(
     Π :: POVM,
-    ψ :: AbstractKet
+    ψ :: Ket
 ) :: Probabilities
     Probabilities( real.(map( Π_el -> ψ' * Π_el * ψ, Π)) )
 end
 function measure(
     Π :: POVM,
-    ψ_kets :: Vector{<:AbstractKet}
+    ψ_kets :: Vector{<:Ket}
 ) :: Conditionals
     measure(Π, pure_state.(ψ_kets))
 end

@@ -42,7 +42,7 @@ operator remaining after system ``B`` is traced out.
 
 A `DomainError` is thrown if `ρ` is not square or of proper dimension.
 """
-function partial_trace(ρ::AbstractMatrix, system::Vector{Int64}, id::Int64) :: Matrix
+function partial_trace(ρ::AbstractMatrix{<:Number}, system::Vector{Int64}, id::Int64) :: Matrix
     dim = *(system...)
 
     if size(ρ) != (dim, dim)
@@ -79,11 +79,11 @@ function computational_basis_vectors(dim::Int64) :: Vector{Vector{Int64}}
 end
 
 """
-    is_hermitian( M :: AbstractMatrix; atol=ATOL :: Float64 ) :: Bool
+    is_hermitian( M :: AbstractMatrix{<:Number}; atol=ATOL :: Float64 ) :: Bool
 
 Returns `true` if the supplied matrix is hermitian (self-adjoint).
 """
-function is_hermitian(M :: AbstractMatrix; atol=ATOL :: Float64) :: Bool
+function is_hermitian(M :: AbstractMatrix{<:Number}; atol=ATOL :: Float64) :: Bool
     indsm, indsn = axes(M)
     if indsm != indsn
         return false
@@ -104,7 +104,7 @@ end
 Returns `true` if the supplied matrix is square and positive semidefinite (all eigen values
 are real and greater than or equal to 0).
 """
-function is_positive_semidefinite(M :: AbstractMatrix; atol=ATOL) :: Bool
+function is_positive_semidefinite(M :: AbstractMatrix{<:Number}; atol=ATOL) :: Bool
     if !isequal(size(M)...)
         return false
     end
@@ -125,7 +125,7 @@ end
 
 Returns `true` if `basis_vecs` forms an orthonormal basis.
 """
-function is_orthonormal_basis(basis_vecs :: Vector{<:AbstractVector}; atol=ATOL :: Float64) :: Bool
+function is_orthonormal_basis(basis_vecs :: Vector{<:AbstractVector{<:Number}}; atol=ATOL :: Float64) :: Bool
     num_vecs = length(basis_vecs)
     if num_vecs != length(basis_vecs[1])
         return false
@@ -185,7 +185,7 @@ Returns true if matrix `A` commutes with matrix `B`. Two matrices commute if
 
 A `DomainError` is thrown if the matrices are not compatible.
 """
-function commutes(A :: AbstractMatrix, B :: Matrix; atol=ATOL :: Float64) :: Bool
+function commutes(A :: AbstractMatrix{<:Number}, B :: Matrix; atol=ATOL :: Float64) :: Bool
     if (size(A)[1] != size(B)[2]) || (size(A)[2] != size(B)[1])
         throw(DomainError((A,B), "size(A) is not compatible with size(B)."))
     end
@@ -194,11 +194,11 @@ function commutes(A :: AbstractMatrix, B :: Matrix; atol=ATOL :: Float64) :: Boo
 end
 
 """
-    is_complete(Π :: Vector{<:AbstracMatrix}; atol=ATOL :: Float64) :: Bool
+    is_complete(Π :: Vector{<:AbstractMatrix{<:Number}}; atol=ATOL :: Float64) :: Bool
 
 Returns `true` if the provided set of matrices sums to the identity.
 """
-function is_complete(Π :: Vector{<:AbstractMatrix}; atol=ATOL :: Float64) :: Bool
+function is_complete(Π :: Vector{<:AbstractMatrix{<:Number}}; atol=ATOL :: Float64) :: Bool
     if !isapprox(sum(Π), I, atol=atol)
         return false
     end

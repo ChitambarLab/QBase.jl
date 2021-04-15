@@ -40,9 +40,8 @@ include("types/states.jl")
 include("types/unitaries.jl")
 include("types/measurements.jl")
 
-# TODO: AbstractOperator < Matrix
-    # TODO: Unitary
-    # TODO: KrausOperator
+# TODO: Unitary
+# TODO: KrausOperator
 # TODO: AbstractChannel
 # TODO: AbstractSuperOperator
 # TODO: AbstractObservable

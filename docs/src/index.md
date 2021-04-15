@@ -7,13 +7,15 @@ CurrentModule = QBase
 *A base library for quantum information.*
 
 !!! note "Alpha Version"
-    Breaking changes will be made in future commits.
+    Your thoughts and opinions are valued and will help improve this software. To
+    provide feedback or make feature requests, please contact [brian.d.doolittle@gmail.com](mailto:brian.d.doolittle@gmail.com).
 
 ## Features:
-  1. Types and constructors for representing quantum states and operators.
-  2. Methods for evolving quantum systems and performing quantum measurements.
-  3. Methods for computing information-theoretic quantities.
-  4. Mathematics utilities to support quantum calculations.
+  1. Validated types with a flexible tolerance for numerical error.
+  2. Constructors for quantum states, measurements, and evolution operators.
+  3. Methods for evolving and measuring quantum systems.
+  4. Methods for calculating information-theoretic quantities.
+  5. Mathematics utilities that support quantum mechanics.
 
 ## Citing
 
@@ -33,6 +35,6 @@ Urbana-Champaign. Funding was provided by NSF Award 1914440.
 ## Contents
 
 ```@contents
-Pages = ["user_guide.md", "exports.md", "submodules/States.md", "submodules/Unitaries.md", "submodules/Observables.md", "submodules/Channels.md", "submodules/Information.md", "submodules/QMath.md"]
+Pages = ["base_types.md", "states.md", "evolution.md", "measurement.md", "informmation.md", "math_utilities.md", "examples.md"]
 Depth = 1
 ```

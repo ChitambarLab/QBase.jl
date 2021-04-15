@@ -4,45 +4,45 @@ using LinearAlgebra
 
 @testset "./src/types/brakets.jl" begin
 
-@testset "is_wave_vector()" begin
+@testset "is_braket()" begin
     @testset "simple valid wavefunction" begin
-        @test is_wave_vector([1;0])
-        @test is_wave_vector([1])
-        @test is_wave_vector([0,-im]')
-        @test is_wave_vector([1;1;-1]/sqrt(3))
-        @test is_wave_vector([1;im]/sqrt(2))
+        @test is_braket([1;0])
+        @test is_braket([1])
+        @test is_braket([0,-im]')
+        @test is_braket([1;1;-1]/sqrt(3))
+        @test is_braket([1;im]/sqrt(2))
     end
 
     @testset "invalid wavefunctions" begin
-        @test !is_wave_vector([0;0])
-        @test !is_wave_vector([1;1])
-        @test_throws MethodError is_wave_vector([1 0;0 0])
-        @test_throws MethodError is_wave_vector([1 0;0 0]')
+        @test !is_braket([0;0])
+        @test !is_braket([1;1])
+        @test_throws MethodError is_braket([1 0;0 0])
+        @test_throws MethodError is_braket([1 0;0 0]')
     end
 
     @testset "valid input vector types" begin
-        @test is_wave_vector([1,0])
-        @test is_wave_vector([1,0]')
-        @test is_wave_vector([1;0])
-        @test is_wave_vector(Ket([1,0]))
-        @test is_wave_vector(Bra([1,0]))
+        @test is_braket([1,0])
+        @test is_braket([1,0]')
+        @test is_braket([1;0])
+        @test is_braket(Ket([1,0]))
+        @test is_braket(Bra([1,0]))
     end
 
     @testset "tuning atol" begin
         ϵ = 1e-7
 
-        @test is_wave_vector([1,1], atol=1)
-        @test is_wave_vector([1,1], atol=sqrt(2)-1+ϵ)
-        @test !is_wave_vector([1,1], atol=sqrt(2)-1-ϵ)
-        @test !is_wave_vector([1,1], atol=0)
+        @test is_braket([1,1], atol=1)
+        @test is_braket([1,1], atol=sqrt(2)-1+ϵ)
+        @test !is_braket([1,1], atol=sqrt(2)-1-ϵ)
+        @test !is_braket([1,1], atol=0)
     end
 end
 
-@testset "_wave_vector_error()" begin
-    @test_throws DomainError QBase._wave_vector_error([1,0])
+@testset "_braket_error()" begin
+    @test_throws DomainError QBase._braket_error([1,0])
 
     try
-        QBase._wave_vector_error([1,0])
+        QBase._braket_error([1,0])
         @test false
     catch err
         @test err isa DomainError

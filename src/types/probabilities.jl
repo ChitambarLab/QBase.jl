@@ -61,7 +61,6 @@ end
 is_probability_distribution(::ProbabilityDistribution) = true
 is_probability_distribution(::JointProbabilityDistribution) = true
 
-
 """
     is_conditional_distribution( probabilities :: AbstractMatrix{<:Real}; atol=ATOL :: Flaot64 ) :: Bool
 

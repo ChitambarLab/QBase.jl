@@ -15,10 +15,12 @@ makedocs(;
     ),
     pages=[
         "Home" => "index.md",
-        "Base Types" => "base_types.md",
+        "Bras and Kets" => "brakets.md",
+        "Operators" => "operators.md",
         "States" => "states.md",
         "Evolution" => "evolution.md",
         "Measurements" => "measurements.md",
+        "Probabilities" => "probabilities.md",
         "Information" => "information.md",
         "Math Utilities" => "math_utilities.md",
         "Examples" => "examples.md",

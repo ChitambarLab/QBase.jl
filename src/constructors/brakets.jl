@@ -1,5 +1,4 @@
 # Ket Constructors
-
 # qubit constructors
 export bloch_qubit_ket
 export mirror_symmetric_qubit_kets, planar_symmetric_qubit_kets
@@ -16,6 +15,10 @@ export generalized_bell_kets
     computational_basis_kets( dim :: Int64 ) :: Vector{Ket{Int64}}
 
 The computational basis vectors for the Hilbert space of dimension, `dim`.
+
+```math
+\\Psi = \\{ |j\\rangle \\}_{j=0}^{(d-1)}
+```
 """
 function computational_basis_kets(dim::Int64) :: Vector{Ket{Int64}}
     Ket.(computational_basis_vectors(dim))
@@ -25,11 +28,17 @@ end
     bloch_qubit_ket( θ :: Real, ϕ :: Real ) :: Ket{Complex{Float64}}
 
 Returns the qubit ket for the specified spherical coordinate on the surface of
-bloch sphere, `(r=1, θ, ϕ)`. If the state does not have a complex phase then
+bloch sphere, `(r=1, θ, ϕ)`:
 
-    bloch_qubit_ket( θ :: Real ) :: Ket{Float64}
+```math
+|\\psi\\rangle = \\cos(\\theta/2)|0\\rangle + e^{i\\phi}\\sin(\\theta/2)|1\\rangle
+```
 
-can be used to construct the state.
+If the ket does not have a phase then a real-valued `Ket` is constructed as:
+
+```julia
+bloch_qubit_ket( θ :: Real ) :: Ket{Float64}
+```
 
 Inputs:
 
@@ -59,7 +68,8 @@ end
 """
     bell_kets() :: Vector{Ket{Float64}}
 
-The Bell basis kets, ordered as ``\\{|\\Phi^+\\rangle, |\\Phi^-\rangle, |\\Psi^+\rangle, |\\Psi^-\\rangle \\}``, where
+The Bell basis kets for maximally entangled bipartite qubit systems.
+These kets are ordered as ``\\{|\\Phi^+\\rangle, |\\Phi^-\\rangle, |\\Psi^+\\rangle, |\\Psi^-\\rangle \\}``, where
 
 ```math
 \\begin{matrix}
@@ -70,7 +80,7 @@ The Bell basis kets, ordered as ``\\{|\\Phi^+\\rangle, |\\Phi^-\rangle, |\\Psi^+
 \\end{matrix}
 ```
 """
-bell_kets() ::Vector{Ket{Float64}} = Ket.([
+bell_kets() :: Vector{Ket{Float64}} = Ket.([
     1/sqrt(2)*[1,0,0,1],
     1/sqrt(2)*[1,0,0,-1],
     1/sqrt(2)*[0,1,1,0],
@@ -80,13 +90,13 @@ bell_kets() ::Vector{Ket{Float64}} = Ket.([
 """
     generalized_bell_kets( dim :: Int64 ) :: Vector{Ket{Float64}}
 
-The Bell basis for quantum states of dimension `dim`. Each state is constructed by
+The Bell basis for entangled bipartite quantum states each of dimension `dim`. Each state is constructed by
 
 ```math
-|\\Psi^p_c\\rangle = \\frac{1}{\\sqrt{d}}\\sum_{j=0}^{d-1} e^{i2\\pi pj/d}|j\\rangle |mod(j+c,d)\\rangle
+|\\Psi^p_c\\rangle = \\frac{1}{\\sqrt{d}}\\sum_{j=0}^{d-1} e^{i2\\pi pj/d}|j\\rangle |\\mod(j+c,d)\\rangle
 ```
 
-where ``p,c\\in 0,\\cdots, (d-1)`` and ``d`` is `dim`. When iterated ``c`` is the major
+where ``p,c\\in \\{0,\\cdots, (d-1)\\}`` and ``d`` is `dim`. When iterated, ``c`` is the major
 index and ``p`` is the minor index.
 
 A `DomainError` is thrown if `dim ≥ 2` is not satisfied.
@@ -113,12 +123,13 @@ end
 """
     mirror_symmetric_qubit_kets( θ :: Real ) :: Vector{Ket{Float64}}
 
-Returns the triplet of qubit kets in the z-x plane of bloch sphere. The first ket
-is  ``|0\\rangle`` and the other two are symmetric across the z-axis.
+Returns the triplet of qubit kets in the x-z plane of bloch sphere. The first ket
+is  ``|0\\rangle`` and the other two are symmetric across the z-axis,
+``|\\pm\\rangle = \\cos(\\theta)|0 \\rangle \\pm \\sin(\\theta)|1\\rangle``.
 
 Input:
 
-* `θ ∈ [0,π/2]`: the hilbert space angle between |0> and symmetric kets.
+* `θ ∈ [0,π/2]`: the hilbert space angle between ``|0\\rangle`` and symmetric kets.
 """
 function mirror_symmetric_qubit_kets(θ::Real) :: Vector{Ket{Float64}}
     if !(0 <= θ <= π/2)
@@ -135,17 +146,17 @@ end
 """
     planar_symmetric_qubit_kets( n :: Int64 ) :: Vector{Ket{Float64}}
 
-Constructs a set of `Ket` states oriented symmetrically in the x-z-plane.
-Each state is separated by a bloch angle of `2π/n`. The states are constructed
-with the form
+Constructs a set of `n ``Ket`s oriented symmetrically in the x-z-plane.
+Each ket is separated by a bloch angle of `2π/n`. The `Ket`s are constructed
+with the form:
 
 ```math
 |\\psi_j \\rangle = \\cos(j \\pi/n) | 0\\rangle + \\sin(j \\pi/n)|1\\rangle
 ```
 
-where ``j \\in 0,\\cdots, (n-1)``.
+where ``j \\in \\{0,\\cdots, (n-1)\\}``.
 
-A `DomainError` is thrown if
+A `DomainError` is thrown if `n < 2`.
 """
 function planar_symmetric_qubit_kets(n :: Int64) :: Vector{Ket{Float64}}
     if !(n ≥ 2)
@@ -158,13 +169,12 @@ end
 """
     trine_qubit_kets() :: Vector{Ket{Float64}}
 
-The triplet of kets representing three quantum states separated by equal angles in
-the z-x plane of bloch sphere.
+The triplet of `Ket`s separated by equal angles in the x-z plane of bloch sphere.
 
 ```math
     |\\psi_1\\rangle = |0\\rangle, \\quad
-    |\\psi_2\\rangle = \\frac{1}{2}|0\\rangle + \\frac{\\sqrt(3)}{2}|1\\rangle, \\quad
-    |\\psi_3\\rangle = \\frac{1}{2}|0\\rangle - \\frac{\\sqrt(3)}{2}|1\\rangle
+    |\\psi_2\\rangle = \\frac{1}{2}|0\\rangle + \\frac{\\sqrt{3}}{2}|1\\rangle, \\quad
+    |\\psi_3\\rangle = \\frac{1}{2}|0\\rangle - \\frac{\\sqrt{3}}{2}|1\\rangle
 ```
 
 ```jldoctest
@@ -177,25 +187,27 @@ trine_qubit_kets() :: Vector{Ket{Float64}} = Ket.([
 ])
 
 """
-    sic_qubit_kets :: Vector{Ket{Complex{Float64}}}
+    sic_qubit_kets() :: Vector{Ket{Complex{Float64}}}
 
-The quadruplet of symmetric informationally complete (SIC) qubits. The qubits
-are the vertices of a tetrahedron inscribed on bloch sphere.
+The quadruplet of symmetric informationally complete (SIC) qubits. This set of qubits
+correspond to the vertices of a tetrahedron inscribed on bloch sphere.
 
 ```math
-\\begin{align}
-    |\\psi_1\\rangle = |0\\rangle, & \\quad |\\psi_2\\rangle = \\frac{1}{\\sqrt{3}}|0\\rangle + \\sqrt{\\frac{2}{3}}|1\\rangle \\\\
+\\begin{matrix}
+    |\\psi_1\\rangle = |0\\rangle, & \\quad |\\psi_2\\rangle = \\frac{1}{\\sqrt{3}}|0\\rangle + \\sqrt{\\frac{2}{3}}|1\\rangle, \\\\
     |\\psi_3\\rangle = \\frac{1}{\\sqrt{3}}|0\\rangle + \\sqrt{\\frac{2}{3}}\\exp{i 2\\pi/3}|1\\rangle, & \\quad |\\psi_4\\rangle = \\frac{1}{\\sqrt{3}}|0\\rangle + \\sqrt{\\frac{2}{3}}\\exp{i 4\\pi/3}|1\\rangle
-\\end{align}
+\\end{matrix}
 ```
 
 ```jldoctest
-julia> sic_qubit_kets()
-4-element Array{Ket{Complex{Float64}},1}:
- [1.0 + 0.0im, 0.0 + 0.0im]
- [0.5773502691896258 + 0.0im, 0.816496580927726 + 0.0im]
- [0.5773502691896258 + 0.0im, -0.40824829046386285 + 0.7071067811865476im]
- [0.5773502691896258 + 0.0im, -0.4082482904638634 - 0.7071067811865474im]
+julia> sic_qubit_kets() == [
+    [1., 0im],
+    [1/sqrt(3), sqrt(2/3)+ 0im],
+    [1/sqrt(3), sqrt(2/3)*exp(im*2π/3)],
+    [1/sqrt(3), sqrt(2/3)*exp(im*4π/3)]
+]
+true
+```
 """
 sic_qubit_kets() :: Vector{Ket{Complex{Float64}}} = Ket.([
     [1., 0im], [1/sqrt(3), sqrt(2/3)+ 0im],
@@ -209,12 +221,10 @@ The quadruplet of qubit kets used in the BB84 Quantum Key Distribution protocol.
 states are ``|0\\rangle``, ``|+\\rangle``, ``|1\\rangle``, and ``|- \\rangle``.
 
 ```jldoctest
-julia> bb84_qubit_kets()
-4-element Array{QBase.Ket{Float64},1}:
- [1.0, 0.0]
- [0.7071067811865475, 0.7071067811865475]
- [0.0, 1.0]
- [0.7071067811865475, -0.7071067811865475]
+julia> bb84_qubit_kets() == [
+    [1,0], [1,1]/sqrt(2), [0,1], [1,-1]/sqrt(2)
+]
+true
 ```
 """
 bb84_qubit_kets() :: Vector{Ket{Float64}} = Ket.([

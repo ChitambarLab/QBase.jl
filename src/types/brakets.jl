@@ -4,10 +4,15 @@ export Ket, Bra
 """
     is_braket( ψ :: Vector; atol=ATOL :: Float64) :: Bool
 
-Returns `true` if vector `ψ` is a valid ket representation of a quantum state:
+    is_braket(
+        ψ :: Adjoint{T, Vector{T}};
+        atol=ATOL :: Float64
+    ) where T <: Number :: Bool
+
+Returns `true` if vector `ψ` is a valid bra (or ket):
 
 * `ψ` is a real or complex-valued vector.
-* `ψ` is normalized with respect to the bra-ket inner prodcut (`ψ' * ψ == 0`).
+* `ψ` is normalized with respect to the bra-ket inner prodcut (`ψ' * ψ == 1`).
 """
 function is_braket(ψ :: Vector{<:Number}; atol=ATOL :: Float64)
     isapprox( norm(ψ,2), 1, atol=atol )
@@ -29,14 +34,17 @@ _braket_error(ψ) = throw(DomainError(ψ, "ψ must be a vector that satisfies `n
 A normalized column vector on a complex-valued Hilbert space. If called with
 an adjoint vector `ψ'`, the adjoint will be taken on construction.
 
-    Ket(ψ :: Adjoint{Vector{T}}; atol=ATOL :: Float64) where T <: Number
+```julia
+Ket(ψ :: Adjoint{Vector{T}}; atol=ATOL :: Float64) where T <: Number
+```
 
 Similarly a `Bra` can be converted into a `Ket` via the adjoint.
 
-    Ket(ψ :: Bra{T}; atol=ATOL :: Float64) where T <: Number
+```julia
+Ket(ψ :: Bra{T}; atol=ATOL :: Float64) where T <: Number
+```
 
-When given invalid input, the constructor, `Ket(ψ)`, throws:
-* `DomainError` - If `ψ` is not normalized.
+`Ket(ψ)`, throws a `DomainError` if `ψ` is not normalized.
 """
 struct Ket{T<:Number} <: AbstractVector{Number}
     ψ :: Vector{T}
@@ -59,16 +67,19 @@ is_braket(::Ket) = true
     Bra(ψ :: Adjoint{T,Vector{T}}; atol=ATOL :: Float64) where T <: Number
 
 A row vector on a complex valued HIlbet space. Bras are dual to Kets via the adjoint
-If called with an `Vector{T}` type, the adjoint will automatically be taken `ψ'`.
+If called with an `Vector{<:Number}` type, the adjoint will automatically be taken `ψ'`.
 
-    Bra(ψ :: Vector{T}; atol=ATOL :: Float64) where T <: Number
+```julia
+Bra(ψ :: Vector{<:Number}; atol=ATOL :: Float64)
+```
 
 Similarly a `Ket` can be converted into a `Bra` via the adjoint.
 
-    Bra(ψ :: Ket{T}; atol=ATOL :: Float64) where T <: Number
+```julia
+Bra(ψ :: Ket; atol=ATOL :: Float64)
+```
 
-When given invalid input, the constructor, `Ket(ψ)`, throws:
-* `DomainError` - If `ψ` is not normalized.
+`Bra(ψ')`, throws a `DomainError` if `ψ'` is not normalized.
 """
 struct Bra{T<:Number} <: AbstractMatrix{Number}
     ψ :: Adjoint{T,Vector{T}}
@@ -85,36 +96,50 @@ Base.getindex(bra::Bra, I::Vararg{Int,2}) = getindex(bra.ψ, I...)
 Base.setindex!(bra::Bra, val, I::Vararg{Int,2}) = (bra.ψ[I...] = val)
 is_braket(::Bra) = true
 
+# Bra-Ket conversions
 Ket(bra :: Bra) = Ket(bra.ψ', atol=bra.atol)
 Bra(ket :: Ket) = Bra(ket.ψ', atol=ket.atol)
 
 """
 Outer product ``|\\psi \\rangle\\langle \\psi|``:
 
-    *(ket :: Ket, bra :: Bra) :: Matrix
+```julia
+*(ket :: Ket, bra :: Bra) :: Matrix
+```
 
 Inner product ``\\langle \\psi | \\psi \\rangle``:
 
-    *(bra :: Bra, ket :: Ket) :: Number
+```julia
+*(bra :: Bra, ket :: Ket) :: Number
+```
 """
-*(ket :: Ket{<:Number}, bra :: Bra{<:Number}) :: Matrix{<:Number} = ket.ψ * bra.ψ
-*(bra :: Bra{<:Number}, ket :: Ket{<:Number}) :: Number = (bra.ψ * ket.ψ)[1]
+*(ket :: Ket, bra :: Bra) :: Matrix = ket.ψ * bra.ψ
+*(bra :: Bra, ket :: Ket) :: Number = (bra.ψ * ket.ψ)[1]
 
 """
-The adjoint converts a bra to a ket  and vice versa, ``|\\psi\\rangle^{\\dagger} = \\langle\\psi |``
-and ``\\langle\\psi |^{\\dagger} = |\\psi \\rangle``.
+The adjoint is the complex conjugate transpose. This operation converts a `Ket` to
+a `Bra`, ``\\langle \\psi | = |\\psi \\rangle^{\\dagger}``:
 
-    adjoint(ket :: Ket) :: Bra
-    adjoint(bra :: Bra) :: Ket
+```julia
+adjoint(ket :: Ket) :: Bra
+```
+
+Or, convert a `Bra` to a `Ket`, ``|\\psi\\rangle = \\langle \\psi |^{\\dagger}``:
+
+```julia
+adjoint(bra :: Bra) :: Ket
+```
 """
-adjoint(ket :: Ket{<:Number}) = Bra(ket)
-adjoint(bra :: Bra{<:Number}) = Ket(bra)
+adjoint(ket :: Ket) = Bra(ket)
+adjoint(bra :: Bra) = Ket(bra)
 
 """
-A kronecker product between bras (kets) produces a new bra (ket).
+Performs the kronecker product of a set of `Ket`s (`Bra`s) to produce a new `Ket` (`Bra`).
 
-    kron(kets :: Vararg{Ket}; atol=ATOL) :: Ket
-    kron(bras :: Vararg{Bra}; atol=ATOL) :: Bra
+```julia
+kron( kets :: Vararg{Ket}; atol=ATOL ) :: Ket
+kron( bras :: Vararg{Bra}; atol=ATOL ) :: Bra
+```
 """
-kron(kets :: Vararg{Ket{<:Number}}; atol=ATOL) = Ket(kron(map(ket -> ket.ψ, kets)...), atol=atol)
-kron(bras :: Vararg{Bra{<:Number}}; atol=ATOL) = Bra(kron(map(bra -> bra.ψ', bras)...), atol=atol)
+kron(kets :: Vararg{Ket}; atol=ATOL) = Ket(kron(map(ket -> ket.ψ, kets)...), atol=atol)
+kron(bras :: Vararg{Bra}; atol=ATOL) = Bra(kron(map(bra -> bra.ψ', bras)...), atol=atol)

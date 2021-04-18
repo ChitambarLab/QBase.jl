@@ -1,7 +1,6 @@
 ```@meta
 CurrentModule = QBase
 ```
-
 # QBase.jl
 
 *A base library for quantum information.*
@@ -16,6 +15,29 @@ CurrentModule = QBase
   3. Methods for evolving and measuring quantum systems.
   4. Methods for calculating information-theoretic quantities.
   5. Mathematics utilities that support quantum mechanics.
+
+## Base Types
+
+QBase.jl provides a general framework for representing finite quantum
+systems and their dynamics.
+Quantum mechanics is simply an application of linear algebra where particular
+constraints are applied to the vectors and matrices involved in the representation
+of quantum systems.
+There are three core data structures used to represent quantum systems and their behavior:
+  1. **[Bras and Kets](@ref):**  Row and column vectors defined on a complex-valued Hilbert space.
+  2. **[Operators](@ref):** Matrices defined on a complex-valued Hilbert space.
+  3. **[Probabilities](@ref):** Real-valued vectors and matrices describing the probabilities of events.
+
+Details regarding the definitions and constraints for each of these data structure
+are provided in subsequent pages of this documentation.
+
+Ideally, the constraints on quantum objects should be met exactly, however, numerical
+errors are inherent to the computations involved.
+Therefore, each type has an absolute tolerance parameter `atol` which specifies how
+much error is allowed before the quantum object is deemed invalid.
+By default, the `atol=1e-7` and is stored in the constant `QBase.ATOL`.
+This tolerance is sufficient for most tasks, however, it can easily be relaxed or
+tightened as needed.
 
 ## Citing
 

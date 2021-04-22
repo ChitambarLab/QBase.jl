@@ -30,21 +30,33 @@ using QBase
 end
 
 @testset "mixed_state()" begin
-    ρ_mix = mixed_state(
-        Probabilities([0.7,0.2,0.1]),
-        State.([[1 0 0;0 0 0;0 0 0],[0 0 0;0 0 0;0 0 1],[0 0 0;0 1 0;0 0 0]])
-    )
-    @test ρ_mix == [0.7 0 0;0 0.1 0;0 0 0.2]
-    @test ρ_mix isa State{Float64}
-    @test rank(ρ_mix) == 3
+    @testset "strongly typed inputs" begin
+        ρ_mix = mixed_state(
+            Probabilities([0.7,0.2,0.1]),
+            State.([[1 0 0;0 0 0;0 0 0],[0 0 0;0 0 0;0 0 1],[0 0 0;0 1 0;0 0 0]])
+        )
+        @test ρ_mix == [0.7 0 0;0 0.1 0;0 0 0.2]
+        @test ρ_mix isa State{Float64}
+        @test rank(ρ_mix) == 3
+    end
 
-    ρ_mix = mixed_state([0.7,0.2,0.1],[[1 0 0;0 0 0;0 0 0],[0 0 0;0 0 0;0 0 1],[0 0 0;0 1 0;0 0 0]])
-    @test ρ_mix == [0.7 0 0;0 0.1 0;0 0 0.2]
-    @test ρ_mix isa State{Float64}
-    @test rank(ρ_mix) == 3
+    @testset "loosely typed inputs" begin
+        ρ_mix = mixed_state([0.7,0.2,0.1],[[1 0 0;0 0 0;0 0 0],[0 0 0;0 0 0;0 0 1],[0 0 0;0 1 0;0 0 0]])
+        @test ρ_mix == [0.7 0 0;0 0.1 0;0 0 0.2]
+        @test ρ_mix isa State{Float64}
+        @test rank(ρ_mix) == 3
 
-    @test_throws DomainError mixed_state([0.7,0.2], [[1 0;0 0],[0 0;0 1]])
-    @test_throws DomainError mixed_state([0.7,0.3], [[1 0;0 .1],[0 0;0 1]])
+        ρ_mix = mixed_state(
+            Probabilities([1/2, 1/2]),
+            [0.5*[1 im;-im 1], [1 0;0 0]]
+        )
+        @test ρ_mix == [0.75 0.25im;-0.25im 0.25]
+        @test ρ_mix isa State{ComplexF64}
+        @test rank(ρ_mix) == 2
+
+        @test_throws DomainError mixed_state([0.7,0.2], [[1 0;0 0],[0 0;0 1]])
+        @test_throws DomainError mixed_state([0.7,0.3], [[1 0;0 .1],[0 0;0 1]])
+    end
 end
 
 @testset "trine_qubit_states()" begin

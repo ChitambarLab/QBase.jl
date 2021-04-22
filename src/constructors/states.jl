@@ -10,12 +10,17 @@ export trine_qubit_states, bb84_qubit_states, sic_qubit_states
 
 """
     pure_state( ψ :: Ket; atol=ATOL :: Float64 ) :: State
+    pure_state( ψ :: Bra; atol=ATOL :: Float64 ) :: State
 
-A state is considered "pure" if it is rank-one. A rank-one density matrix
-is constructed by taking the outer-product of a `Ket` or `Bra`.
-The method alternatively accepts a `Vector` input.
+A [`State`](@ref) is "pure" if it is rank-one (see [`is_pure`](@ref)).
+A rank-one density matrix is constructed by taking the outer-product of a
+[`Ket`](@reg) (or [`Bra`](@ref)) with itself, ``|\\psi\\rangle\\langle \\psi| = \\rho``.
+This method alternatively accepts `Vector` inputs.
 
-    pure_state( ψ :: Vector ) :: State
+```julia
+pure_state( ψ :: Vector ) :: State
+pure_state( ψ :: Adjoint{T,Vector{T}} where T; atol=ATOL :: Float64 ) :: State
+```
 """
 function pure_state(ket::Ket; atol=ATOL :: Float64) :: State
     State(ket.ψ*ket.ψ', atol=atol)
@@ -27,22 +32,42 @@ function pure_state(ψ::Vector{<:Number}; atol=ATOL :: Float64) :: State
     State(ψ*ψ', atol=atol)
 end
 function pure_state(
-    ψ::Adjoint{T,Vector{T}} where T <: Number; atol=ATOL :: Float64
+    ψ::Adjoint{T,Vector{T}} where T; atol=ATOL :: Float64
 ) :: State
     State(ψ'*ψ, atol=atol)
 end
 
 """
     mixed_state(
-        priors :: AbstractVector{<:Number},
-        states :: Vector{<:AbstractMatrix{<:Number}}
+        priors :: Probabilities,
+        states :: Vector{<:State};
+        atol=ATOL :: Float64
     ) :: State
 
 Constructs the statistical mixture (weighted average) of quantum states.
+This method can also be used `Vector` and `Matrix` types which satisfy the requirements
+of [`is_probability_distribution`](@ref) and [`is_density_matrix`](@ref) respectively.
+
+```julia
+mixed_state(
+    priors :: AbstractVector,
+    states :: Vector{<:AbstractMatrix}
+) :: State
+```
+
+A `DomainError` is thrown if the provided `Vector`s of `priors` or `states` do
+not satisfy their respective requirements.
 """
 function mixed_state(
-    priors::AbstractVector{<:Number},
-    states::Vector{<:AbstractMatrix{<:Number}};
+        priors :: Probabilities,
+        states :: Vector{<:State};
+        atol=ATOL :: Float64
+) :: State
+    State(sum(priors .* states); atol=atol)
+end
+function mixed_state(
+    priors::AbstractVector,
+    states::Vector{<:AbstractMatrix};
     atol=ATOL :: Float64
 ) :: State
     if !is_probability_distribution(priors)
@@ -50,14 +75,14 @@ function mixed_state(
     elseif findfirst(!is_density_matrix, states) !== nothing
         throw(DomainError(states, "Input `states` is not a set of valid density matrices."))
     end
-
-    State(sum(priors .* states))
+    State(sum(priors .* states); atol=atol)
 end
 
 """
     computational_basis_states( dim :: Int64 ) :: Vector{State}
 
-The density matrices for the computational basis of dimension, `dim`.
+The set of density matrices constructed from the [`computational_basis_vectors`](@ref)
+with dimension, `dim`.
 """
 function computational_basis_states(dim::Int64)::Vector{State}
     pure_state.(computational_basis_vectors(dim))

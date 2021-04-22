@@ -1,11 +1,22 @@
+```@meta
+CurrentModule = QBase
+```
 # States
 
-A quantum state can be represented by a density operator.
+A quantum state is represented by a density operator.
 This matrix describes the wave function of the quantum system.
 
 ```@docs
 is_density_matrix
 State
+```
+
+## State Operations
+
+```@docs
+kron(states :: Vararg{State}; atol=ATOL :: Float64)
+partial_trace(ρ::State, system::Vector{Int64}, id::Int64; atol=ATOL :: Float64)
+eigvals(ρ :: State)
 is_pure
 is_mixed
 ```

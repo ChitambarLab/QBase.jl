@@ -32,3 +32,5 @@ jobs:
           version: ${{ matrix.julia-version }}
       - uses: julia-actions/julia-buildpkg@v1
       - uses: julia-actions/julia-runtest@v1
+      - run: julia --code-coverage test/runtests.jl
+      - uses: codecov/codecov-action@v1

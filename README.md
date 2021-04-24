@@ -3,7 +3,7 @@
 *A base library for quantum information.*
 
 [![Latest](https://img.shields.io/badge/docs-latest-blue.svg)](https://ChitambarLab.github.io/QBase.jl/dev)
-![Build Status](https://github.com/ChitambarLab/QBase.jl/blob/main/.github/workflows/run_tests.yml/badge.svg?branch=main)
+![Build Status](https://github.com/ChitambarLab/QBase.jl/actions/workflows/run_tests.yml/badge.svg?branch=main)
 [![Coverage](https://codecov.io/gh/ChitambarLab/QBase.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/chitambarlab/QBase.jl)
 
 ## Features:

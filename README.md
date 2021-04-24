@@ -5,6 +5,9 @@
 [![Latest](https://img.shields.io/badge/docs-latest-blue.svg)](https://ChitambarLab.github.io/QBase.jl/dev)
 [![Test Status](https://github.com/ChitambarLab/QBase.jl/actions/workflows/run_tests.yml/badge.svg?branch=main)](https://github.com/ChitambarLab/QBase.jl/actions/workflows/run_tests.yml)
 [![Coverage](https://codecov.io/gh/ChitambarLab/QBase.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/chitambarlab/QBase.jl)
+[![DOI](https://zenodo.org/badge/272202430.svg)](https://zenodo.org/badge/latestdoi/272202430)
+
+
 
 ## Features:
   1. Types and constructors for representing quantum states and operators.

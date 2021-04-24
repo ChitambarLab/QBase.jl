@@ -85,6 +85,10 @@ struct POVM{T<:Number} <: Measurement{POVMel{T}}
         Π :: Vector{Matrix{T}};
         atol=ATOL :: Float64
     ) where T <: Number = is_povm(Π, atol=atol) ? new{T}(POVMel.(Π, atol=atol), atol) : throw(DomainError(Π, "povm Π is invalid"))
+    POVM(
+        Π :: Vector{<:State};
+        atol=ATOL :: Float64
+    ) = is_povm(Π, atol=atol) ? new{eltype(Π[1].M)}(POVMel.(Π, atol=atol), atol) : throw(DomainError(Π, "povm Π is invalid"))
 end
 is_povm(::POVM) :: Bool = true
 

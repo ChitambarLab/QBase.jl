@@ -36,7 +36,7 @@ adjoint(ket :: Ket{<:Number})
 kron(kets :: Vararg{Ket{<:Number}}; atol=ATOL)
 ```
 
-## Ket State Constructors
+## Ket Constructors
 
 QBase.jl provides a catalog for constructing various `Ket`s.
 To construct similar `Bra`s you must manually convert the `Ket` to a `Bra` using

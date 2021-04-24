@@ -74,9 +74,7 @@ atol=atol)
 """
     partial_trace(ρ::State, system::Vector{Int64}, id::Int64) :: State
 
-Takes the partial_trace of a `State` `ρ` to construct a new `State`: `` \\text{Tr}_B[\\rho_{AB}] = \\rho_A.``
-
-This method extends [`partial_trace`](@ref).
+Takes the partial_trace of a `State` `ρ` to construct a new `State`: ``\\text{Tr}_B[\\rho_{AB}] = \\rho_A``.
 """
 partial_trace(ρ::State, system::Vector{Int64}, id::Int64; atol=ATOL :: Float64) :: State = begin
     State(partial_trace(ρ.M, system, id), atol=atol)

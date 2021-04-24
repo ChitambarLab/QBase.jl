@@ -1,13 +1,16 @@
 export stirling2, stirling2_partitions, stirling2_matrices
-export permutations, permutation_matrices
-export combinations, n_choose_k_matrices
+export permutation_matrices, n_choose_k_matrices
 export base_n_val
 
 """
     stirling2( n :: Int64, k :: Int64  ) :: Int64
 
 Counts the number of ways to partition `n` items into `k` unlabelled groups.
-This quantity is known as Stirling's number of the 2nd kind.
+This quantity is known as Stirling's number of the 2nd kind:
+
+```math
+\\left\\{n \\atop k \\right\\} = \\frac{1}{k!}\\sum_{i=0}^k (-1)^i\\binom{k}{i}(k-i)^n
+```
 
 Throws a `DomainError` if inputs do not satisfy `n ≥ k ≥ 1`.
 """
@@ -24,6 +27,20 @@ end
 
 Enumerates the unique partitions of `n` items into `k` unlabelled sets.
 Each partition is a vector containing a  set of `k` vectors designating each group.
+
+E.g.
+
+```jldoctest
+julia> stirling2_partitions( 4, 2 )
+7-element Array{Array{Array{Int64,1},1},1}:
+ [[1, 2, 3], [4]]
+ [[3], [1, 2, 4]]
+ [[1, 2], [3, 4]]
+ [[1, 3], [2, 4]]
+ [[2], [1, 3, 4]]
+ [[2, 3], [1, 4]]
+ [[1], [2, 3, 4]]
+```
 
 This recursive algorithm was inspired by [this blog](https://devblogs.microsoft.com/oldnewthing/20140324-00/?p=1413).
 """
@@ -76,6 +93,20 @@ Generates the set of matrices with `k` rows and `n` columns where rows correspon
 to the groups and columns are the grouped elements. A non-zero element designates
 that the column id is grouped into the corresponding row.
 
+E.g.
+
+```jldoctest
+julia> stirling2_matrices( 4, 2 )
+7-element Array{Array{Bool,2},1}:
+ [1 1 1 0; 0 0 0 1]
+ [0 0 1 0; 1 1 0 1]
+ [1 1 0 0; 0 0 1 1]
+ [1 0 1 0; 0 1 0 1]
+ [0 1 0 0; 1 0 1 1]
+ [0 1 1 0; 1 0 0 1]
+ [1 0 0 0; 0 1 1 1]
+```
+
 A `DomainError` is thrown if `n ≥ k ≥ 1` is not satisfied.
 """
 function stirling2_matrices(n :: Int64, k :: Int64) :: Vector{Matrix{Bool}}
@@ -100,6 +131,19 @@ end
     permutation_matrices( dim :: Int64 ) :: Vector{Matrix{Bool}}
 
 Generates the set of square permutation matrices of dimension `dim`.
+
+E.g.
+
+```jldoctest
+julia> permutation_matrices( 3 )
+6-element Array{Array{Bool,2},1}:
+ [1 0 0; 0 1 0; 0 0 1]
+ [1 0 0; 0 0 1; 0 1 0]
+ [0 1 0; 1 0 0; 0 0 1]
+ [0 0 1; 1 0 0; 0 1 0]
+ [0 1 0; 0 0 1; 1 0 0]
+ [0 0 1; 0 1 0; 1 0 0]
+```
 """
 function permutation_matrices(dim :: Int64) :: Vector{Matrix{Bool}}
     map(perm_ids -> Matrix{Bool}(I,dim,dim)[:,perm_ids], permutations(1:dim))
@@ -111,6 +155,19 @@ end
 Generates a set of `n` by `k` matrices which represent all combinations of selecting
 `k` columns from `n` rows.  Each column, contains a single non-zero element and
 `k` rows contain a non-zero element.
+
+E.g.
+
+```jldoctest
+julia> n_choose_k_matrices( 4, 2 )
+6-element Array{Array{Bool,2},1}:
+ [1 0; 0 1; 0 0; 0 0]
+ [1 0; 0 0; 0 1; 0 0]
+ [1 0; 0 0; 0 0; 0 1]
+ [0 0; 1 0; 0 1; 0 0]
+ [0 0; 1 0; 0 0; 0 1]
+ [0 0; 0 0; 1 0; 0 1]
+```
 
 A `DomainError` is thrown if `n ≥ k ≥ 1` is not satisfied.
 """

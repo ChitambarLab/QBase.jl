@@ -10,8 +10,8 @@ export qubit_rotation, random_unitary
 Identity unitary:
 
 ```jldoctest
-julia> σx
-2×2 QBase.Unitary{Int64}:
+julia> σI
+2×2 Unitary{Int64}:
  1  0
  0  1
 ```
@@ -25,7 +25,7 @@ Pauli-X unitary:
 
 ```jldoctest
 julia> σx
-2×2 QBase.Unitary{Int64}:
+2×2 Unitary{Int64}:
  0  1
  1  0
 ```
@@ -39,7 +39,7 @@ Pauli-Y unitary:
 
 ```jldoctest
 julia> σy
-2×2 QBase.Unitary{Complex{Int64}}:
+2×2 Unitary{Complex{Int64}}:
  0+0im  0-1im
  0+1im  0+0im
 ```
@@ -53,7 +53,7 @@ Pauli-Z unitary:
 
 ```
 julia> σz
-2×2 QBase.Unitary:
+2×2 Unitary:
  1   0
  0  -1
 ```

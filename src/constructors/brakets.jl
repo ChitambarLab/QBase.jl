@@ -176,11 +176,6 @@ The triplet of `Ket`s separated by equal angles in the x-z plane of bloch sphere
     |\\psi_2\\rangle = \\frac{1}{2}|0\\rangle + \\frac{\\sqrt{3}}{2}|1\\rangle, \\quad
     |\\psi_3\\rangle = \\frac{1}{2}|0\\rangle - \\frac{\\sqrt{3}}{2}|1\\rangle
 ```
-
-```jldoctest
-julia> trine_qubit_kets() == [[1.0, 0], [0.5, sqrt(3)/2], [0.5, -sqrt(3)/2]]
-true
-```
 """
 trine_qubit_kets() :: Vector{Ket{Float64}} = Ket.([
     [1.0, 0], [0.5, sqrt(3)/2], [0.5, -sqrt(3)/2]
@@ -195,18 +190,8 @@ correspond to the vertices of a tetrahedron inscribed on bloch sphere.
 ```math
 \\begin{matrix}
     |\\psi_1\\rangle = |0\\rangle, & \\quad |\\psi_2\\rangle = \\frac{1}{\\sqrt{3}}|0\\rangle + \\sqrt{\\frac{2}{3}}|1\\rangle, \\\\
-    |\\psi_3\\rangle = \\frac{1}{\\sqrt{3}}|0\\rangle + \\sqrt{\\frac{2}{3}}\\exp{i 2\\pi/3}|1\\rangle, & \\quad |\\psi_4\\rangle = \\frac{1}{\\sqrt{3}}|0\\rangle + \\sqrt{\\frac{2}{3}}\\exp{i 4\\pi/3}|1\\rangle
+    |\\psi_3\\rangle = \\frac{1}{\\sqrt{3}}|0\\rangle + \\sqrt{\\frac{2}{3}} e^{i 2\\pi/3}|1\\rangle, & \\quad |\\psi_4\\rangle = \\frac{1}{\\sqrt{3}}|0\\rangle + \\sqrt{\\frac{2}{3}} e^{i 4\\pi/3}|1\\rangle
 \\end{matrix}
-```
-
-```jldoctest
-julia> sic_qubit_kets() == [
-    [1., 0im],
-    [1/sqrt(3), sqrt(2/3)+ 0im],
-    [1/sqrt(3), sqrt(2/3)*exp(im*2π/3)],
-    [1/sqrt(3), sqrt(2/3)*exp(im*4π/3)]
-]
-true
 ```
 """
 sic_qubit_kets() :: Vector{Ket{Complex{Float64}}} = Ket.([
@@ -219,13 +204,6 @@ sic_qubit_kets() :: Vector{Ket{Complex{Float64}}} = Ket.([
 
 The quadruplet of qubit kets used in the BB84 Quantum Key Distribution protocol. The
 states are ``|0\\rangle``, ``|+\\rangle``, ``|1\\rangle``, and ``|- \\rangle``.
-
-```jldoctest
-julia> bb84_qubit_kets() == [
-    [1,0], [1,1]/sqrt(2), [0,1], [1,-1]/sqrt(2)
-]
-true
-```
 """
 bb84_qubit_kets() :: Vector{Ket{Float64}} = Ket.([
     [1,0], [1,1]/sqrt(2), [0,1], [1,-1]/sqrt(2)

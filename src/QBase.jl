@@ -1,19 +1,5 @@
 """
 A collection of methods and submodules useful for computation of quantum sytems.
-
-# Exports
-
-*Methods:*
-- [`evolve`](@ref) - Performs unitary evolution of quantum states.
-- [`measurement_probs`](@ref) - Outcome probabilities of quantum measurement.
-
-*Modules:*
-- [`States`](@ref) - Types and constructors for representing quantum states.
-- [`Observables`](@ref) - Types and constructors for representing measureable quantities.
-- [`Unitaries`](@ref) - Types and constructors for representing unitary operators.
-- [`Channels`](@ref) - A catalog of common quantum channels.
-- [`Information`](@ref) - Functions for computing information-theoretic quantities.
-- [`QMath`](@ref) - Mathematics useful for modeling quantum operations.
 """
 module QBase
 

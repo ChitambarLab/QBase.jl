@@ -9,6 +9,14 @@ CurrentModule = QBase
     Your thoughts and opinions are valued and will help improve this software. To
     provide feedback or make feature requests, please contact [brian.d.doolittle@gmail.com](mailto:brian.d.doolittle@gmail.com).
 
+## Quickstart
+
+1. Add the QBase.jl Package:
+
+```julia
+julia> using Pkg; Pkg.add("QBase")
+```
+
 ## Features:
   1. Validated types with a flexible tolerance for numerical error.
   2. Constructors for quantum states, measurements, and evolution operators.

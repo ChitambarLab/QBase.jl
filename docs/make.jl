@@ -15,6 +15,7 @@ makedocs(;
     ),
     pages=[
         "Home" => "index.md",
+        "Examples" => "examples.md",
         "Bras and Kets" => "brakets.md",
         "Operators" => "operators.md",
         "States" => "states.md",
@@ -23,17 +24,6 @@ makedocs(;
         "Probabilities" => "probabilities.md",
         "Information" => "information.md",
         "Math Utilities" => "math_utilities.md",
-        "Examples" => "examples.md",
-        "User Guide" => "user_guide.md",
-        # "Exports" => "exports.md",
-        # "Modules" => [
-        #     "States" => "submodules/States.md",
-        #     "Unitaries" => "submodules/Unitaries.md",
-        #     "Observables" => "submodules/Observables.md",
-        #     "Channels" => "submodules/Channels.md",
-        #     "Information" => "submodules/Information.md",
-        #     "QMath" => "submodules/QMath.md",
-        # ],
     ],
 )
 

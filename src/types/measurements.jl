@@ -41,7 +41,7 @@ Returns `true` if `Π` satisfies the following constraints
 * Each POVM element is hermitian
 * Each POVM element positive semi-definite
 """
-function is_povm(Π::Vector{<:AbstractMatrix{<:Number}}; atol=ATOL :: Float64) :: Bool
+function is_povm(Π::Vector{<:AbstractMatrix}; atol=ATOL :: Float64) :: Bool
     if !is_complete(Π, atol=atol)
         return false
     elseif !all(M -> is_povm_element(M, atol=atol), Π)

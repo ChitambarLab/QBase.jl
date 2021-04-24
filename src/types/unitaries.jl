@@ -7,7 +7,7 @@ Returns `true` if matrix `U` is unitary. The hermitian adjoint of a unitary matr
 is its inverse:
 * `U' * U == I` where `I` is the identity matrix.
 """
-function is_unitary(U::AbstractMatrix{<:Number}; atol=ATOL :: Float64) :: Bool
+function is_unitary(U::AbstractMatrix; atol=ATOL :: Float64) :: Bool
     if !isequal(size(U)...)
         return false
     end
@@ -33,13 +33,16 @@ end
 is_unitary(U :: Unitary) = true
 
 """
-*(unitaries :: Vararg{Unitary}; atol=ATOL :: Float64) :: Unitary
+    *(unitaries :: Vararg{Unitary}; atol=ATOL :: Float64) :: Unitary
 """
 *(unitaries :: Vararg{Unitary}; atol=ATOL :: Float64) :: Unitary = Unitary(*(map(U -> U.M, unitaries)...), atol=atol)
 
 """
-kron(unitaries :: Vararg{Unitary}; atol=ATOL :: Float64) :: Unitary
+    kron(unitaries :: Vararg{Unitary}; atol=ATOL :: Float64) :: Unitary
 """
 kron(unitaries :: Vararg{Unitary}; atol=ATOL :: Float64) :: Unitary = Unitary(kron(map(U -> U.M, unitaries)...), atol=atol)
 
+"""
+    adjoint(U :: Unitary) :: Unitary
+"""
 adjoint(U :: Unitary) :: Unitary = Unitary(U.M', atol=U.atol)

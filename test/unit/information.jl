@@ -72,22 +72,22 @@ end
     @test holevo_bound(priors, sic_qubit_states()) == 1
 end
 
-@testset "holevo_information()" begin
+@testset "mutual_information()" begin
     priors = Probabilities([1/3,1/3,1/3])
     ρ_set = trine_qubit_states()
     povm = sqrt_povm(priors, ρ_set)
-    @test holevo_information(priors, ρ_set, povm) ≈ 1/3
+    @test mutual_information(priors, ρ_set, povm) ≈ 1/3
 
-    @test holevo_information([0.5,0.5],[[1 0;0 0],[0 0;0 1]],[[1 0;0 0],[0 0;0 1]]) == 1
+    @test mutual_information([0.5,0.5],[[1 0;0 0],[0 0;0 1]],[[1 0;0 0],[0 0;0 1]]) == 1
 
     rot_y = qubit_rotation(π,axis="y")
 
     rot_povm = POVM(map(el -> rot_y*el*rot_y', povm))
 
-    @test holevo_information(priors, ρ_set, rot_povm) ≈ 0.5849625
+    @test mutual_information(priors, ρ_set, rot_povm) ≈ 0.5849625
 
     orth_povm = POVM([[0.5 0;0 0],[0.5 0;0 0],[0 0;0 1]])
-    @test holevo_information(priors, ρ_set, orth_povm) ≈ 0.459147917
+    @test mutual_information(priors, ρ_set, orth_povm) ≈ 0.459147917
 end
 
 @testset "joint_entropy()" begin

@@ -84,7 +84,7 @@ end
 """
     random_unitary( d :: Int64 ) :: Unitary{Complex{Float64}}
 
-Constructs a `d x d` random unitary matrix.
+Constructs a `d x d` random unitary matrix according to the Haar measure.
 """
 function random_unitary(d :: Int64) :: Unitary{Complex{Float64}}
     generator = Haar(2) # Specifies a complex hermitian unitary matrix

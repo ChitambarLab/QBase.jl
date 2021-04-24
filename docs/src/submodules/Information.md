@@ -18,7 +18,7 @@ conditional_entropy
 ## Information
 ```@docs
 holevo_bound
-holevo_information
+mutual_information
 mutual_information
 ```
 

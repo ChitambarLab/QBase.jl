@@ -96,14 +96,12 @@ The Bell basis density matrices. See [`bell_kets`](@ref) for more details.
 bell_states() :: Vector{State{Float64}} = pure_state.(bell_kets())
 
 """
-    generalized_bell_states( dim :: Int64 ) :: Vector{State{Complex{Float64}}}
+    generalized_bell_states( dim :: Int64 ) :: Vector{State{ComplexF64}
 
-The density matrix representation of the generalized Bell basis. See  [`bell_kets`](@ref)
-for more details.
-
+The generalized Bell basis density matrices. See  [`bell_kets`](@ref) for more details.
 A `DomainError` is thrown if `dim ≥ 2` is not satisfied.
 """
-generalized_bell_states(dim :: Int64) :: Vector{State{Complex{Float64}}} = pure_state.(generalized_bell_kets(dim))
+generalized_bell_states(dim :: Int64) :: Vector{State{ComplexF64}} = pure_state.(generalized_bell_kets(dim))
 
 """
     planar_symmetric_qubit_states( n :: Int64 ) :: Vector{State{Float64}}
@@ -137,7 +135,9 @@ Spherical Coordinates:
 
 States on the surface of bloch sphere may be described by spherical coordinates.
 
-    bloch_qubit_state(θ::Real, ϕ::Real) :: State{Complex{Float64}}
+```julia
+bloch_qubit_state(θ::Real, ϕ::Real) :: State{Complex{Float64}}
+```
 
 * `θ ∈ [0, π]`: polar angle (w.r.t z-axis).
 * `ϕ ∈ [0, 2π]`: azimuthal angle (x-y plane)
@@ -146,7 +146,9 @@ Cartesian Coordinates:
 
 States within the volume of bloch sphere may be described in cartesian coordinates.
 
-    bloch_qubit_state(x::Real, y::Real, z::Real) :: State{Complex{Float64}}
+```julia
+bloch_qubit_state(x::Real, y::Real, z::Real) :: State{Complex{Float64}}
+```
 
  * where `x`, `y`, and `z` are constrained to the unit sphere, `0 <= norm([x,y,z]) <= 1`.
 

@@ -26,7 +26,7 @@ Measurement of an ensemble of `Ket` or `DensityMatrix` types:
 
     measure(
         Π :: POVM,
-        ψ_kets :: Vector{<:ABstractKet}
+        ψ_kets :: Vector{<:Ket}
     ) :: Conditionals
 """
 function measure(

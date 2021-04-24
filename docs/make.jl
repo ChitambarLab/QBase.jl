@@ -29,4 +29,5 @@ makedocs(;
 
 deploydocs(;
     repo="github.com/ChitambarLab/QBase.jl",
+    devbranch = "main",
 )

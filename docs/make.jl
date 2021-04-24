@@ -15,19 +15,19 @@ makedocs(;
     ),
     pages=[
         "Home" => "index.md",
-        "User Guide" => "user_guide.md",
-        "Exports" => "exports.md",
-        "Modules" => [
-            "States" => "submodules/States.md",
-            "Unitaries" => "submodules/Unitaries.md",
-            "Observables" => "submodules/Observables.md",
-            "Channels" => "submodules/Channels.md",
-            "Information" => "submodules/Information.md",
-            "QMath" => "submodules/QMath.md",
-        ],
+        "Tutorial" => "tutorial.md",
+        "Bras and Kets" => "brakets.md",
+        "Operators" => "operators.md",
+        "States" => "states.md",
+        "Evolution" => "evolution.md",
+        "Measurements" => "measurements.md",
+        "Probabilities" => "probabilities.md",
+        "Information Theory" => "information_theory.md",
+        "Math Utilities" => "math_utilities.md",
     ],
 )
 
 deploydocs(;
     repo="github.com/ChitambarLab/QBase.jl",
+    devbranch = "main",
 )

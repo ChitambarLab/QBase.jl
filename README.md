@@ -3,9 +3,8 @@
 *A base library for quantum information.*
 
 [![Latest](https://img.shields.io/badge/docs-latest-blue.svg)](https://ChitambarLab.github.io/QBase.jl/dev)
-[![Build Status](https://travis-ci.com/ChitambarLab/QBase.jl.svg?branch=master)](https://travis-ci.com/ChitambarLab/QBase.jl)
+![Build Status](https://github.com/ChitambarLab/QBase.jl/blob/main/.github/workflows/run_tests.yml/badge.svg?branch=main)
 [![Coverage](https://codecov.io/gh/ChitambarLab/QBase.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/chitambarlab/QBase.jl)
-[![Coverage Status](https://coveralls.io/repos/github/ChitambarLab/QBase.jl/badge.svg?branch=master)](https://coveralls.io/github/ChitambarLab/QBase.jl?branch=master)
 
 ## Features:
   1. Types and constructors for representing quantum states and operators.

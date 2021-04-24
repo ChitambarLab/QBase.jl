@@ -66,23 +66,23 @@ State([1 ϵ;-ϵ 0], atol=1e-4)</code></pre><pre class="documenter-example-output
   1.0     1.0e-5
  -1.0e-5  0.0</pre><h3 id="Random-States"><a class="docs-heading-anchor" href="#Random-States">Random States</a><a id="Random-States-1"></a><a class="docs-heading-anchor-permalink" href="#Random-States" title="Permalink"></a></h3><pre><code class="language-julia"># Create a 5x5 random unitary
 U_rand = random_unitary( 5 )</code></pre><pre class="documenter-example-output">5×5 Unitary{ComplexF64}:
-  -0.151086-0.0604237im   -0.793127-0.0134936im  …   0.141916-0.297534im
-  0.0254656+0.472633im     0.210007-0.178833im      -0.283163+0.0298742im
-  -0.611491-0.458354im    0.0911362-0.134921im       -0.44881+0.267912im
- -0.0591682-0.106115im   -0.0300064-0.452099im       -0.11704-0.269046im
-   0.327527+0.208439im    -0.214077-0.13058im       -0.660164+0.123088im</pre><pre><code class="language-julia"># evolve the |0&gt; Ket
+  0.406414-0.478414im    0.285028-0.25196im   …    0.233878+0.0638542im
+  0.483757-0.223332im    0.106706-0.163502im      0.0144628-0.166036im
+  0.144664-0.391246im    0.127848+0.784827im     -0.0256587+0.0371755im
+ -0.327273-0.0194613im  0.0982459+0.222218im     -0.0128441+0.567962im
+ 0.0784906-0.185479im   -0.325641-0.14065im        0.433092+0.633318im</pre><pre><code class="language-julia"># evolve the |0&gt; Ket
 ψ_rand = U_rand * Ket( [1, 0, 0, 0, 0] )</code></pre><pre class="documenter-example-output">5-element Ket{ComplexF64}:
- -0.15108645963551626 - 0.06042367763568485im
- 0.025465571957531713 + 0.4726332169361576im
-  -0.6114911164744774 - 0.45835366483554263im
- -0.05916821642873943 - 0.10611463189121828im
-  0.32752650270505623 + 0.20843928920165455im</pre><pre><code class="language-julia"># create a pure state from the random ket
+  0.4064137857525519 - 0.47841372584292396im
+    0.48375664724728 - 0.2233316532150256im
+  0.1446644014715346 - 0.39124594258066847im
+ -0.3272727795057888 - 0.019461258653413804im
+ 0.07849055335262345 - 0.18547901281091256im</pre><pre><code class="language-julia"># create a pure state from the random ket
 ρ_rand = pure_state(ψ_rand)</code></pre><pre class="documenter-example-output">5×5 State{ComplexF64}:
-  0.0264781+0.0im        -0.0324057+0.0698698im  …  -0.0620795+0.011702im
- -0.0324057-0.0698698im    0.224031+0.0im             0.106856+0.149492im
-   0.120083+0.0323025im   -0.232205+0.277339im       -0.295818-0.0226642im
-  0.0153514+0.0124573im  -0.0516601+0.0252626im     -0.0414976-0.0224224im
- -0.0620795-0.011702im     0.106856-0.149492im        0.150721+0.0im</pre><h3 id="Noisy-Quantum-Channel"><a class="docs-heading-anchor" href="#Noisy-Quantum-Channel">Noisy Quantum Channel</a><a id="Noisy-Quantum-Channel-1"></a><a class="docs-heading-anchor-permalink" href="#Noisy-Quantum-Channel" title="Permalink"></a></h3><p>Computing measurement probabilities in a noiseless channel:</p><pre><code class="language-julia"># create bipartite Bell states
+  0.394052+0.0im          0.30345-0.140671im   …    0.120635+0.0378303im
+   0.30345+0.140671im    0.283898+0.0im            0.0793937+0.0721973im
+  0.245971-0.0897983im    0.15736-0.15696im        0.0839227-0.0038769im
+ -0.123698-0.164481im   -0.153974-0.0825049im     -0.0220782-0.0622298im
+  0.120635-0.0378303im  0.0793937-0.0721973im      0.0405632+0.0im</pre><h3 id="Noisy-Quantum-Channel"><a class="docs-heading-anchor" href="#Noisy-Quantum-Channel">Noisy Quantum Channel</a><a id="Noisy-Quantum-Channel-1"></a><a class="docs-heading-anchor-permalink" href="#Noisy-Quantum-Channel" title="Permalink"></a></h3><p>Computing measurement probabilities in a noiseless channel:</p><pre><code class="language-julia"># create bipartite Bell states
 ρ_bell_states = bell_states()
 
 # create a measurement in the same Bell basis
@@ -112,4 +112,4 @@ measure( Π_bell_basis, ρ_noisy_bell_states  )</code></pre><pre class="document
 partial_trace(ρ, [3,3], 1)</code></pre><pre class="documenter-example-output">3×3 State{ComplexF64}:
  0.333333+0.0im       0.0+0.0im       0.0+0.0im
       0.0+0.0im  0.333333+0.0im       0.0+0.0im
-      0.0+0.0im       0.0+0.0im  0.333333+0.0im</pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../">« Home</a><a class="docs-footer-nextpage" href="../brakets/">Bras and Kets »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Saturday 24 April 2021 19:44">Saturday 24 April 2021</span>. Using Julia version 1.6.1.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+      0.0+0.0im       0.0+0.0im  0.333333+0.0im</pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../">« Home</a><a class="docs-footer-nextpage" href="../brakets/">Bras and Kets »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Saturday 24 April 2021 21:07">Saturday 24 April 2021</span>. Using Julia version 1.6.1.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

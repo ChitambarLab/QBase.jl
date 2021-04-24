@@ -126,6 +126,25 @@ measure( Π_X, ρ_0 )
 measure( Π_Z, [ρ_0, ρ_1] )
 ```
 
+### Quantum Information
+
+See the [Information Theory](@ref) section for a complete list of methods.
+
+#### Von Neumann Entropy of Bell state
+
+```@example tutorial
+# maximally entangled bipartite qubit state
+ρ_bell = bell_states()[1]
+
+von_neumann_entropy( ρ_bell )
+```
+```@example tutorial
+# maximally mixed two-qubit state
+ρ_bell_mix = mixed_state( [1,1,1,1]/4, bell_states() )
+
+von_neumann_entropy( ρ_bell_mix )
+```
+
 ## Advanced Examples
 
 ### Absolute Tolerance
@@ -159,14 +178,18 @@ U_rand = random_unitary( 5 )
 ```
 
 ```@example tutorial
+# evolve the |0> Ket
 ψ_rand = U_rand * Ket( [1, 0, 0, 0, 0] )
 ```
 
 ```@example tutorial
+# create a pure state from the random ket
 ρ_rand = pure_state(ψ_rand)
 ```
 
 ### Noisy Quantum Channel
+
+Computing measurement probabilities in a noiseless channel:
 
 ```@example tutorial
 # create bipartite Bell states
@@ -178,6 +201,8 @@ U_rand = random_unitary( 5 )
 # compute the ideal measurement probabilities
 measure( Π_bell_basis, ρ_bell_states )
 ```
+
+Computing measurement probabilities with a noisy channel:
 
 ```@example tutorial
 # create a depolarizing channel which mixes in 50% white noise

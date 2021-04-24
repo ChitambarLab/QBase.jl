@@ -22,7 +22,7 @@ makedocs(;
         "Evolution" => "evolution.md",
         "Measurements" => "measurements.md",
         "Probabilities" => "probabilities.md",
-        "Information" => "information.md",
+        "Information Theory" => "information_theory.md",
         "Math Utilities" => "math_utilities.md",
     ],
 )

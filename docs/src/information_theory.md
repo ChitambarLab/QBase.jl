@@ -1,7 +1,7 @@
 ```@meta
 CurrentModule = QBase
 ```
-# Information
+# Information Theory
 
 ## Entropy
 ```@docs

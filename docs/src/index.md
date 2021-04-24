@@ -10,14 +10,14 @@ CurrentModule = QBase
     provide feedback or make feature requests, please contact [brian.d.doolittle@gmail.com](mailto:brian.d.doolittle@gmail.com).
 
 
-## Features:
-  1. Validated types with a flexible tolerance for numerical error.
-  2. Constructors for quantum states, measurements, and evolution operators.
+## Features
+  1. Base quantum types with a flexible tolerance for numerical error.
+  2. Constructors for quantum state, measurement, and evolution operators.
   3. Methods for evolving and measuring quantum systems.
   4. Methods for calculating information-theoretic quantities.
   5. Mathematics utilities that support quantum mechanics.
 
-## Base Types
+## Base Quantum Types
 
 QBase.jl provides a general framework for representing finite quantum
 systems and their dynamics.

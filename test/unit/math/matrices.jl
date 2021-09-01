@@ -1,4 +1,5 @@
-using Test, LinearAlgebra
+using Test
+using LinearAlgebra
 using QBase
 
 @testset "./src/math/matrices.jl" begin
@@ -54,6 +55,9 @@ end
     @testset "using atol" begin
         @test !is_hermitian([1 1;1+1e-6 1])
         @test is_hermitian([1 1;1+1e-6 1], atol=1e-5)
+
+        @test !is_hermitian([1 1e-6 + 1im;-1im 1])
+        @test is_hermitian([1 1e-6 + 1im;-1im 1], atol=1e-5)
     end
 end
 

@@ -93,7 +93,7 @@ function is_hermitian(M :: AbstractMatrix{<:Number}; atol=ATOL :: Float64) :: Bo
     end
 
     for i = indsn, j = i:last(indsn)
-        if M[i,j] != adjoint(M[j,i]) && !isapprox(M[i,j],M[j,i],atol=atol)
+        if M[i,j] != M[j,i]' && !isapprox(M[i,j], M[j,i]', atol=atol)
             return false
         end
     end

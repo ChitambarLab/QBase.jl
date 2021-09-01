@@ -54,9 +54,9 @@ end
         @test M isa POVMel{Complex{Float64}}
         @test M == [0.5 0.5im;-0.5im 0.5]
 
-        M = POVMel([0.5 0.5im;0.5im 0.5], atol=0.51)
+        M = POVMel([0.5 0.45im;-0.5im 0.5], atol=0.06)
         @test M isa POVMel{Complex{Float64}}
-        @test M == [0.5 0.5im;0.5im 0.5]
+        @test M == [0.5 0.45im;-0.5im 0.5]
     end
 
     @testset "errors" begin

@@ -71,6 +71,7 @@ is_povm_element(::POVMel) :: Bool = true
 kron(Π_els :: Vararg{POVMel}) = POVMel(kron(map(Π_el -> Π_el.M, Π_els)...))
 
 """
+    POVM( Π :: Vector{POVMel{T}} ) <: Measurement{T}
     POVM( Π :: Vector{Matrix{T}} ) <: Measurement{T}
 
 Positve-operator valued measures (POVMs) represent a general quantum measurement.
@@ -82,13 +83,23 @@ struct POVM{T<:Number} <: Measurement{POVMel{T}}
     V :: Vector{POVMel{T}}
     atol :: Float64
     POVM(
+        Π :: Vector{POVMel{T}},
+        atol=ATOL :: Float64
+    ) where T <: Number = is_povm(Π, atol=atol) ? new{T}(
+            Π, atol
+        ) : throw(DomainError(Π, "povm Π is invalid"))
+    POVM(
         Π :: Vector{Matrix{T}};
         atol=ATOL :: Float64
-    ) where T <: Number = is_povm(Π, atol=atol) ? new{T}(POVMel.(Π, atol=atol), atol) : throw(DomainError(Π, "povm Π is invalid"))
+    ) where T <: Number = is_povm(Π, atol=atol) ? new{T}(
+            POVMel.(Π, atol=atol), atol
+        ) : throw(DomainError(Π, "povm Π is invalid"))
     POVM(
         Π :: Vector{<:State};
         atol=ATOL :: Float64
-    ) = is_povm(Π, atol=atol) ? new{eltype(Π[1].M)}(POVMel.(Π, atol=atol), atol) : throw(DomainError(Π, "povm Π is invalid"))
+    ) = is_povm(Π, atol=atol) ? new{eltype(Π[1].M)}(
+            POVMel.(Π, atol=atol), atol
+        ) : throw(DomainError(Π, "povm Π is invalid"))
 end
 is_povm(::POVM) :: Bool = true
 

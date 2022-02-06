@@ -26,7 +26,8 @@ include("types/states.jl")
 include("types/unitaries.jl")
 include("types/measurements.jl")
 
-# TODO: Unitary
+include("choi_operators.jl")
+
 # TODO: KrausOperator
 # TODO: AbstractChannel
 # TODO: AbstractSuperOperator
@@ -36,11 +37,11 @@ include("constructors/brakets.jl")
 include("constructors/states.jl")
 include("constructors/unitaries.jl")
 include("constructors/measurements.jl")
-include("channels.jl")
 
 
 # main methods
 include("evolve.jl")
+include("channels.jl")
 include("measure.jl")
 include("information.jl")
 

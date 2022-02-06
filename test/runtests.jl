@@ -31,6 +31,9 @@ println("Testing Types : ")
 
     println("./test/unit/types/measurements.jl")
     @time @safetestset "./test/unit/types/measurements.jl" begin include("unit/types/measurements.jl") end
+
+    println("./test/unit/choi_operators.jl")
+    @time @safetestset "./test/unit/choi_operators.jl" begin include("unit/choi_operators.jl") end
 end
 
 println("Testing Constructors : ")

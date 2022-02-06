@@ -41,3 +41,12 @@ replacer_channel
 depolarizing_channel
 erasure_channel
 ```
+
+## Choi Operators
+
+```@docs
+ChoiOp
+is_choi_matrix
+choi_matrix
+choi_evolve
+```

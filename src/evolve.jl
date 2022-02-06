@@ -31,3 +31,14 @@ Apply a unitary evolution `U` to a state ket `ψ`: ``|\\psi'\\rangle = U|\\psi\\
 """
 evolve(U::Unitary, ψ::Ket) :: Ket = U*ψ
 evolve(U :: AbstractMatrix, ψ :: AbstractVector; atol=ATOL :: Float64) :: Ket = Ket(U*ψ, atol=atol)
+
+"""
+Evolve a `State` `ρ` by `Λ` the [`ChoiOp`](@ref) representation of a channel
+
+    evolve(Λ ::  ChoiOp, ρ :: State) :: State
+    evolve(Λ :: ChoiOp, ρ :: AbstractMatrix) :: Matrix
+
+See the [`choi_evolve`](@ref) method for details regarding 
+"""
+evolve(Λ::ChoiOp, ρ::State) :: State = State(choi_evolve(Λ.M, ρ.M, Λ.dims))
+evolve(Λ::ChoiOp, ρ::AbstractMatrix) :: Matrix = choi_evolve(Λ.M, ρ, Λ.dims)

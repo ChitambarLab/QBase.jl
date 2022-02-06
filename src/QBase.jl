@@ -36,11 +36,12 @@ include("constructors/brakets.jl")
 include("constructors/states.jl")
 include("constructors/unitaries.jl")
 include("constructors/measurements.jl")
+include("channels.jl")
+
 
 # main methods
 include("evolve.jl")
 include("measure.jl")
-include("channels.jl")
 include("information.jl")
 
 end

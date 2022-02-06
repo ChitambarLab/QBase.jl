@@ -56,4 +56,18 @@ end
     end
 end
 
+@testset "evolve(::ChoiOp)" begin
+    ρ_mix = [1 0;0 1]/2
+    Λ_depol = ChoiOp(x -> ρ_mix, [2,2])
+    ρ = [1 0;0 0]
+
+    ρ_out = evolve(Λ_depol, ρ)
+    @test ρ_out isa Matrix
+    @test ρ_out == ρ_mix
+
+    ρ_out = evolve(Λ_depol, State(ρ))
+    @test ρ_out isa State
+    @test ρ_out == ρ_mix
+end
+
 end

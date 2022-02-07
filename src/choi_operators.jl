@@ -93,12 +93,12 @@ struct ChoiOp{T<:Number} <: Operator{T}
         Λ :: AbstractMatrix{T},
         dims :: Vector{Int};
         atol=ATOL :: Float64
-    ) where T <: Number = is_choi_matrix(Λ, dims, atol=atol) ? new{T}(Λ, dims) : throw(
+    ) where T <: Number = is_choi_matrix(Λ, dims, atol=atol) ? new{T}(Λ, dims, atol) : throw(
         DomainError(Λ, "The Choi operator is not a valid quantum channel.")
     )
     ChoiOp(
         𝒩 :: Function,
-        dims :: Vector{Int},
+        dims :: Vector{Int};
         atol=ATOL :: Float64
     ) = ChoiOp( choi_matrix(𝒩, dims), dims, atol=atol)
 end

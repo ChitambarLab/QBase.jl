@@ -32,43 +32,47 @@ end
 end
 
 @testset "ChoiOp()" begin
-        @testset "function instantiation" begin
-            Λ_depol = ChoiOp(x -> 1/2*[1 0; 0 1], [2,2])
+    @testset "function instantiation" begin
+        Λ_depol = ChoiOp(x -> 1/2*[1 0; 0 1], [2,2])
 
-            @test Λ_depol isa Operator
-            @test Λ_depol isa ChoiOp{ComplexF64}
-            @test Λ_depol.M isa Matrix{ComplexF64}
-            @test Λ_depol.M == [1 0 1 0;0 1 0 1;1 0 1 0;0 1 0 1]/2
-            @test Λ_depol.dims == [2,2]
+        @test Λ_depol isa Operator
+        @test Λ_depol isa ChoiOp{ComplexF64}
+        @test Λ_depol.M isa Matrix{ComplexF64}
+        @test Λ_depol.M == [1 0 1 0;0 1 0 1;1 0 1 0;0 1 0 1]/2
+        @test Λ_depol.dims == [2,2]
+    end
+
+    @testset "matrix instantiation" begin
+        Λ = [1 0 0 1;0 0 0 0;0 0 0 0;1 0 0 1]
+        Λ_id = ChoiOp(Λ, [2,2])
+
+        @test Λ_id isa Operator
+        @test Λ_id isa ChoiOp{Int}
+        @test Λ_id.M isa Matrix{Int}
+        @test Λ_id.M == Λ
+        @test Λ_id.dims == [2,2]
+    end
+
+    @testset "DomainError" begin
+        @suppress_err @test_throws DomainError ChoiOp(Matrix(I, 4, 4), [2,2])
+    end
+
+    @testset "show(::ChoiOp)" begin
+        show_msg = @capture_out begin
+            show(stdout, MIME("text/plain"), ChoiOp([
+                1 0 0 1;0 0 0 0;0 0 0 0;1 0 0 1
+            ], [2,2]))
         end
 
-        @testset "matrix instantiation" begin
-            Λ = [1 0 0 1;0 0 0 0;0 0 0 0;1 0 0 1]
-            Λ_id = ChoiOp(Λ, [2,2])
-
-            @test Λ_id isa Operator
-            @test Λ_id isa ChoiOp{Int}
-            @test Λ_id.M isa Matrix{Int}
-            @test Λ_id.M == Λ
-            @test Λ_id.dims == [2,2]
-        end
-
-        #
-        # @testset "kraus operator instantiation" begin
-        #     kraus_ops = [σI, σx, σy, σz]/2
-        #     choi_channel = Choi(kraus_ops)
-        #
-        #     @test choi_channel isa Choi{ComplexF64}
-        #     @test choi_channel.JN isa Matrix{ComplexF64}
-        #     @test choi_channel.JN == I/2
-        #     @test choi_channel.in_dim == 2
-        #     @test choi_channel.out_dim == 2
-        # end
-        #
-
-        @testset "DomainError" begin
-            @suppress_err @test_throws DomainError ChoiOp(Matrix(I, 4, 4), [2,2])
-        end
+        @test show_msg == """4×4 ChoiOp{Int64}
+        dims : [2, 2]
+        atol : 1.0e-7
+        M : 4×4 Array{Int64,2}:
+         1  0  0  1
+         0  0  0  0
+         0  0  0  0
+         1  0  0  1"""
+    end
 end
 
 @testset "choi_evolve()" begin

@@ -64,14 +64,11 @@ end
             ], [2,2]))
         end
 
-        @test show_msg == """4×4 ChoiOp{Int64}
-        dims : [2, 2]
-        atol : 1.0e-7
-        M : 4×4 Array{Int64,2}:
-         1  0  0  1
-         0  0  0  0
-         0  0  0  0
-         1  0  0  1"""
+        # show_msg is inconsistent across environments
+        @test occursin(
+            "1  0  0  1\n 0  0  0  0\n 0  0  0  0\n 1  0  0  1",
+            show_msg
+        )
     end
 end
 

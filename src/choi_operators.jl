@@ -23,11 +23,11 @@ function is_choi_matrix(
     if !is_hermitian(Λ, atol=atol)
         @warn "The Choi matrix `Λ` is not Hermitian-preserving.`"
         return false
-    elseif !isapprox(partial_trace(Λ, dims, 1), I, atol=atol)
-        @warn "The Choi matrix `Λ` is not trace-preserving."
-        return false
     elseif !is_positive_semidefinite(Λ, atol=atol)
         @warn "The Choi matrix `Λ` is not completely-positive."
+        return false
+    elseif !isapprox(partial_trace(Λ, dims, 1), I, atol=atol)
+        @warn "The Choi matrix `Λ` is not trace-preserving."
         return false
     end
 

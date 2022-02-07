@@ -12,10 +12,22 @@ using QBase
 
     @testset "invalid cases" begin
         warn_msg = @capture_err begin
-            @test !is_choi_matrix([1 0 0 1;0 0 0 0;0 0 0 0;1 0 0 0.9], [2,2])
+            @test !is_choi_matrix([1 0 0 0.5;0 0 0 0;0 0 0 0;0.5 0 0 0.9], [2,2])
         end
 
         @test occursin("The Choi matrix `Λ` is not trace-preserving.", warn_msg)
+
+        warn_msg = @capture_err begin
+            @test !is_choi_matrix([1 0 0 im;0 0 0 0;0 0 0 0;im 0 0 1], [2,2])
+        end
+
+        @test occursin("The Choi matrix `Λ` is not Hermitian-preserving.`", warn_msg)
+
+        warn_msg = @capture_err begin
+            @test !is_choi_matrix([1 0 0 2;0 0 0 0;0 0 0 0;2 0 0 1], [2,2])
+        end
+
+        @test occursin("The Choi matrix `Λ` is not completely-positive.", warn_msg)
     end
 end
 

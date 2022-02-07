@@ -33,12 +33,23 @@ evolve(U::Unitary, ψ::Ket) :: Ket = U*ψ
 evolve(U :: AbstractMatrix, ψ :: AbstractVector; atol=ATOL :: Float64) :: Ket = Ket(U*ψ, atol=atol)
 
 """
-Evolve a `State` `ρ` by `Λ` the [`ChoiOp`](@ref) representation of a channel
+Evolve a `State` `ρ` by `Λ` the [`ChoiOp`](@ref) representation of a channel.
 
     evolve(Λ ::  ChoiOp, ρ :: State) :: State
     evolve(Λ :: ChoiOp, ρ :: AbstractMatrix) :: Matrix
 
-See the [`choi_evolve`](@ref) method for details regarding 
+See the [`choi_evolve`](@ref) method for details.
 """
 evolve(Λ::ChoiOp, ρ::State) :: State = State(choi_evolve(Λ.M, ρ.M, Λ.dims))
 evolve(Λ::ChoiOp, ρ::AbstractMatrix) :: Matrix = choi_evolve(Λ.M, ρ, Λ.dims)
+
+"""
+Evolve a `State` `ρ` by the [`KrausChannel`](@ref) `𝒩`.
+
+    evolve(𝒩::KrausChannel, ρ::State) :: State
+    evolve(𝒩::KrausChannel, ρ::AbstractMatrix)
+
+See the [`kraus_evolve`](@ref) method for details.
+"""
+evolve(𝒩::KrausChannel, ρ::State) :: State = State(kraus_evolve(𝒩.kraus_ops, ρ.M))
+evolve(𝒩::KrausChannel, ρ::AbstractMatrix) :: Matrix = kraus_evolve(𝒩.kraus_ops, ρ)

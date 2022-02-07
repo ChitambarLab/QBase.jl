@@ -26,12 +26,8 @@ include("types/states.jl")
 include("types/unitaries.jl")
 include("types/measurements.jl")
 
+include("kraus_channels.jl")
 include("choi_operators.jl")
-
-# TODO: KrausOperator
-# TODO: AbstractChannel
-# TODO: AbstractSuperOperator
-# TODO: AbstractObservable
 
 include("constructors/brakets.jl")
 include("constructors/states.jl")

@@ -70,4 +70,20 @@ end
     @test ρ_out == ρ_mix
 end
 
+@testset "evolve(::KrausChannel)" begin
+    𝒩_amp_damp = KrausChannel([
+        [1 0;0 0.5],
+        [0 sqrt(3/4);0 0]
+    ])
+    ρ = [1 1;1 1] / 2
+
+    ρ_out = evolve(𝒩_amp_damp, ρ)
+    @test ρ_out isa Matrix{Float64}
+    @test ρ_out == [7/8 1/4;1/4 1/8]
+
+    ρ_out = evolve(𝒩_amp_damp, State(ρ))
+    @test ρ_out isa State{Float64}
+    @test ρ_out == [7/8 1/4;1/4 1/8]
+end
+
 end

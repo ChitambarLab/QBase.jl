@@ -122,7 +122,7 @@ Applies the Choi operator `Λ` to the density operator `ρ`. The output of this
 quantum channel evaluated as,
 
 ```math
-    \\rho'_B = \\text{Tr}_A[\\Lambda_{AB}(\\rho_A^{T}\\otimes \\mathbb{I}_B],
+    \\rho'_B = \\text{Tr}_A[\\Lambda_{AB}(\\rho_A^{T}\\otimes \\mathbb{I}_B)],
 ```
 
 where the [`partial_trace`](@ref) is take with respect to the input system.

@@ -40,7 +40,7 @@ end
 Returns the Choi operator of a channel. The Choi matrix is constructed as
 
 ```math
-        \\Lambda^{AB} = \\sum_{i,j \\in [d_A]} E^A_{i,j} \\otimes \\mathcal{N}^B(E_{i,j}) ,
+        \\Lambda^{AB} = \\sum_{i,j \\in [d_A]} E^A_{i,j} \\otimes \\mathcal{N}^{A' \\to B}(E_{i,j}^{A'}) ,
 ```
 
 where ``[d_A]`` is the finite alphabet indexing the input space and ``E_{i,j}``

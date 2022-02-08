@@ -32,12 +32,12 @@ using QBase
 end
 
 @testset "choi_matrix()" begin
-    𝒩_depol(X) = 1/2*[1 0 ; 0 1]
+    𝒩_depol(ρ) = 1/2*[1 0 ; 0 1]*tr(ρ)
     Λ_depol = choi_matrix(𝒩_depol, [2,2])
-    @test Λ_depol == [1 0 1 0;0 1 0 1;1 0 1 0;0 1 0 1] / 2
+    @test Λ_depol == I / 2
     @test is_choi_matrix(Λ_depol, [2,2])
 
-    𝒩_id(X) = X
+    𝒩_id(ρ) = ρ
     Λ_id = choi_matrix(𝒩_id, [2,2])
     @test Λ_id == [1 0 0 1;0 0 0 0;0 0 0 0;1 0 0 1]
     @test is_choi_matrix(Λ_id, [2,2])
@@ -45,12 +45,12 @@ end
 
 @testset "ChoiOp()" begin
     @testset "function instantiation" begin
-        Λ_depol = ChoiOp(x -> 1/2*[1 0; 0 1], [2,2])
+        Λ_depol = ChoiOp(ρ -> 1/2*[1 0; 0 1] * tr(ρ), [2,2])
 
         @test Λ_depol isa Operator
         @test Λ_depol isa ChoiOp{ComplexF64}
         @test Λ_depol.M isa Matrix{ComplexF64}
-        @test Λ_depol.M == [1 0 1 0;0 1 0 1;1 0 1 0;0 1 0 1]/2
+        @test Λ_depol.M == I / 2
         @test Λ_depol.dims == [2,2]
     end
 

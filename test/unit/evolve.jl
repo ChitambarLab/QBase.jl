@@ -1,4 +1,5 @@
 using Test
+using LinearAlgebra
 using QBase
 
 @testset "./src/evolve.jl" begin
@@ -58,7 +59,7 @@ end
 
 @testset "evolve(::ChoiOp)" begin
     ρ_mix = [1 0;0 1]/2
-    Λ_depol = ChoiOp(x -> ρ_mix, [2,2])
+    Λ_depol = ChoiOp(x -> tr(x)*ρ_mix, [2,2])
     ρ = [1 0;0 0]
 
     ρ_out = evolve(Λ_depol, ρ)

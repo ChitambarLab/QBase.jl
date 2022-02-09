@@ -109,6 +109,17 @@ end
         end
     end
 
+    @testset "POVM(::POVMel)" begin
+        Π = POVM([
+            POVMel([0.5 0;0 0]),
+            POVMel([0 0;0 0.5]),
+            POVMel([0.25 0.25;0.25 0.25]),
+            POVMel([0.25 -0.25;-0.25 0.25]),
+        ])
+
+        @assert Π isa POVM
+    end
+
     @testset "atol" begin
         Π = [[1 0;0 0],[0 0.1;0 1]]
         @test_throws DomainError POVM(Π)

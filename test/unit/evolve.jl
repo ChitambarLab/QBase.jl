@@ -1,4 +1,5 @@
 using Test
+using LinearAlgebra
 using QBase
 
 @testset "./src/evolve.jl" begin
@@ -54,6 +55,36 @@ end
         @test ψ isa Ket{Float64}
         @test ψ == [1,-1]/sqrt(2)
     end
+end
+
+@testset "evolve(::ChoiOp)" begin
+    ρ_mix = [1 0;0 1]/2
+    Λ_depol = ChoiOp(x -> tr(x)*ρ_mix, [2,2])
+    ρ = [1 0;0 0]
+
+    ρ_out = evolve(Λ_depol, ρ)
+    @test ρ_out isa Matrix
+    @test ρ_out == ρ_mix
+
+    ρ_out = evolve(Λ_depol, State(ρ))
+    @test ρ_out isa State
+    @test ρ_out == ρ_mix
+end
+
+@testset "evolve(::KrausChannel)" begin
+    𝒩_amp_damp = KrausChannel([
+        [1 0;0 0.5],
+        [0 sqrt(3/4);0 0]
+    ])
+    ρ = [1 1;1 1] / 2
+
+    ρ_out = evolve(𝒩_amp_damp, ρ)
+    @test ρ_out isa Matrix{Float64}
+    @test ρ_out == [7/8 1/4;1/4 1/8]
+
+    ρ_out = evolve(𝒩_amp_damp, State(ρ))
+    @test ρ_out isa State{Float64}
+    @test ρ_out == [7/8 1/4;1/4 1/8]
 end
 
 end

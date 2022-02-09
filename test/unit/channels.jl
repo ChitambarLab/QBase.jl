@@ -1,9 +1,10 @@
 using Test
+using LinearAlgebra
 using QBase
 
 @testset "./src/channels.jl" begin
 
-@testset "repalacer_channel()" begin
+@testset "replacer_channel()" begin
     @testset "simple qubit examples" begin
         ρ = State([1 0;0 0])
         σ = State([0 0;0 1])

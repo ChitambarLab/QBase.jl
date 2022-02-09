@@ -41,3 +41,20 @@ replacer_channel
 depolarizing_channel
 erasure_channel
 ```
+
+## Kraus Channels
+
+```@docs
+KrausChannel
+is_kraus_channel
+kraus_evolve
+```
+
+## Choi Operators
+
+```@docs
+ChoiOp
+is_choi_matrix
+choi_matrix
+choi_evolve
+```

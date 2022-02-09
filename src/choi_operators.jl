@@ -12,7 +12,7 @@ channel.
 
 The requirements on `Λ` are ([https://arxiv.org/abs/1111.6950](https://arxiv.org/abs/1111.6950)):
 * Is Hermitian, ``\\Lambda = \\Lambda^{\\dagger}``.
-* Is trace-preserving, ``\\text{Tr}_B[\\Lambda^{AB}]=\\mathbb{I}_B``.
+* Is trace-preserving, ``\\text{Tr}_B[\\Lambda^{AB}]=\\mathbb{I}_A``.
 * Is completely-positive, ``\\Lambda \\geq 0``.
 """
 function is_choi_matrix(
